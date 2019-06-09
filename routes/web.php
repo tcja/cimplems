@@ -13,7 +13,7 @@
 */
 
 // Main route for handling a page
-Route::get('/{slug}', 'PageController@index')->where('slug', '^(?!.*(admin|login|logout|list_private_pages|show_home_page|get_user_email)).*$');
+Route::get('/{slug}', 'PageController@index')->where('slug', '^(?!admin|login|logout|list_private_pages|show_home_page|get_user_email).*$');
 
 // Default abort page for forms
 Route::post('/abort', function () {
