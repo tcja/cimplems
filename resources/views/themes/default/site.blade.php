@@ -60,7 +60,7 @@
 		@endif
 	</head>
 	<body>
-		@include(config('site.theme_dir') . config('site.theme') . '/' . 'misc_top')
+		@include('misc_top')
 		<nav>
 			@include(config('site.theme_dir') . config('site.theme') . '/' . 'menu')
 		</nav>

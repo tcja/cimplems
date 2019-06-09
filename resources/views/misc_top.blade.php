@@ -12,3 +12,8 @@
 	</div>
 	<div class="toast-body">{{ __('site.page_deleted') }}</div>
 </div>
+@if (session('admin') === true)
+    @include('modals_admin')
+@else
+    @include('modals')
+@endif
