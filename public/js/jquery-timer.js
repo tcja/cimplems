@@ -1,0 +1,1 @@
+jQuery.timer=function(d,c,e){var b={timer:setTimeout(c,d),callback:null};if(typeof(e)=="function"){b.callback=e}return b};jQuery.clearTimer=function(b){clearTimeout(b.timer);if(typeof(b.callback)=="function"){b.callback()}return this};
