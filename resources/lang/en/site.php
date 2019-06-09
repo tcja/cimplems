@@ -101,7 +101,7 @@ return [
     'auth_logged_in_title'          =>  'Successful authentication!',
     'auth_logged_in'                =>  "You are now logged in as an admin.",
     'auth_logged_out_title'         =>  'Successful disconnection',
-    'auth_logged_out'               =>  'You are now logged off!',
+    'auth_logged_out'               =>  'You are now logged off from the admin!',
 
     // User panel
     'configure_account'             =>  'Account configuration',
@@ -154,18 +154,18 @@ return [
     'error_403_home'                =>  'Go back to home page',
     'view_as_visitor'               =>  'View the website as a visitor',
     'view_as_admin'                 =>  'Get back to administrator mode',
-    'site_in_constr_warning_title'  =>  'Website in construction !',
-    'site_in_constr_warning_label'  =>  'Your website appears to visitors as being under construction !',
+    'site_in_constr_warning_title'  =>  'Website in construction!',
+    'site_in_constr_warning_label'  =>  'Your website appears to visitors as being under construction!',
     'dots'                          =>  '...',
 
     // Update browser
     'update_browser_title'          =>  'Incompatible browser',
     'update_browser_h1'             =>  "⚠ The site's administration is incompatible with your browser!",
-    'update_browser_h2'             =>  'Are you trying to access the administration with an old browser (for example : Internet Explorer)?',
+    'update_browser_h2'             =>  'Are you trying to access the administration with an old browser (e.g. : Internet Explorer)?',
     'update_browser_p_st'           =>  'You can find the latest browser by',
     'update_browser_get_here'       =>  'going here',
     'update_browser_h2_sec'         =>  'Why can I not get to this part of the site with my current browser?',
-    'update_browser_p_sec'          =>  "Your browser is too outdated to be able to use the web's latest technologies in order to administrate properly your website, hence why you need to get one of the latest browser available by",
+    'update_browser_p_sec'          =>  "Your browser is too outdated to be able to use the web's latest technologies in order to administrate properly your website, hence why you need to get one of the latest available by",
 
     // Contact mail
     'contact_mail_title'            =>  'Contact e-mail',

@@ -101,7 +101,7 @@ return [
     'auth_logged_in_title'          =>  'Authentification réussie !',
     'auth_logged_in'                =>  "Vous êtes désormais connecté en tant qu'adminstrateur.",
     'auth_logged_out_title'         =>  'Déconnexion réussie !',
-    'auth_logged_out'               =>  'Vous êtes désormais deconnecté.',
+    'auth_logged_out'               =>  "Vous êtes désormais deconnecté de l'administration.",
 
     // User panel
     'configure_account'             =>  'Configuration du compte',
@@ -114,7 +114,7 @@ return [
     'change_password'               =>  'Changer le mot de passe',
     'change_in_progress'            =>  'Changement en cours...',
     'change_done'                   =>  'Changement effectué !',
-    'wrong_password'                =>  "L'ancien de passe n'est pas le bon, veuillez réessayer.",
+    'wrong_password'                =>  "L'ancien mot de passe n'est pas le bon, veuillez réessayer.",
 
     // Confirm modal
     'delete_page_modal'             =>  'Supprimer la page',
@@ -127,7 +127,7 @@ return [
     // Toast messages
     'job_done_title'                =>  'Opération effectuée !',
     'menu_updated'                  =>  'Le menu a été mis à jour avec succès !',
-    'page_created'                  =>  'La page a été créé avec succès !',
+    'page_created'                  =>  'La page a été créée avec succès !',
     'page_updated'                  =>  'La page a été mise à jour avec succès !',
     'page_name_changed'             =>  'Le nom de la page a été modifié avec succès !',
     'page_public'                   =>  'La page est désormais en ligne !',
