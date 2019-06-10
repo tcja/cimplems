@@ -480,11 +480,11 @@
         $(this).off('click', '.delete_gallery');
 		$(this).on('click', '.delete_gallery', function(e) {
             e.preventDefault();
-            $defaultsConfirmModal = {
+            var options = {
                 messageHeader: '{{ __("site.delete_gallery_modal") }} : ',
                 modalBoxWidth: '405px'
             };
-			$.confirmModal('{{ __("site.delete_gallery_message_modal") }}', function(obj) {
+			$.confirmModal('{{ __("site.delete_gallery_message_modal") }}', options, function(obj) {
 				var gallery_id = $(obj).parent().prev().attr('id');
 				var galleryID = 'gallery' + gallery_id;
 				var data_string = 'gallery_id=' + gallery_id;

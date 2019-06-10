@@ -3,11 +3,11 @@
         $(this).off('click', '.delete_image');
         $(this).on('click', '.delete_image', function(e) {
             e.preventDefault();
-            $defaultsConfirmModal = {
+            var options = {
                 messageHeader: '{{ __("site.delete_image_modal") }}',
                 modalBoxWidth: '365px'
             };
-            $.confirmModal('{{ __("site.delete_image_message_modal") }}', function(obj) {
+            $.confirmModal('{{ __("site.delete_image_message_modal") }}', options, function(obj) {
                 var image_name = $(obj).attr('alt');
                 var gallery_name = $(obj).parents('.thumbs').parent().parents().attr('id');
                 var gal = ('#' + gallery_name);

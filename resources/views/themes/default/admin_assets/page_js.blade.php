@@ -280,11 +280,11 @@
 
         $(this).on('click', '.delete_page', function(e) {
             e.preventDefault();
-            $defaultsConfirmModal = {
+            var options = {
                 messageHeader: '{{ __("site.delete_page_modal") }} : ',
                 modalBoxWidth: '405px'
             };
-            $.confirmModal('{{ __("site.delete_page_message_modal") }}', function(obj) {
+            $.confirmModal('{{ __("site.delete_page_message_modal") }}', options, function(obj) {
                 var slug = $('#EditPage').find('input[name="slug"]').val();
                 var array_images = [];
                 $('.note-editable').find('.img-fluidR').each(function(i, el) {

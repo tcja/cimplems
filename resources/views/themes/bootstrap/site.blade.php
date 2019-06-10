@@ -39,11 +39,9 @@
 				$currentMenuOrder = {{ $currentMenuOrder }};
 				$currentPageTitle = '{{ $currentPageTitle }}';
                 $currentSlug = '{{ $currentSlug }}';
-                $optionsConfirmModal = {
-                    //messageHeader: '{{ __("site.delete_image_modal") }}',
-                    //modalBoxWidth: '365px',
-                    modalVerticalCenter: false,
-                    fadeAnimation: false
+                $defaultsConfirmModal = {
+                    confirmButton: '{{ __("site.ok_button") }}',
+                    cancelButton: '{{ __("site.cancel_button") }}'
                 };
 				$(this).tooltip({
 					selector: '.tooltipz',

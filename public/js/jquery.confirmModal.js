@@ -2,26 +2,33 @@
  * jQuery.confirmModal v1.0
  * Copyright (c) 2018 Trim C.
  * Released under the MIT license
- * Description : Easy and simple to use plugin replacing the browser's default confirm box with bootstrap 4 modal
+ * Description : simple to use plugin replacing the browser's default confirm box with bootstrap 4 modal
  */
 (function ($) {
     $currentModalTarget = {};
     $defaultsConfirmModal = {};
-    $optionsConfirmModal = {};
-    jQuery.confirmModal = function(message, callback) {
+    jQuery.confirmModal = function(message, options, callback) {
         var targetElement = document.activeElement;
 
-        if (!$isMobile) {
-            $(document).on('shown.bs.modal', '.modalConfirm', function () { $('.confirmButton').focus(); });
-        }
-
-        var settings = $.extend({}, $defaultsConfirmModal, $optionsConfirmModal);
+        var settings = $.extend({}, $defaultsConfirmModal, options);
 
         if (settings === undefined) {
             var modalBoxWidth = 'auto';
             var modalVerticalCenter = '';
             var fadeAnimation = '';
+            var confirmButton = 'OK';
+            var cancelButton = 'Cancel';
         } else {
+            if ($defaultsConfirmModal.confirmButton === undefined) {
+                var confirmButton = 'OK';
+            } else {
+                var confirmButton = $defaultsConfirmModal.confirmButton;
+            }
+            if ($defaultsConfirmModal.cancelButton === undefined) {
+                var cancelButton = 'Cancel';
+            } else {
+                var cancelButton = $defaultsConfirmModal.cancelButton;
+            }
             if (settings.modalBoxWidth === undefined) {
                 var modalBoxWidth = 'auto';
             } else {
@@ -32,8 +39,8 @@
             } else {
                 var modalVerticalCenter = 'modal-dialog-centered';
             }
-            if (settings.messageHeader === undefined) {
-                var messageHeader = '';
+            if (settings.messageHeader === undefined || settings.messageHeader === '') {
+                var messageHeader = '&nbsp;';
             } else {
                 var messageHeader = settings.messageHeader;
             }
@@ -42,17 +49,42 @@
             } else {
                 var fadeAnimation = 'fade';
             }
-            if (settings.blur !== undefined || settings.blur === true) {
-                $('.edit_image_mobile').addClass('blur');
-            }
-        }
+            if (settings.backgroundBlur === true) {
+                if ($('#cmStyle').length === 0) {
+                    $('<style id="cmStyle" type="text/css"> .cmBackgroundBlur{ -webkit-filter: blur(0.1rem); -moz-filter: blur(0.1rem);	-o-filter: blur(0.1rem); -ms-filter: blur(0.1rem); filter: blur(0.1rem); } </style>').appendTo('head');
+                } else {
+                    $('#cmStyle').remove();
+                    $('<style id="cmStyle" type="text/css"> .cmBackgroundBlur{ -webkit-filter: blur(0.1rem); -moz-filter: blur(0.1rem);	-o-filter: blur(0.1rem); -ms-filter: blur(0.1rem); filter: blur(0.1rem); } </style>').appendTo('head');
+                }
+                $('.container').addClass('cmBackgroundBlur');
+                $(document).one('hide.bs.modal', '.modalConfirm', function () { $('.container').removeClass('cmBackgroundBlur'); });
+            } else if (typeof(settings.backgroundBlur) === 'object') {
+                var findBlurWeight = settings.backgroundBlur.findIndex(function(el) { return /(^[0-9]+px|rem$)/i.test(el); });
+                if (findBlurWeight >= 0) {
+                    if (findBlurWeight == 0) {
+                        var elements = '.container';
+                        var blurSize = settings.backgroundBlur[0];
+                    } else {
+                        var elements = settings.backgroundBlur[0];
+                        var blurSize = settings.backgroundBlur[1];
+                    }
+                } else {
+                    var elements = settings.backgroundBlur[0];
+                    var blurSize = '0.1rem';
+                }
 
-        if ($locale === 'en') {
-            var confirmButton = 'OK';
-            var cancelButton = 'Cancel';
-        } else {
-            var confirmButton = 'OK';
-            var cancelButton = 'Annuler';
+                if ($('#cmStyle').length === 0) {
+                    $('<style id="cmStyle" type="text/css"> .cmBackgroundBlur{ -webkit-filter: blur(' + blurSize + '); -moz-filter: blur(' + blurSize + '); -o-filter: blur(' + blurSize + '); -ms-filter: blur(' + blurSize + '); filter: blur(' + blurSize + '); } </style>').appendTo('head');
+                } else {
+                    $('#cmStyle').remove();
+                    $('<style id="cmStyle" type="text/css"> .cmBackgroundBlur{ -webkit-filter: blur(' + blurSize + '); -moz-filter: blur(' + blurSize + '); -o-filter: blur(' + blurSize + '); -ms-filter: blur(' + blurSize + '); filter: blur(' + blurSize + '); } </style>').appendTo('head');
+                }
+                $(elements).addClass('cmBackgroundBlur');
+                $(document).one('hide.bs.modal', '.modalConfirm', function () { $(elements).removeClass('cmBackgroundBlur'); });
+            }
+            if (settings.autoFocusOnConfirmBtn === true) {
+                $(document).one('shown.bs.modal', '.modalConfirm', function () { $('.confirmButton').focus(); });
+            }
         }
 
         var html = `
@@ -63,10 +95,10 @@
                             <h6 class="modal-title">` + messageHeader + `</h6>
                             <button type="button" style="padding: 0.45rem 0.8rem;" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                         </div>
-                        <div style="padding: 0.8rem; font-size: 0.89rem;" class="modal-body">` + message + `</div>
-                        <div style="padding: 0.55rem;" class="noselect modal-footer">
-                            <button type="button" style="width: 66px; padding: .18rem .5rem;" class="confirmButton btn btn-primary btn-sm">` + confirmButton + `</button>
-                            <button type="button" style="padding: .18rem .5rem;" class="btn btn-secondary btn-sm" data-dismiss="modal">` + cancelButton + `</button>
+                        <div style="padding: 0.8rem; font-size: 0.9rem;" class="modal-body text-break">` + message + `</div>
+                        <div style="padding: 0.55rem; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;" class="modal-footer">
+                            <button type="button" style="` + (confirmButton === 'OK' ? `width: 66px;` : ``) + ` padding: .18rem .5rem;" class="confirmButton btn btn-primary btn-sm">` + confirmButton + `</button>
+                            <button type="button" style="` + (cancelButton === 'Cancel' ? `width: 66px;` : ``) + ` padding: .18rem .5rem;" class="btn btn-secondary btn-sm" data-dismiss="modal">` + cancelButton + `</button>
                         </div>
                     </div>
                 </div>
@@ -77,39 +109,42 @@
             $currentModalTarget = targetElement;
             $('body').prepend(html);
             $('.modalConfirm').modal('show');
-            if (settings.blur === true) {
-                $('.modalConfirm').on('hide.bs.modal', function () { $('.edit_image_mobile').removeClass('blur'); });
-            }
             $('.confirmButton').on('click', function(e) {
                 e.preventDefault();
                 $('.modalConfirm').modal('hide');
-                callback(targetElement);
+                if (typeof(callback) === 'function') {
+                    callback(targetElement);
+                } else {
+                    options(targetElement)
+                }
             });
         } else if ($currentModalTarget.className != targetElement.className) {
             $('body > div.modalConfirm').remove();
             $currentModalTarget = targetElement;
             $('body').prepend(html);
             $('.modalConfirm').modal('show');
-            if (settings.blur === true) {
-                $('.modalConfirm').on('hide.bs.modal', function () { $('.edit_image_mobile').removeClass('blur'); });
-            }
             $('.confirmButton').off('click');
             $('.confirmButton').on('click', function(e) {
                 e.preventDefault();
                 $('.modalConfirm').modal('hide');
-                callback(targetElement);
+                if (typeof(callback) === 'function') {
+                    callback(targetElement);
+                } else {
+                    options(targetElement)
+                }
             });
         } else if (targetElement != $currentModalTarget) {
             $currentModalTarget = targetElement;
             $('.modalConfirm').modal('show');
-            if (settings.blur === true) {
-                $('.modalConfirm').on('hide.bs.modal', function () { $('.edit_image_mobile').removeClass('blur'); });
-            }
             $('.confirmButton').off('click');
             $('.confirmButton').on('click', function(e) {
                 e.preventDefault();
                 $('.modalConfirm').modal('hide');
-                callback(targetElement);
+                if (typeof(callback) === 'function') {
+                    callback(targetElement);
+                } else {
+                    options(targetElement)
+                }
             });
         } else {
             $('.modalConfirm').modal('show');

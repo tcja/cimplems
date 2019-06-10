@@ -3,11 +3,11 @@
         $(this).off('click', '.delete_image_mobile');
         $(this).on('click', '.delete_image_mobile', function(e) {
             e.preventDefault();
-            $defaultsConfirmModal = {
+            var options = {
                 messageHeader: '{{ __("site.delete_image_modal") }}',
-                blur: true
+                backgroundBlur: ['.edit_image_mobile .modal-content']
             };
-            $.confirmModal('{{ __("site.delete_image_message_modal") }}', function(obj) {
+            $.confirmModal('{{ __("site.delete_image_message_modal") }}', options, function(obj) {
                 var image_name = $(obj).parents('div.row').prev().children().find('input[name="photo_name"]').attr('value');
                 var gallery_name = $(obj).parents('div.thumbs_resp').parent().parent().attr('id');
                 var gal = ('#' + gallery_name + ' .thumb_resp');
