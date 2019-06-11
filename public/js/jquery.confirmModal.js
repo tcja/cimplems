@@ -1,6 +1,6 @@
 /*!
- * jQuery.confirmModal v1.0
- * Copyright (c) 2018 Trim C.
+ * jQuery.confirmModal v1.1
+ * Copyright (c) 2018-2019 Trim C.
  * Released under the MIT license
  * Description : simple to use plugin replacing the browser's default confirm box with bootstrap 4 modal
  */
@@ -51,10 +51,9 @@
             }
             if (settings.backgroundBlur === true) {
                 if ($('#cmStyle').length === 0) {
-                    $('<style id="cmStyle" type="text/css"> .cmBackgroundBlur{ -webkit-filter: blur(0.1rem); -moz-filter: blur(0.1rem);	-o-filter: blur(0.1rem); -ms-filter: blur(0.1rem); filter: blur(0.1rem); } </style>').appendTo('head');
-                } else {
-                    $('#cmStyle').remove();
-                    $('<style id="cmStyle" type="text/css"> .cmBackgroundBlur{ -webkit-filter: blur(0.1rem); -moz-filter: blur(0.1rem);	-o-filter: blur(0.1rem); -ms-filter: blur(0.1rem); filter: blur(0.1rem); } </style>').appendTo('head');
+                    $('head').append('<style id=cmStyle>.cmBackgroundBlur{-webkit-filter:blur(0.1rem);-moz-filter:blur(0.1rem);-o-filter:blur(0.1rem);-ms-filter:blur(0.1rem);filter:blur(0.1rem)}</style>');
+                } else if ($('#cmStyle').html() != '.cmBackgroundBlur{-webkit-filter:blur(0.1rem);-moz-filter:blur(0.1rem);-o-filter:blur(0.1rem);-ms-filter:blur(0.1rem);filter:blur(0.1rem)}') {
+                    $('#cmStyle').html('.cmBackgroundBlur{-webkit-filter:blur(0.1rem);-moz-filter:blur(0.1rem);-o-filter:blur(0.1rem);-ms-filter:blur(0.1rem);filter:blur(0.1rem)}');
                 }
                 $('.container').addClass('cmBackgroundBlur');
                 $(document).one('hide.bs.modal', '.modalConfirm', function () { $('.container').removeClass('cmBackgroundBlur'); });
@@ -74,10 +73,9 @@
                 }
 
                 if ($('#cmStyle').length === 0) {
-                    $('<style id="cmStyle" type="text/css"> .cmBackgroundBlur{ -webkit-filter: blur(' + blurSize + '); -moz-filter: blur(' + blurSize + '); -o-filter: blur(' + blurSize + '); -ms-filter: blur(' + blurSize + '); filter: blur(' + blurSize + '); } </style>').appendTo('head');
-                } else {
-                    $('#cmStyle').remove();
-                    $('<style id="cmStyle" type="text/css"> .cmBackgroundBlur{ -webkit-filter: blur(' + blurSize + '); -moz-filter: blur(' + blurSize + '); -o-filter: blur(' + blurSize + '); -ms-filter: blur(' + blurSize + '); filter: blur(' + blurSize + '); } </style>').appendTo('head');
+                    $('head').append('<style id=cmStyle>.cmBackgroundBlur{-webkit-filter:blur(' + blurSize + ');-moz-filter:blur(' + blurSize + ');-o-filter:blur(' + blurSize + ');-ms-filter:blur(' + blurSize + ');filter:blur(' + blurSize + ')}</style>');
+                } else if ($('#cmStyle').html() != '.cmBackgroundBlur{-webkit-filter:blur(' + blurSize + ');-moz-filter:blur(' + blurSize + ');-o-filter:blur(' + blurSize + ');-ms-filter:blur(' + blurSize + ');filter:blur(' + blurSize + ')}') {
+                    $('#cmStyle').html('.cmBackgroundBlur{-webkit-filter:blur(' + blurSize + ');-moz-filter:blur(' + blurSize + ');-o-filter:blur(' + blurSize + ');-ms-filter:blur(' + blurSize + ');filter:blur(' + blurSize + ')}');
                 }
                 $(elements).addClass('cmBackgroundBlur');
                 $(document).one('hide.bs.modal', '.modalConfirm', function () { $(elements).removeClass('cmBackgroundBlur'); });
