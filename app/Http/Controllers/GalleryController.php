@@ -18,7 +18,7 @@ class GalleryController extends Controller
         ]);
 
 		if (!$validator->fails()) {
-            return $edit_gallery->uploadImage($request, $request->image_title, $request->gallery);
+            return response()->json($edit_gallery->uploadImage($request, $request->image_title, $request->gallery));
 		} else {
             return redirect('/');
         }
@@ -27,17 +27,14 @@ class GalleryController extends Controller
     public function createGallery(Request $request, EditGallery $edit_gallery)
 	{
         $validator = \Validator::make($request->all(), [
-            'gallery_title' => 'required|min:3|max:50'
+            'gallery_title' => 'required|min:3|max:60'
         ]);
 
 		if (!$validator->fails()) {
-			$edit_gallery->addGallery($request->gallery_title);
-			$result = 'success';
+			return response()->json($edit_gallery->addGallery($request->gallery_title));
 		} else {
-            $result = 'fail';
+            return redirect('/');
         }
-
-		return response()->json($request->gallery_title);
     }
 
     public function editGalleries(Request $request, EditGallery $edit_gallery)
@@ -45,14 +42,17 @@ class GalleryController extends Controller
 		foreach ($request->all() as $gallery_id => $galleryName) {
 			if (is_int($gallery_id)) {
                 $validator = \Validator::make($request->all(), [
-                    'gallery_title' => 'required|min:3|max:50'
+                    $gallery_id => 'required|min:3|max:60'
                 ]);
-				$edit_gallery->modifyGallery($gallery_id, $request->$gallery_id);
+                if (!$validator->fails()) {
+                    return response()->json($edit_gallery->modifyGallery($gallery_id, $request->$gallery_id));
+                } else {
+                    return redirect('/');
+                }
 			} else {
-                break;
+                return response()->json(0);
             }
 		}
-		return response()->json('done');
     }
 
     public function editImageShowForm(Request $request, Gallery $gallery, Mobile_Detect $mobile_detect)
@@ -60,19 +60,18 @@ class GalleryController extends Controller
         $validator = \Validator::make($request->all(), [
             'image_name' => 'required'
         ]);
+
         if (!$validator->fails()) {
             $array_image = $gallery->getImageInfos($request->image_name);
             $galleries_name = $gallery->getGalleriesArray();
 
             if ($mobile_detect->isMobile() || $mobile_detect->isTablet()) {
-                $result = view(config('site.theme_dir') . config('site.theme') . '/' . 'edit_image_mobile', ['array_image' => $array_image, 'galleries_name' => $galleries_name])->render();
+                return response()->json(view(config('site.theme_dir') . config('site.theme') . '/' . 'edit_image_mobile', ['array_image' => $array_image, 'galleries_name' => $galleries_name])->render());
             } else {
-                $result = view(config('site.theme_dir') . config('site.theme') . '/' . 'edit_image', ['array_image' => $array_image, 'galleries_name' => $galleries_name])->render();
+                return response()->json(view(config('site.theme_dir') . config('site.theme') . '/' . 'edit_image', ['array_image' => $array_image, 'galleries_name' => $galleries_name])->render());
             }
-
-            return response()->json($result);
         } else {
-            return response()->json('error_file');
+            return redirect('/');
         }
     }
 
@@ -85,20 +84,9 @@ class GalleryController extends Controller
 		]);
 
 		if (!$validator->fails()) {
-			$timestamp = microtime(true);
-			if ($edit_gallery->modifyImage($timestamp, $request->photo_name, $request->gallery, $request->change_title, $request->modify_one_image)) {
-				$array = [
-					'timestamp' => $timestamp,
-					'name' => $request->photo_name,
-					'gallery' => $request->gallery,
-					'title' => empty($request->change_title) ? '' : $request->change_title
-				];
-				return $array;
-			} else {
-                return response()->json('fail');
-            }
+			return response()->json($edit_gallery->modifyImage($request->photo_name, $request->gallery, $request->change_title, $request->modify_one_image));
 		} else {
-            return response()->json('fail');
+            return redirect('/');
         }
 	}
 
@@ -106,11 +94,12 @@ class GalleryController extends Controller
 	{
 		$validator = \Validator::make($request->all(), [
             'file' => 'required|size:20'
-		]);
+        ]);
+
 		if (!$validator->fails()) {
-            $edit_gallery->removeImage($request->file);
+            return response()->json($edit_gallery->removeImage($request->file));
         } else {
-            return response()->json('fail');
+            return redirect('/');
         }
     }
 
@@ -118,11 +107,12 @@ class GalleryController extends Controller
 	{
 		$validator = \Validator::make($request->all(), [
             'gallery_id' => 'required|numeric'
-		]);
+        ]);
+
 		if (!$validator->fails()) {
-            $edit_gallery->removeGallery($request->gallery_id);
+            return response()->json($edit_gallery->removeGallery($request->gallery_id));
         } else {
-            return response()->json('fail');
+            return redirect('/');
         }
 	}
 }

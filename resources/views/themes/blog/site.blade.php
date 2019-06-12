@@ -14,9 +14,6 @@
 		<link rel="stylesheet" href="{{ asset(config('site.theme_dir') . config('site.theme') . '/' . 'css/style.css') }}">
 		@include('assets/js_common_assets')
 		<script src="{{ asset('js/jquery.fancybox-1.3.6.min.js') }}"></script>
-		@if (session('admin') === true)
-			@include('admin_assets/js_assets')
-		@endif
 		<script type="text/javascript">
 			$(function(){
 				$(this).on('click','.fancyboxThumb',function(e){
@@ -37,7 +34,8 @@
 				$isMobile = false;
 			});
 		</script>
-		@if (session('admin') === true)
+        @if (session('admin') === true)
+            @include('admin_assets/js_assets')
             @include(config('site.theme_dir') . config('site.theme') . '/' . 'admin_assets/misc_admin_js')
             @include(config('site.theme_dir') . config('site.theme') . '/' . 'admin_assets/user_js')
 		@else

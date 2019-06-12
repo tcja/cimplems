@@ -10,20 +10,20 @@
 						return $.trim(value);
 					},
 					minlength: 3,
-					maxlength: 85
+					maxlength: 60
 				}
 			},
 			submitHandler: function(form) {
 				var gallery = $("<div/>").html($.trim($(form).find('input[name="gallery_title"]').val())).text();
 				var data_string = 'gallery_title=' + gallery;
-				$(form).find('input[name="gallery_title"]').attr('disabled', 'disabled');
+				$(form).find('input[name="gallery_title"]').prop('disabled', true);
 				$.ajax({
 					beforeSend : function() {
 						$(form).find('.sendForm').hide();
 						$(form).find('.formSending').fadeIn(0);
 					},
 					type: 'POST',
-					url: $rootUrl+'/create_gallery',
+					url: $rootUrl + '/create_gallery',
 					dataType: 'json',
 					data: data_string
 				}).done(function(datas) {
@@ -33,21 +33,21 @@
 						arraygal.push($(el).val());
 					});
 					var newgallery = Math.max.apply(Math, arraygal) + 1;
-					$('#gallery').append('<option value="'+newgallery+'">'+gallery+'</option>');
+					$('#gallery').append('<option value="' + newgallery + '">' + gallery + '</option>');
 					$('#galeries').find('select').each(function(i, el) {
-						$(el).append('<option value="'+newgallery+'">'+gallery+'</option>');
+						$(el).append('<option value="' + newgallery + '">' + gallery + '</option>');
 					});
 
 					if ($('#nogallery').length == 1) {
 						var form_open = '{!! Form::open([url("/abort"), "id" => "modify_gal", "class" => ""]) !!}';
 
-						var galleryz = '<div class="form-group row"><div class="col-2 col-sm-2 col-md-1 text-center"><label for="'+newgallery+'" class="col-form-label">{{ __("site.title") }}</label></div><div class="col-10 col-sm-10 col-md-5 mt-1"><div class="input-group input-group-sm"><input type="text" class="form-control galzor" id="'+newgallery+'" name="'+newgallery+'" value="'+newGalleryName+'"/><div class="input-group-append ml-2 '+($isMobile ? "mt-1" : "")+'"><a href="javascript:;" class="delete_gallery" title="{{ __("site.delete_gallery") }}"><i style="'+($isMobile ? "font-size: 1.3rem;" : "")+'" class="far fa-trash-alt"></i></a></div></div></div></div><input type="hidden" name="change_gallery_title" value="1"/><button class="mt-1 btn btn-primary btn-sm" style="'+($isMobile ? "margin-left: 4.9rem;" : "margin-left: 12rem;")+'" type="submit">{{ __("site.apply_changes") }}</button><button style="display:none; '+($isMobile ? "margin-left: 4.9rem;" : "margin-left: 12rem;")+'" class="btn btn-primary btn-sm" type="button" disabled><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> {{ __("site.changes_in_progress") }}</button><button style="display:none; '+($isMobile ? "margin-left: 4.9rem;" : "margin-left: 12rem;")+'" type="button" class="btn btn-sm btn-success"><i class="far fa-check-circle"></i> <b>{{ __("site.changes_done") }}</b></button>';
+						var galleryz = '<div class="form-group row"><div class="col-2 col-sm-2 col-md-1 text-center"><label for="' + newgallery + '" class="col-form-label">{{ __("site.title") }}</label></div><div class="col-10 col-sm-10 col-md-5 mt-1"><div class="input-group input-group-sm"><input type="text" class="form-control galzor" id="' + newgallery + '" name="' + newgallery + '" value="' + newGalleryName + '"/><div class="input-group-append ml-2 ' + ($isMobile ? "mt-1" : "") + '"><a href="javascript:;" class="delete_gallery" title="{{ __("site.delete_gallery") }}"><i style="'+ ($isMobile ? "font-size: 1.3rem;" : "")+'" class="far fa-trash-alt"></i></a></div></div></div></div><input type="hidden" name="change_gallery_title" value="1"/><button class="mt-1 btn btn-primary btn-sm" style="' + ($isMobile ? "margin-left: 4.9rem;" : "margin-left: 12rem;") + '" type="submit">{{ __("site.apply_changes") }}</button><button style="display:none; '+ ($isMobile ? "margin-left: 4.9rem;" : "margin-left: 12rem;")+'" class="btn btn-primary btn-sm" type="button" disabled><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> {{ __("site.changes_in_progress") }}</button><button style="display:none; ' + ($isMobile ? "margin-left: 4.9rem;" : "margin-left: 12rem;") + '" type="button" class="btn btn-sm btn-success"><i class="far fa-check-circle"></i> <b>{{ __("site.changes_done") }}</b></button>';
 
 						var form_close =  '{!! Form::close() !!}';
 
 						var full_form = form_open + galleryz + form_close;
 					} else {
-						var galleryz = '<div class="form-group row"><div class="col-2 col-sm-2 col-md-1 text-center"><label for="'+newgallery+'" class="col-form-label">{{ __("site.title") }}</label></div><div class="col-10 col-sm-10 col-md-5 mt-1"><div class="input-group input-group-sm"><input type="text" class="form-control galzor" id="'+newgallery+'" name="'+newgallery+'" value="'+newGalleryName+'"><div class="input-group-append ml-2 "><a href="javascript:;" class="delete_gallery" title="{{ __("site.delete_gallery") }}"><i style="'+ ($isMobile ? 'font-size: 1.3rem;' : '') +'" class="far fa-trash-alt"></i></a></div></div></div></div>';
+						var galleryz = '<div class="form-group row"><div class="col-2 col-sm-2 col-md-1 text-center"><label for="' + newgallery + '" class="col-form-label">{{ __("site.title") }}</label></div><div class="col-10 col-sm-10 col-md-5 mt-1"><div class="input-group input-group-sm"><input type="text" class="form-control galzor" id="' + newgallery + '" name="' + newgallery + '" value="' + newGalleryName + '"><div class="input-group-append ml-2 "><a href="javascript:;" class="delete_gallery" title="{{ __("site.delete_gallery") }}"><i style="' + ($isMobile ? 'font-size: 1.3rem;' : '') + '" class="far fa-trash-alt"></i></a></div></div></div></div>';
 					}
 
 					$.timer(1000, function() {
@@ -66,7 +66,7 @@
                                 }
 								$('#modify_gal > div').last().hide().fadeIn(200);
 								$(form).find('input[name=gallery_title]').val('');
-								$(form).find('input[name=gallery_title]').removeAttr('disabled');
+								$(form).find('input[name=gallery_title]').prop('disabled', false);
 								$(form).find('input[name=gallery_title]').fadeIn(150);
 							});
 						});
@@ -80,7 +80,7 @@
 		$('#submit_img').validate({
 			rules: {
 				image_title: {
-					maxlength: 80,
+					maxlength: 50
 				},
 				gallery: {
 					required: true,
@@ -112,7 +112,7 @@
 					var imgf = image.name[image_numb][0].split('.').join("").split('-').join("").split('_').join("");
 					var gallery_nbr = image.gallery;
 					var gallery_name = $('select[name=gallery]').find(":selected").html();
-					var gal_id = 'gallery'+gallery_nbr;
+					var gal_id = 'gallery' + gallery_nbr;
 					var gal_find = '#gallery' + gallery_nbr;
 					var gal_exist = $(document.body).find(gal_find).length;
 					var has_no_galeries = $(document.body).find('#noimage').length;
@@ -122,27 +122,27 @@
 							$('#files_list').append(image.errors[0] + '<br>');
 						} else {
 							if (gal_exist == 1) {
-								$('#gallery'+image.gallery).children('div').append('<div id="'+imgf+'" style="display:none;" class="thumb_resp thumbs_resp"><a href="'+$rootUrl+'/storage/images_gallery/big/'+image.name[image_numb][0]+'" rel="external" title="'+escapeHtml($("<div/>").html(image.title).text())+'" data-size="1280x960" data-med="'+$rootUrl+'/storage/images_gallery/big/'+image.name[image_numb][0]+'" data-med-size="1280x960" alt="'+image.name[image_numb][0]+'" class="phswipe"><img alt="" src="'+$rootUrl+'/storage/images_gallery/min/'+image.name[image_numb][0]+'" class="thumb_resp2 img-fluid"></a></div>');
+								$('#gallery'+image.gallery).children('div').append('<div id="' + imgf + '" style="display:none;" class="thumb_resp thumbs_resp"><a href="' + $rootUrl + '/storage/images_gallery/big/' + image.name[image_numb][0] + '" rel="external" title="' + escapeHtml($("<div/>").html(image.title).text()) + '" data-size="1280x960" data-med="' + $rootUrl + '/storage/images_gallery/big/' + image.name[image_numb][0] + '" data-med-size="1280x960" alt="' + image.name[image_numb][0] + '" class="phswipe"><img alt="" src="' + $rootUrl + '/storage/images_gallery/min/' + image.name[image_numb][0] + '" class="thumb_resp2 img-fluid"></a></div>');
 								if (image_numb === 0) {
                                     $.scrollTo('#' + gal_id, 600, {
                                         onAfter: function() {
-                                            $('div[id='+imgf+']').fadeIn(600);
+                                            $('div[id=' + imgf + ']').fadeIn(600);
                                         }
                                     });
                                 } else {
-                                    $('div[id='+imgf+']').fadeIn(600);
+                                    $('div[id=' + imgf + ']').fadeIn(600);
                                 }
 							} else if (has_no_galeries == 1) {
 								$('#noimage').remove();
-								$('#galeries').append('<div id="'+gal_id+'" style="display:none;" class="row mb-4"><h2>'+gallery_name+'</h2><div class="col-12 d-flex flex-wrap"><div id="'+imgf+'" class="thumb_resp thumbs_resp"><a href="'+$rootUrl+'/storage/images_gallery/big/'+image.name[image_numb][0]+'" rel="external" title="'+escapeHtml($("<div/>").html(image.title).text())+'" data-size="1280x960" data-med="'+$rootUrl+'/storage/images_gallery/big/'+image.name[image_numb][0]+'" data-med-size="1280x960" alt="'+image.name[image_numb][0]+'" class="phswipe"><img alt="" src="'+$rootUrl+'/storage/images_gallery/min/'+image.name[image_numb][0]+'" class="thumb_resp2 img-fluid"></a></div></div></div>');
-								$('div[id='+gal_id+']').css('opacity', '0').css('display', '');
+								$('#galeries').append('<div id="' + gal_id + '" style="display:none;" class="row mb-4"><h2>' + gallery_name + '</h2><div class="col-12 d-flex flex-wrap"><div id="' + imgf + '" class="thumb_resp thumbs_resp"><a href="' + $rootUrl + '/storage/images_gallery/big/' + image.name[image_numb][0] + '" rel="external" title="' + escapeHtml($("<div/>").html(image.title).text()) + '" data-size="1280x960" data-med="' + $rootUrl + '/storage/images_gallery/big/' + image.name[image_numb][0] + '" data-med-size="1280x960" alt="' + image.name[image_numb][0] + '" class="phswipe"><img alt="" src="' + $rootUrl + '/storage/images_gallery/min/' + image.name[image_numb][0] + '" class="thumb_resp2 img-fluid"></a></div></div></div>');
+								$('div[id=' + gal_id + ']').css('opacity', '0').css('display', '');
                                 $.scrollTo('#' + gal_id, 600, {
                                     onAfter: function() {
-                                        $('div[id='+gal_id+']').fadeIn(600);
+                                        $('div[id=' + gal_id + ']').fadeIn(600);
                                     }
                                 });
 							} else {
-								var html = '<div id="'+gal_id+'" style="display:none;" class="row mb-4"><h2>'+gallery_name+'</h2><div class="col-12 d-flex flex-wrap"><div id="'+imgf+'" class="thumb_resp thumbs_resp"><a href="'+$rootUrl+'/storage/images_gallery/big/'+image.name[image_numb][0]+'" rel="external" title="'+escapeHtml($("<div/>").html(image.title).text())+'" data-size="1280x960" data-med="'+$rootUrl+'/storage/images_gallery/big/'+image.name[image_numb][0]+'" data-med-size="1280x960" alt="'+image.name[image_numb][0]+'" class="phswipe"><img alt="" src="'+$rootUrl+'/storage/images_gallery/min/'+image.name[image_numb][0]+'" class="thumb_resp2 img-fluid"></a></div></div></div>';
+								var html = '<div id="' + gal_id + '" style="display:none;" class="row mb-4"><h2>' + gallery_name + '</h2><div class="col-12 d-flex flex-wrap"><div id="' + imgf + '" class="thumb_resp thumbs_resp"><a href="' + $rootUrl + '/storage/images_gallery/big/' + image.name[image_numb][0] + '" rel="external" title="' + escapeHtml($("<div/>").html(image.title).text()) + '" data-size="1280x960" data-med="' + $rootUrl + '/storage/images_gallery/big/' + image.name[image_numb][0] + '" data-med-size="1280x960" alt="' + image.name[image_numb][0] + '" class="phswipe"><img alt="" src="' + $rootUrl + '/storage/images_gallery/min/' + image.name[image_numb][0] + '" class="thumb_resp2 img-fluid"></a></div></div></div>';
 
 								if (gallery_nbr == 1) {
 									$('#galeries').prepend(html);
@@ -165,10 +165,10 @@
 										$('#galeries > div').eq(index - 1).after(html);
                                     }
 								}
-								$('div[id='+gal_id+']').css('opacity', '0').css('display', '');
+								$('div[id=' + gal_id + ']').css('opacity', '0').css('display', '');
                                 $.scrollTo('#' + gal_id, 600, {
                                     onAfter: function() {
-                                        $('div[id='+gal_id+']').fadeIn(600);
+                                        $('div[id=' + gal_id + ']').fadeIn(600);
                                     }
                                 });
 							}
@@ -178,27 +178,27 @@
 							$('#files_list').append(image.errors + '<br>');
 						} else {
 							if (gal_exist == 1) {
-                                $('#gallery'+image.gallery).children('div').append('<div id="'+imgf+'" style="display:none;" class="thumbs"><a href="'+$rootUrl+'/storage/images_gallery/big/'+image.name[image_numb][0]+'" rel="gallery1" title="'+escapeHtml($("<div/>").html(image.title).text())+'" class="fancyboxThumb text-decoration-none"><img alt="'+image.name[image_numb][0]+'" src="'+$rootUrl+'/storage/images_gallery/min/'+image.name[image_numb][0]+'" class="img-thumbnail img-thumbnailz"></a><a title="{{ __("site.delete_image") }}" alt="'+image.name[image_numb][0]+'" class="delete_image" href="javascript:;"><i class="far fa-trash-alt"></i></a><a class="edit_image" alt="'+image.name[image_numb][0]+'" title="{{ __("site.edit_image") }}" href="javascript:;"><i class="far fa-edit"></i></a></div>');
+                                $('#gallery' + image.gallery).children('div').append('<div id="' + imgf + '" style="display:none;" class="thumbs"><a href="' + $rootUrl + '/storage/images_gallery/big/' + image.name[image_numb][0] + '" rel="gallery1" title="' + escapeHtml($("<div/>").html(image.title).text()) + '" class="fancyboxThumb text-decoration-none"><img alt="' + image.name[image_numb][0] + '" src="' + $rootUrl + '/storage/images_gallery/min/' + image.name[image_numb][0] + '" class="img-thumbnail img-thumbnailz"></a><a title="{{ __("site.delete_image") }}" alt="' + image.name[image_numb][0] + '" class="delete_image" href="javascript:;"><i class="far fa-trash-alt"></i></a><a class="edit_image" alt="' + image.name[image_numb][0] + '" title="{{ __("site.edit_image") }}" href="javascript:;"><i class="far fa-edit"></i></a></div>');
                                 if (image_numb === 0) {
                                     $.scrollTo('#' + gal_id, 600, {
                                         onAfter: function() {
-                                            $('div[id='+imgf+']').fadeIn(600);
+                                            $('div[id=' + imgf + ']').fadeIn(600);
                                         }
                                     });
                                 } else {
-                                    $('div[id='+imgf+']').fadeIn(600);
+                                    $('div[id=' + imgf + ']').fadeIn(600);
                                 }
 							} else if (has_no_galeries == 1) {
 								$('#galeries').empty();
-								$('#galeries').append('<div id="'+gal_id+'" style="display:none;" class="row mb-4"><h2>'+gallery_name+'</h2><div class="col-12 d-flex flex-wrap"><div id="'+imgf+'" class="thumbs"><a href="'+$rootUrl+'/storage/images_gallery/big/'+image.name[image_numb][0]+'" rel="gallery1" title="'+escapeHtml($("<div/>").html(image.title).text())+'" class="fancyboxThumb text-decoration-none"><img alt="'+image.name[image_numb][0]+'" src="'+$rootUrl+'/storage/images_gallery/min/'+image.name[image_numb][0]+'" class="img-thumbnail img-thumbnailz"></a><a class="delete_image" title="{{ __("site.delete_image") }}" alt="'+image.name[image_numb][0]+'" href="javascript:;"><i class="far fa-trash-alt"></i></a><a class="edit_image" alt="'+image.name[image_numb][0]+'" title="{{ __("site.edit_image") }}" href="javascript:;"><i class="far fa-edit"></i></a></div></div></div>');
-                                $('div[id='+gal_id+']').css('opacity', '0').css('display', '');
+								$('#galeries').append('<div id="' + gal_id + '" style="display:none;" class="row mb-4"><h2>' + gallery_name + '</h2><div class="col-12 d-flex flex-wrap"><div id="' + imgf + '" class="thumbs"><a href="' + $rootUrl + '/storage/images_gallery/big/' + image.name[image_numb][0] + '" rel="gallery1" title="' + escapeHtml($("<div/>").html(image.title).text()) + '" class="fancyboxThumb text-decoration-none"><img alt="' + image.name[image_numb][0] + '" src="' + $rootUrl + '/storage/images_gallery/min/' + image.name[image_numb][0] + '" class="img-thumbnail img-thumbnailz"></a><a class="delete_image" title="{{ __("site.delete_image") }}" alt="' + image.name[image_numb][0] + '" href="javascript:;"><i class="far fa-trash-alt"></i></a><a class="edit_image" alt="' + image.name[image_numb][0] + '" title="{{ __("site.edit_image") }}" href="javascript:;"><i class="far fa-edit"></i></a></div></div></div>');
+                                $('div[id=' + gal_id + ']').css('opacity', '0').css('display', '');
                                 $.scrollTo('#' + gal_id, 600, {
                                     onAfter: function() {
-                                        $('div[id='+gal_id+']').fadeIn(600);
+                                        $('div[id=' + gal_id + ']').fadeIn(600);
                                     }
                                 });
 							} else {
-								var html = '<div id="'+gal_id+'" style="display:none;" class="row mb-4"><h2>'+gallery_name+'</h2><div class="col-12 d-flex flex-wrap"><div id="'+imgf+'" class="thumbs"><a href="'+$rootUrl+'/storage/images_gallery/big/'+image.name[image_numb][0]+'" rel="gallery1" title="'+escapeHtml($("<div/>").html(image.title).text())+'" class="fancyboxThumb text-decoration-none"><img alt="'+image.name[image_numb][0]+'" src="'+$rootUrl+'/storage/images_gallery/min/'+image.name[image_numb][0]+'" class="img-thumbnail img-thumbnailz"></a><a class="delete_image" alt="'+image.name[image_numb][0]+'" title="{{ __("site.delete_image") }}" href="javascript:;"><i class="far fa-trash-alt"></i></a><a class="edit_image" alt="'+image.name[image_numb][0]+'" title="{{ __("site.edit_image") }}" href="javascript:;"><i class="far fa-edit"></i></a></div></div></div>';
+								var html = '<div id="' + gal_id + '" style="display:none;" class="row mb-4"><h2>' + gallery_name + '</h2><div class="col-12 d-flex flex-wrap"><div id="' + imgf + '" class="thumbs"><a href="' + $rootUrl + '/storage/images_gallery/big/' + image.name[image_numb][0] + '" rel="gallery1" title="' + escapeHtml($("<div/>").html(image.title).text()) + '" class="fancyboxThumb text-decoration-none"><img alt="' + image.name[image_numb][0] + '" src="' + $rootUrl + '/storage/images_gallery/min/' + image.name[image_numb][0] + '" class="img-thumbnail img-thumbnailz"></a><a class="delete_image" alt="' + image.name[image_numb][0] + '" title="{{ __("site.delete_image") }}" href="javascript:;"><i class="far fa-trash-alt"></i></a><a class="edit_image" alt="' + image.name[image_numb][0] + '" title="{{ __("site.edit_image") }}" href="javascript:;"><i class="far fa-edit"></i></a></div></div></div>';
 
 								if (gallery_nbr == 1) {
 									$('#galeries').prepend(html);
@@ -221,10 +221,10 @@
 										$('#galeries > div').eq(index - 1).after(html);
                                     }
                                 }
-                                $('div[id='+gal_id+']').css('opacity', '0').css('display', '');
+                                $('div[id=' + gal_id + ']').css('opacity', '0').css('display', '');
                                 $.scrollTo('#' + gal_id, 600, {
                                     onAfter: function() {
-                                        $('div[id='+gal_id+']').fadeIn(600);
+                                        $('div[id=' + gal_id + ']').fadeIn(600);
                                     }
                                 });
 							}
@@ -234,13 +234,13 @@
 
 				for (var i=0; i<$fileNumbers; i++) {
 					data_string.append($('#file_upload').attr('name'), $tabz[i]);
-					data_string.append('image_number_'+i, i);
+					data_string.append('image_number_' + i, i);
 				}
-				$('#file_upload').attr('disabled', 'disabled');
-				$('#import').attr('disabled', 'disabled');
+				$('#file_upload').prop('disabled', true);
+				$('#import').prop('disabled', true);
 				$.ajax({
 					type: 'POST',
-					url: $rootUrl+'/do_upload',
+					url: $rootUrl + '/do_upload',
 					context: this,
 					dataType: 'json',
 					cache: false,
@@ -248,8 +248,8 @@
 					processData: false,
                     data: data_string,
                     complete: function() {
-						$('#file_upload').removeAttr('disabled');
-					    $('#import').removeAttr('disabled');
+						$('#file_upload').prop('disabled', false);
+					    $('#import').prop('disabled', false);
                     }
 				}).done(function(datas) {
 					for (var i=0; i<datas.name.length; i++) {
@@ -265,8 +265,8 @@
 					}
 
 					$('input[name=image_title]').val('');
-					/* $('#file_upload').removeAttr('disabled');
-					$('#import').removeAttr('disabled'); */
+					/* $('#file_upload').prop('disabled', false);
+					$('#import').prop('disabled', false); */
 					$('#gallery').val(0)
 					$fileNumbers = 0;
 					$('#loader').removeClass('d-flex').addClass('d-none');
@@ -395,10 +395,10 @@
 					}
 					if ($('#import').attr('disabled') === undefined) {
 						$('#loader2').removeClass('d-none').addClass('d-flex');
-						$('#file_upload').attr('disabled', 'disabled');
-						$('#import').attr('disabled', 'disabled');
+						$('#file_upload').prop('disabled', true);
+						$('#import').prop('disabled', true);
 					}
-					$('#files_list').append('<div style="'+dimension+'" class="'+$fileNumb+'"><div style="position: absolute; top:30%; left: 40%;" class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div></div>');
+					$('#files_list').append('<div style="' + dimension + '" class="' + $fileNumb + '"><div style="position: absolute; top:30%; left: 40%;" class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div></div>');
 					$.canvasResize(fileMIMEChecked, {
 						width: 1280,
 						height: 0,
@@ -419,10 +419,10 @@
 							else
 								typez = '<span class="badge badge-secondary mr-1">JPG</span>';
 
-							$('.'+this.i).removeAttr('style');
-							$('.'+this.i).addClass(Wwidth);
-							$('.'+this.i).empty();
-							$('.'+this.i).append('<img src="'+data+'" class="img-thumbs"><div class="'+thumbs_label+'">'+'<span class="mr-1">'+name.replace(/\.[^/.]+$/, "").substr(0,14)+'</span>'+typez+'<a class="delete_pre_image" title="{{ __("site.remove_from_queue") }}" alt="'+this.i+'" href="javascript:;"><i style="'+ ($isMobile ? 'font-size: 1.3rem;' : '') +'" class="far fa-trash-alt"></i></a></div>');
+							$('.' + this.i).removeAttr('style');
+							$('.' + this.i).addClass(Wwidth);
+							$('.' + this.i).empty();
+							$('.' + this.i).append('<img src="' + data + '" class="img-thumbs"><div class="' + thumbs_label + '">'+'<span class="mr-1">' + name.replace(/\.[^/.]+$/, "").substr(0,14) + '</span>' + typez + '<a class="delete_pre_image" title="{{ __("site.remove_from_queue") }}" alt="' + this.i + '" href="javascript:;"><i style="' + ($isMobile ? 'font-size: 1.3rem;' : '') + '" class="far fa-trash-alt"></i></a></div>');
 
 							if (type == 'image/gif') {
 								$tabz[this.i] = fileMIMEChecked;
@@ -440,8 +440,8 @@
 		}).on('fileuploadprocessalways', function (e, data) {
 			if (data.files[0].name == data.originalFiles[data.originalFiles.length-1].name) {
 				$('#loader2').removeClass('d-flex').addClass('d-none');
-				$('#file_upload').removeAttr('disabled');
-				$('#import').removeAttr('disabled');
+				$('#file_upload').prop('disabled', false);
+				$('#import').prop('disabled', false);
 			}
 		});
 
@@ -491,18 +491,18 @@
 				var total_galleries = $(obj).parents('form').children('div').length;
 				var total_images = $('#galeries > div > div > div').length;
 				if ($isMobile) {
-					var total_gallery_images = $('#gallery'+$(obj).parent().prev().attr('name')+' div.thumbs_resp').length;
+					var total_gallery_images = $('#gallery' + $(obj).parent().prev().attr('name') + ' div.thumbs_resp').length;
                 } else {
-					var total_gallery_images = $('#gallery'+$(obj).parent().prev().attr('name')+' div.thumbs').length;
+					var total_gallery_images = $('#gallery' + $(obj).parent().prev().attr('name') + ' div.thumbs').length;
                 }
 				$.ajax({
 					type: 'POST',
-					url: $rootUrl+'/delete_gallery',
+					url: $rootUrl + '/delete_gallery',
 					context: $(obj).parents('div.form-group'),
 					data: data_string
 				}).done(function(datas) {
-					$('#gallery option[value="'+gallery_id+'"]').remove();
-					$('#galeries select option[value="'+gallery_id+'"]').remove();
+					$('#gallery option[value="' + gallery_id + '"]').remove();
+					$('#galeries select option[value="' + gallery_id + '"]').remove();
 					if (total_galleries == 1) {
 						$(this).fadeOut(500, function(el) {
 							$(el).parent().parent().append('<h6 id="nogallery" class="ml-3">{{ __("site.no_gallery") }}</h6>');
@@ -556,14 +556,14 @@
 						}
 					});
 					if (!haveData) return false;
-					$('.galzor').attr('disabled', 'disabled');
+					$('.galzor').prop('disabled', true);
 					$.ajax({
-						beforeSend : function() {
+						beforeSend: function() {
 							$(form).find('button').first().hide();
 							$(form).find('button').first().next().fadeIn(0);
 						},
 						type: 'POST',
-						url: $rootUrl+'/edit_galleries',
+						url: $rootUrl + '/edit_galleries',
 						context: form,
 						dataType: 'json',
 						cache: false,
@@ -572,10 +572,10 @@
 						data: data_string
 					}).done(function(datas) {
 						arraygalleries.forEach(function(val, i){
-							$('#gallery'+i+' > h2').html($("<div/>").html(val).text());
-							$('#gallery').children('option[value="'+i+'"]').html($("<div/>").html(val).text());
-							$('#galeries').find('select').children('option[value="'+i+'"]').html($("<div/>").html(val).text());
-							$(form).find('input[name="'+i+'"]')[0].defaultValue = $("<div/>").html(val).text();
+							$('#gallery' + i + ' > h2').html($("<div/>").html(val).text());
+							$('#gallery').children('option[value="' + i + '"]').html($("<div/>").html(val).text());
+							$('#galeries').find('select').children('option[value="' + i + '"]').html($("<div/>").html(val).text());
+							$(form).find('input[name="' + i + '"]')[0].defaultValue = $("<div/>").html(val).text();
 						});
 						$.timer(1000, function() {
 							$(form).find('button').first().next().fadeOut(150, function() {
@@ -584,7 +584,7 @@
 							$.timer(1500, function() {
 								$(form).find('button').last().fadeOut(150, function() {
 									$(form).find('button').first().fadeIn(150);
-									$('.galzor').removeAttr('disabled');
+									$('.galzor').prop('disabled', false);
 								});
 							});
 						});
@@ -603,7 +603,7 @@
 						error.appendTo( element.parent() );
 					}, */
 					minlength: 3,
-					maxlength: 85
+					maxlength: 60
 				});
 			});
 			$(this).trigger('submit');

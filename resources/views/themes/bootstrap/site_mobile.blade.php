@@ -18,9 +18,6 @@
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.3/photoswipe.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.3/photoswipe-ui-default.min.js"></script>
 		<script src="{{ asset('js/jqPhotoSwipe.min.js') }}"></script>
-		@if (session('admin') === true)
-			@include('admin_assets/js_assets')
-		@endif
 		<script type="text/javascript">
 			$(function(){
 				$('.thumb_resp2').on("contextmenu",function(e){	e.preventDefault();	});
@@ -45,7 +42,8 @@
 				$isMobile = true;
 			});
 		</script>
-		@if (session('admin') === true)
+        @if (session('admin') === true)
+            @include('admin_assets/js_assets')
             @include(config('site.theme_dir') . config('site.theme') . '/' . 'admin_assets/misc_admin_js')
             @include(config('site.theme_dir') . config('site.theme') . '/' . 'admin_assets/user_js')
         @else

@@ -122,7 +122,7 @@ class Gallery
 	 *
 	 * Gets highest gallery id and stores it in a string
 	 *
-	 * @return	string	Returns a string with the highest gallery id, if no gallery returns 0
+	 * @return	mixed	Returns a string with the highest gallery id, if no gallery returns 0
 	 **/
 	public function getMaxGalleryId()
 	{

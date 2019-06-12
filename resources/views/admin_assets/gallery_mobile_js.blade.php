@@ -14,8 +14,8 @@
                 var total_photos_gal = $(gal).length;
                 var total_galz = $('#galeries').children().length;
                 var data_string = 'file=' + image_name;
-                $('.delete_image_mobile').attr('disabled', 'disabled');
-                $('.accept').attr('disabled', 'disabled');
+                $('.delete_image_mobile').prop('disabled', true);
+                $('.accept').prop('disabled', true);
                 $.ajax({
                     type: 'POST',
                     url: $rootUrl+'/delete_image',
@@ -34,9 +34,9 @@
                                         $('#' + gallery_name).remove();
                                     }
                                 }
-                                $('.sendForm').removeAttr('disabled');
-                                $('.delete_image_mobile').removeAttr('disabled');
-                                $('.accept').removeAttr('disabled');
+                                $('.sendForm').prop('disabled', false);
+                                $('.delete_image_mobile').prop('disabled', false);
+                                $('.accept').prop('disabled', false);
                                 $('.thumb_resp2').off('contextmenu');
                                 $('.thumb_resp2').on('contextmenu',function(e){ e.preventDefault(); });
                                 $(".phswipe").jqPhotoSwipe({ forceSingleGallery: true });
@@ -108,7 +108,7 @@
                     }
                     var name = $(form).children().find("input[name='photo_name']").val();
                     var form_datas = 'change_title=' + title + '&gallery=' + gallery + '&photo_name=' + name + '&modify_one_image=' + onlyTitleChanged;
-                    $('.accept').attr('disabled', 'disabled');
+                    $('.accept').prop('disabled', true);
                     $.ajax({
                         type: 'POST',
                         dataType: 'json',
@@ -119,7 +119,7 @@
                         $(this).parent().parent().parent().parent().modal('hide');
                         $(this).parent().parent().parent().parent().on('hidden.bs.modal', function () {
                             $(this).parent().fadeOut(350, function(el) {
-                                $('.accept').removeAttr('disabled');
+                                $('.accept').prop('disabled', false);
                                 var imgf = datas.name.split('.').join("").split('-').join("").split('_').join("");
                                 var gallery_nbr = datas.gallery;
                                 var gallery_name = $(form).children().find("select[name='gallery']").find(":selected").html();

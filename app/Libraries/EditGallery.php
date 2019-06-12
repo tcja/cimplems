@@ -24,7 +24,7 @@ class EditGallery extends Gallery
 	 * @param	object		$request		    Illuminate\Http\Request instance
 	 * @param 	string		$image_title		The image's title (optional)
 	 * @param 	int		    $gallery	        The image gallery's ID
-	 * @return 	mixed                           Returns false if the request wasn't triggered by an ajax request, returns an array of the image's infos if its upload succeeded
+	 * @return 	mixed                           Returns an error message if the request wasn't triggered by an ajax request, returns an array of the image's infos if its upload succeeded
 	 **/
 	public function uploadImage($request, $image_title, $gallery)
 	{
@@ -39,7 +39,7 @@ class EditGallery extends Gallery
         ];
 
         if ($request->total_files === 0) {
-            return response()->json('error, please re-try');
+            return 0;
         }
 
         $file = $request->file('image_path');
@@ -61,7 +61,7 @@ class EditGallery extends Gallery
                     if ($upload_done = $file[$request->image_number_ . $i]->move($upload_path_big, $new_file_name)) {
                         $this->addImage($timestamp, $new_file_name, $gallery, $image_title);
                     } else {
-                        return json_encode($upload_done->getMessage());
+                        return $upload_done->getMessage();
                     }
                 } else {
                     \Image::make($file[$request->image_number_ . $i]->getRealPath())->widen($widen_big_width, function ($constraint) { $constraint->upsize(); })->save($upload_path_big . $new_file_name);
@@ -79,7 +79,7 @@ class EditGallery extends Gallery
         if ($request->file_ajax) {
             return $array;
         } else {
-            return false;
+            return 0;
         }
 	}
 
@@ -92,7 +92,7 @@ class EditGallery extends Gallery
 	 * @param 	string		$image_name		The name of the image
 	 * @param 	int			$image_gallery	The image's gallery
 	 * @param 	string		$image_title	The image's title, can be empty
-	 * @return 	void
+	 * @return 	bool                        Returns 1 if the new value was saved into the file or 0 if failed
 	 **/
 	public function addImage($timestamp, $image_name, $image_gallery, $image_title)
 	{
@@ -111,28 +111,33 @@ class EditGallery extends Gallery
 		$dom->documentElement->appendChild($title);
 		$title->appendChild($cdata);
 
-		$dom->save(storage_path('app/' . Gallery::_IMAGES_FILE_PATH));
+		if ($dom->save(storage_path('app/' . Gallery::_IMAGES_FILE_PATH))) {
+            return 1;
+        } else {
+            return 0;
+        }
 	}
 	/**
 	 * Modifies image infos in a XML file
 	 *
 	 * Modify image's informations in the provided image XML file
 	 *
-	 * @param 		string		$timestamp			Image's timestamp
 	 * @param 		string		$image_name			The name of the image to modify
 	 * @param 		int			$image_gallery		The image's gallery to modify
 	 * @param 		string		$image_title		The image's title to modify, can be empty
 	 * @param 		bool		$is_same_gallery	If set to true, only the image's title will be changed otherwise with the default value set to false it will modify all the informations accordignly
-	 * @return		bool							Returns true if the modifications were saved in the provided XML, returns false if it failed in the process
+	 * @return		mixed							Returns array of image's new infos if the modifications were saved in the provided XML, returns 0 if it failed in the process
 	 **/
-	public function modifyImage($timestamp, $image_name, $image_gallery, $image_title, $is_same_gallery = false)
+	public function modifyImage($image_name, $image_gallery, $image_title, $is_same_gallery = false)
 	{
 		$dom = new \DOMDocument('1.0', 'UTF-8');
 		$dom->preserveWhiteSpace = false;
 		$dom->formatOutput = true;
 		$dom->load(storage_path('app/' . Gallery::_IMAGES_FILE_PATH));
 		$xpath = new \DOMXpath($dom);
-		$targets = $xpath->query('/images/title[@fileName="' . $image_name . '"]');
+        $targets = $xpath->query('/images/title[@fileName="' . $image_name . '"]');
+        $timestamp = microtime(true);
+
 		if ($targets && $targets->length > 0) {
 			$target = $targets->item(0);
 			if (!$is_same_gallery) {
@@ -146,11 +151,19 @@ class EditGallery extends Gallery
 				$target->replaceChild($cdata, $target->firstChild);
 			}
 			//$target->nodeValue = 'Texte modifié';
-		}
+		} else {
+            return 0;
+        }
+
 		if ($dom->save(storage_path('app/' . Gallery::_IMAGES_FILE_PATH))) {
-            return true;
+            return [
+                'timestamp' => $timestamp,
+                'name' => $image_name,
+                'gallery' => $image_gallery,
+                'title' => empty($image_title) ? '' : $image_title
+            ];
         } else {
-            return false;
+            return 0;
         }
 	}
 	/**
@@ -159,7 +172,7 @@ class EditGallery extends Gallery
 	 * Removes image's informations in the provided image XML file
 	 *
 	 * @param 	string	$image_name		The name of the image to remove from the provided XML file
-	 * @return 	void
+	 * @return 	bool                    Returns 1 if the image was correctly removed from the file and the storage or 0 if failed
 	 **/
 	public function removeImage($image_name)
 	{
@@ -168,18 +181,24 @@ class EditGallery extends Gallery
 		$dom->formatOutput = true;
 		$dom->load(storage_path('app/' . Gallery::_IMAGES_FILE_PATH));
 		$images = $dom->documentElement;
-		$img = $images->getElementsByTagName('title');
+        $img = $images->getElementsByTagName('title');
+
 		foreach($img as $image)	{
 			if ($image->hasAttribute('fileName') == $image_name) {
 				if ($image->getAttribute('fileName') == $image_name) {
                     $images->removeChild($image);
                 }
 			}
-		}
-		$dom->save(storage_path('app/' . Gallery::_IMAGES_FILE_PATH));
+        }
 
-		\File::delete(storage_path('app/public/images_gallery/big/' . $image_name));
-		\File::delete(storage_path('app/public/images_gallery/min/' . $image_name));
+		if ($dom->save(storage_path('app/' . Gallery::_IMAGES_FILE_PATH))) {
+            \File::delete(storage_path('app/public/images_gallery/big/' . $image_name));
+            \File::delete(storage_path('app/public/images_gallery/min/' . $image_name));
+            return 1;
+        } else {
+            return 0;
+        }
+
 	}
 	/**
 	 * Adds a new gallery in a XML file
@@ -187,7 +206,7 @@ class EditGallery extends Gallery
 	 * Adds a new gallery in the provided gallery XML file
 	 *
 	 * @param 	string	$gallery_name	The name of the new gallery to be added
-	 * @return 	void
+	 * @return 	mixed                   Returns the new gallery's name if the new value was saved into the file or false if failed
 	 **/
 	public function addGallery($gallery_name)
 	{
@@ -209,7 +228,11 @@ class EditGallery extends Gallery
 		$dom->documentElement->appendChild($node);
 		$node->appendChild($cdata);
 
-		$dom->save(storage_path('app/' . Gallery::_GALLERIES_FILE_PATH));
+        if ($dom->save(storage_path('app/' . Gallery::_GALLERIES_FILE_PATH))) {
+            return $gallery_name;
+        } else {
+            return 0;
+        }
 	}
 	/**
 	 * Modifies a gallery's name in a XML file
@@ -218,7 +241,7 @@ class EditGallery extends Gallery
 	 *
 	 * @param 	int		$gallery_id		The gallery's ID to be modified
 	 * @param 	int		$gallery_name	The gallery's new name
-	 * @return 	void
+	 * @return 	bool                    Returns 1 if the new value was saved into the file or 0 if failed
 	 **/
 	public function modifyGallery($gallery_id, $gallery_name)
 	{
@@ -227,14 +250,22 @@ class EditGallery extends Gallery
 		$dom->formatOutput = true;
 		$dom->load(storage_path('app/' . Gallery::_GALLERIES_FILE_PATH));
 		$xpath = new \DOMXpath($dom);
-		$targets = $xpath->query('/galleries/name[@galleryID="' . $gallery_id . '"]');
+        $targets = $xpath->query('/galleries/name[@galleryID="' . $gallery_id . '"]');
+
 		if ($targets && $targets->length > 0) {
 			$target = $targets->item(0);
 			$target->setAttribute('galleryID', $gallery_id);
 			$cdata = $dom->createCDATASection($gallery_name);
 			$target->replaceChild($cdata, $target->firstChild);
-		}
-		$dom->save(storage_path('app/' . Gallery::_GALLERIES_FILE_PATH));
+		} else {
+            return 0;
+        }
+
+        if ($dom->save(storage_path('app/' . Gallery::_GALLERIES_FILE_PATH))) {
+            return 1;
+        } else {
+            return 0;
+        }
 	}
 	/**
 	 * Removes a gallery and its images (if any) in a XML file
@@ -242,7 +273,7 @@ class EditGallery extends Gallery
 	 * Removes a gallery and its images (if any) in the provided gallery and image XML file
 	 *
 	 * @param 	int		$gallery_id		The gallery's ID to be removed
-	 * @return 	void
+	 * @return 	bool                    Returns 1 if the gallery was correctly removed from the file or 0 if failed
 	 **/
 	public function removeGallery($gallery_id)
 	{
@@ -270,7 +301,12 @@ class EditGallery extends Gallery
                     $images->removeChild($image);
                 }
 			}
-		}
-		$dom->save(storage_path('app/' . Gallery::_GALLERIES_FILE_PATH));
+        }
+
+		if ($dom->save(storage_path('app/' . Gallery::_GALLERIES_FILE_PATH))) {
+            return 1;
+        } else {
+            return 0;
+        }
 	}
 }

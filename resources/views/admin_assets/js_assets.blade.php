@@ -23,11 +23,13 @@
             cancelButton: '{{ __("site.cancel_button") }}',
             autoFocusOnConfirmBtn: true
         };
-        $(this).tooltip({
-            selector: '.tooltipz',
-            placement: 'bottom',
-            trigger: 'hover'
-        });
+        if (!$isMobile) {
+            $(this).tooltip({
+                selector: '.tooltipz',
+                placement: 'bottom',
+                trigger: 'hover'
+            });
+        }
         $('.toast').toast({
             delay: 3000
         });

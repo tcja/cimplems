@@ -16,7 +16,7 @@
                 var data_string = 'file=' + image_name;
                 $.ajax({
                     type: 'POST',
-                    url: $rootUrl+'/delete_image',
+                    url: $rootUrl + '/delete_image',
                     context: $(obj).parents('.thumbs'),
                     data: data_string
                 }).done(function(datas) {
@@ -50,7 +50,7 @@
                     },
                     type: 'POST',
                     dataType: 'json',
-                    url: $rootUrl+'/edit_image_show_form',
+                    url: $rootUrl + '/edit_image_show_form',
                     data: data_string,
                     context: this,
                     complete: function() {
@@ -106,21 +106,21 @@
                         type: 'POST',
                         dataType: 'json',
                         data: form_datas,
-                        url: $rootUrl+'/edit_image',
+                        url: $rootUrl + '/edit_image',
                         context: form
                     }).done(function(datas) {
                         $(this).parent().fadeOut(350, function(el) {
                             var imgf = datas.name.split('.').join("").split('-').join("").split('_').join("");
                             var gallery_nbr = datas.gallery;
                             var gallery_name = $(form).children().find("select[name='gallery']").find(":selected").html();
-                            var gal_id = 'gallery'+gallery_nbr;
+                            var gal_id = 'gallery' + gallery_nbr;
                             var gal_find = '#gallery' + gallery_nbr;
                             var gal_exist = $(document.body).find(gal_find).length;
                             var current_gal_images = $(el).parents('.flex-wrap').children('div').length;
                             var gal_remove = $(el).parents('.flex-wrap').parent();
                             if (onlyTitleChanged) {
-                                $('#galeries img[alt="'+datas.name+'"]').parent().attr('title', $("<div/>").html(datas.title).text());
-                                $('#galeries img[alt="'+datas.name+'"]').parent().nextAll('form').find('input[name="change_title"]')[0].defaultValue = $("<div/>").html(datas.title).text();
+                                $('#galeries img[alt="' + datas.name + '"]').parent().attr('title', $("<div/>").html(datas.title).text());
+                                $('#galeries img[alt="' + datas.name + '"]').parent().nextAll('form').find('input[name="change_title"]')[0].defaultValue = $("<div/>").html(datas.title).text();
                                 $(el).fadeIn(500);
                                 return false;
                             }
@@ -132,13 +132,13 @@
                                         gal_remove.remove();
                                     }
                                 }
-                                $('#gallery'+datas.gallery).children('div').append('<div id="'+imgf+'" style="display:none;" class="thumbs"><a href="'+$rootUrl+'/storage/images_gallery/big/'+datas.name+'" rel="gallery1" title="'+escapeHtml($("<div/>").html(datas.title).text())+'" class="fancyboxThumb text-decoration-none"><img alt="'+datas.name+'" src="'+$rootUrl+'/storage/images_gallery/min/'+datas.name+'" class="img-thumbnail img-thumbnailz"></a><a title="{{ __("site.delete_image") }}" alt="delete" class="delete_image" href="javascript:;"><i class="far fa-trash-alt"></i></a><a class="edit_image" alt="'+datas.name+'" title="{{ __("site.edit_image") }}" href="javascript:;"><i class="far fa-edit"></i></a></div>');
-                                $('div[id='+imgf+']').fadeIn(500);
+                                $('#gallery' + datas.gallery).children('div').append('<div id="' + imgf + '" style="display:none;" class="thumbs"><a href="' + $rootUrl + '/storage/images_gallery/big/' + datas.name + '" rel="gallery1" title="'+escapeHtml($("<div/>").html(datas.title).text())+'" class="fancyboxThumb text-decoration-none"><img alt="' + datas.name + '" src="' + $rootUrl + '/storage/images_gallery/min/' + datas.name + '" class="img-thumbnail img-thumbnailz"></a><a title="{{ __("site.delete_image") }}" alt="delete" class="delete_image" href="javascript:;"><i class="far fa-trash-alt"></i></a><a class="edit_image" alt="' + datas.name + '" title="{{ __("site.edit_image") }}" href="javascript:;"><i class="far fa-edit"></i></a></div>');
+                                $('div[id=' + imgf + ']').fadeIn(500);
                             } else {
                                 if (current_gal_images == 1) {
                                     gal_remove.remove();
                                 }
-                                var html = '<div id="'+gal_id+'" style="display:none;" class="row mb-4"><h2>'+gallery_name+'</h2><div class="col-12 d-flex flex-wrap"><div id="'+imgf+'" class="thumbs"><a href="'+$rootUrl+'/storage/images_gallery/big/'+datas.name+'" rel="gallery1" title="'+escapeHtml($("<div/>").html(datas.title).text())+'" class="fancyboxThumb text-decoration-none"><img alt="'+datas.name+'" src="'+$rootUrl+'/storage/images_gallery/min/'+datas.name+'" class="img-thumbnail img-thumbnailz"></a><a class="delete_image" title="{{ __("site.delete_image") }}" href="javascript:;"><i class="far fa-trash-alt"></i></a><a class="edit_image" alt="'+datas.name+'" title="{{ __("site.edit_image") }}" href="javascript:;"><i class="far fa-edit"></i></a></div></div></div>';
+                                var html = '<div id="' + gal_id + '" style="display:none;" class="row mb-4"><h2>'+gallery_name+'</h2><div class="col-12 d-flex flex-wrap"><div id="' + imgf + '" class="thumbs"><a href="' + $rootUrl + '/storage/images_gallery/big/' + datas.name + '" rel="gallery1" title="'+escapeHtml($("<div/>").html(datas.title).text())+'" class="fancyboxThumb text-decoration-none"><img alt="' + datas.name + '" src="' + $rootUrl + '/storage/images_gallery/min/' + datas.name + '" class="img-thumbnail img-thumbnailz"></a><a class="delete_image" title="{{ __("site.delete_image") }}" href="javascript:;"><i class="far fa-trash-alt"></i></a><a class="edit_image" alt="' + datas.name + '" title="{{ __("site.edit_image") }}" href="javascript:;"><i class="far fa-edit"></i></a></div></div></div>';
 
                                 if (gallery_nbr == 1) {
                                     $('#galeries').prepend(html);
@@ -161,7 +161,7 @@
                                         $('#galeries > div').eq(index - 1).after(html);
                                     }
                                 }
-                                $('div[id='+gal_id+']').fadeIn(600);
+                                $('div[id=' + gal_id + ']').fadeIn(600);
                             }
                         });
                     }).fail(function() {
