@@ -11,7 +11,7 @@
 						@else
 							@if (!empty($image['fileName']))
 								<div class="thumbs">
-									<a class="fancyboxThumb text-decoration-none" title="{{ $image['title'] }}" rel="gallery1" href="{{ asset('storage/images_gallery/big/' . $image['fileName']) }}">
+									<a class="fancyboxThumb text-decoration-none" title="{{ htmlspecialchars($image['title']) }}" rel="gallery1" href="{{ asset('storage/images_gallery/big/' . $image['fileName']) }}">
 										<img class="img-thumbnail img-thumbnailz" timestamp="{{ $image['timestamp'] }}" src="{{ asset('storage/images_gallery/min/' . $image['fileName']) }}" alt="{{ $image['fileName'] }}">
 									</a>
 									@if (session('admin') === true)

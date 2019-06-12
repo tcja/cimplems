@@ -148,13 +148,13 @@
                                             gal_remove.remove();
                                         }
                                     }
-                                    $('#gallery'+datas.gallery).children('div').append('<div id="'+imgf+'" style="display:none;" class="thumb_resp thumbs_resp"><a href="'+$rootUrl+'/storage/images_gallery/big/'+datas.name+'" rel="external" title="'+datas.title+'" data-size="1280x960" data-med="'+$rootUrl+'/storage/images_gallery/big/'+datas.name+'" data-med-size="1280x960" alt="'+datas.name+'" class="phswipe"><img alt="" src="'+$rootUrl+'/storage/images_gallery/min/'+datas.name+'" class="thumb_resp2 img-fluid"></a></div>');
+                                    $('#gallery'+datas.gallery).children('div').append('<div id="'+imgf+'" style="display:none;" class="thumb_resp thumbs_resp"><a href="'+$rootUrl+'/storage/images_gallery/big/'+datas.name+'" rel="external" title="'+$("<div/>").html(datas.title).text()+'" data-size="1280x960" data-med="'+$rootUrl+'/storage/images_gallery/big/'+datas.name+'" data-med-size="1280x960" alt="'+datas.name+'" class="phswipe"><img alt="" src="'+$rootUrl+'/storage/images_gallery/min/'+datas.name+'" class="thumb_resp2 img-fluid"></a></div>');
                                     $('div[id='+imgf+']').fadeIn(500);
                                 } else {
                                     if (current_gal_images == 1) {
                                         gal_remove.remove();
                                     }
-                                    var html = '<div id="'+gal_id+'" style="display:none;" class="row mb-4"><h2>'+gallery_name+'</h2><div class="col-12 d-flex flex-wrap"><div id="'+imgf+'" class="thumb_resp thumbs_resp"><a href="'+$rootUrl+'/storage/images_gallery/big/'+datas.name+'" rel="external" title="'+datas.title+'" data-size="1280x960" data-med="'+$rootUrl+'/storage/images_gallery/big/'+datas.name+'" data-med-size="1280x960" alt="'+datas.name+'" class="phswipe"><img alt="" src="'+$rootUrl+'/storage/images_gallery/min/'+datas.name+'" class="thumb_resp2 img-fluid"></a></div></div></div>';
+                                    var html = '<div id="'+gal_id+'" style="display:none;" class="row mb-4"><h2>'+gallery_name+'</h2><div class="col-12 d-flex flex-wrap"><div id="'+imgf+'" class="thumb_resp thumbs_resp"><a href="'+$rootUrl+'/storage/images_gallery/big/'+datas.name+'" rel="external" title="'+$("<div/>").html(datas.title).text()+'" data-size="1280x960" data-med="'+$rootUrl+'/storage/images_gallery/big/'+datas.name+'" data-med-size="1280x960" alt="'+datas.name+'" class="phswipe"><img alt="" src="'+$rootUrl+'/storage/images_gallery/min/'+datas.name+'" class="thumb_resp2 img-fluid"></a></div></div></div>';
 
                                     if (gallery_nbr == 1) {
                                         $('#galeries').prepend(html);

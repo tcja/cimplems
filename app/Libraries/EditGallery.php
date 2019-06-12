@@ -14,6 +14,73 @@ class EditGallery extends Gallery
 {
 	public function __construct()
 	{
+    }
+
+    /**
+	 * Uploads a file image into the storage
+	 *
+	 * Uploads a file image into the storage and adds its corresponding infos (title if any set, gallery ID) into the image XML file
+	 *
+	 * @param	object		$request		    Illuminate\Http\Request instance
+	 * @param 	string		$image_title		The image's title (optional)
+	 * @param 	int		    $gallery	        The image gallery's ID
+	 * @return 	mixed                           Returns false if the request wasn't triggered by an ajax request, returns an array of the image's infos if its upload succeeded
+	 **/
+	public function uploadImage($request, $image_title, $gallery)
+	{
+		$upload_path_big = storage_path('app/public/images_gallery/big/');
+        $upload_path_min = storage_path('app/public/images_gallery/min/');
+        $widen_big_width = 1280;
+        $widen_min_width = 300;
+
+        $array = [
+            'gallery' => $gallery,
+            'title' => empty($image_title) ? '' : $image_title
+        ];
+
+        if ($request->total_files === 0) {
+            return response()->json('error, please re-try');
+        }
+
+        $file = $request->file('image_path');
+        for ($i = 0; $i < $request->total_files; $i++) {
+            if (in_array($file[$request->image_number_ . $i]->getMimeType(), array('image/gif', 'image/png', 'image/bmp', 'image/jpeg'))) {
+                if ($file[$request->image_number_ . $i]->getMimeType() == 'image/gif') {
+                    $ext = '.gif';
+                } elseif ($file[$request->image_number_ . $i]->getMimeType() == 'image/png') {
+                    $ext = '.png';
+                } else {
+                    $ext = '.jpg';
+                }
+
+                $timestamp = microtime(true);
+                $new_file_name = substr(sha1(md5('sàéy' . time() . rand(0, 10000) . 'YXdaewS')), 0, 16) . $ext;
+
+                $width = getimagesize($file[$request->image_number_ . $i]->getRealPath());
+                if ($width[0] <= $widen_big_width) {
+                    if ($upload_done = $file[$request->image_number_ . $i]->move($upload_path_big, $new_file_name)) {
+                        $this->addImage($timestamp, $new_file_name, $gallery, $image_title);
+                    } else {
+                        return json_encode($upload_done->getMessage());
+                    }
+                } else {
+                    \Image::make($file[$request->image_number_ . $i]->getRealPath())->widen($widen_big_width, function ($constraint) { $constraint->upsize(); })->save($upload_path_big . $new_file_name);
+                    $this->addImage($timestamp, $new_file_name, $gallery, $image_title);
+                }
+
+                \Image::make($upload_path_big . $new_file_name)->widen($widen_min_width, function ($constraint) { $constraint->upsize(); })->save($upload_path_min . $new_file_name);
+
+                $array['name'][$i][0] = $new_file_name;
+                $array['name'][$i][1] = $request->image_number_ . $i;
+                $array['name'][$i][2] = strval($timestamp);
+            }
+        }
+
+        if ($request->file_ajax) {
+            return $array;
+        } else {
+            return false;
+        }
 	}
 
 	/**

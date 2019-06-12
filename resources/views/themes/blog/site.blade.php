@@ -35,19 +35,6 @@
 					$(this).trigger('click.fb');
 				});
 				$isMobile = false;
-				$rootUrl = '{{ $rootUrl }}';
-				$currentMenuOrder = {{ $currentMenuOrder }};
-				$currentPageTitle = '{{ $currentPageTitle }}';
-                $currentSlug = '{{ $currentSlug }}';
-                $defaultsConfirmModal = {
-                    confirmButton: '{{ __("site.ok_button") }}',
-                    cancelButton: '{{ __("site.cancel_button") }}'
-                };
-				$(this).tooltip({
-					selector: '.tooltipz',
-					placement: 'bottom',
-					trigger: 'hover'
-				});
 			});
 		</script>
 		@if (session('admin') === true)

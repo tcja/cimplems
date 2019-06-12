@@ -18,62 +18,7 @@ class GalleryController extends Controller
         ]);
 
 		if (!$validator->fails()) {
-			$upload_path_big = storage_path('app/public/images_gallery/big/');
-            $upload_path_min = storage_path('app/public/images_gallery/min/');
-			$widen_big_width = 1280;
-			$widen_min_width = 300;
-
-			$image_title = preg_replace('#<script[^>]*>([^<]+)</script>#', '$1', $request->image_title);
-			$gallery = preg_replace('#<script[^>]*>([^<]+)</script>#', '$1', $request->gallery);
-
-			$array = [
-				'gallery' => htmlspecialchars($gallery),
-				'title' => empty($image_title) ? '' : htmlspecialchars($image_title)
-			];
-
-			if ($request->total_files === 0) {
-                return response()->json('erreur, veuillez rééessayer');
-            }
-
-            $file = $request->file('image_path');
-			for ($i = 0; $i < $request->total_files; $i++) {
-				if (in_array($file[$request->image_number_ . $i]->getMimeType(), array('image/gif', 'image/png', 'image/bmp', 'image/jpeg'))) {
-					if ($file[$request->image_number_ . $i]->getMimeType() == 'image/gif') {
-                        $ext = '.gif';
-                    } elseif ($file[$request->image_number_ . $i]->getMimeType() == 'image/png') {
-                        $ext = '.png';
-                    } else {
-                        $ext = '.jpg';
-                    }
-
-					$timestamp = microtime(true);
-					$new_file_name = substr(sha1(md5('sàéy' . time() . rand(0, 10000) . 'YXdaewS')), 0, 16) . $ext;
-
-					$width = getimagesize($file[$request->image_number_ . $i]->getRealPath());
-					if ($width[0] <= $widen_big_width) {
-						if ($upload_done = $file[$request->image_number_ . $i]->move($upload_path_big, $new_file_name)) {
-                            $edit_gallery->addImage($timestamp, $new_file_name, $gallery, $image_title);
-                        } else {
-                            return json_encode($upload_done->getMessage());
-                        }
-					} else {
-						\Image::make($file[$request->image_number_ . $i]->getRealPath())->widen($widen_big_width, function ($constraint) { $constraint->upsize(); })->save($upload_path_big . $new_file_name);
-						$edit_gallery->addImage($timestamp, $new_file_name, $gallery, $image_title);
-					}
-
-					\Image::make($upload_path_big . $new_file_name)->widen($widen_min_width, function ($constraint) { $constraint->upsize(); })->save($upload_path_min . $new_file_name);
-
-					$array['name'][$i][0] = $new_file_name;
-					$array['name'][$i][1] = $request->image_number_ . $i;
-					$array['name'][$i][2] = strval($timestamp);
-				}
-			}
-
-			if ($request->file_ajax) {
-                return $array;
-            } else {
-                return redirect('/');
-            }
+            return $edit_gallery->uploadImage($request, $request->image_title, $request->gallery);
 		} else {
             return redirect('/');
         }
@@ -86,13 +31,13 @@ class GalleryController extends Controller
         ]);
 
 		if (!$validator->fails()) {
-			$edit_gallery->addGallery(preg_replace('#script#', '$1', $request->gallery_title));
+			$edit_gallery->addGallery($request->gallery_title);
 			$result = 'success';
 		} else {
             $result = 'fail';
         }
 
-		return response()->json(htmlspecialchars(preg_replace('#script#', '$1', $request->gallery_title)));
+		return response()->json($request->gallery_title);
     }
 
     public function editGalleries(Request $request, EditGallery $edit_gallery)
@@ -139,17 +84,14 @@ class GalleryController extends Controller
             'change_title' => 'nullable|max:50',
 		]);
 
-        $change_title = preg_replace('#<script[^>]*>([^<]+)</script>#', '$1', $request->change_title);
-		$gallery = preg_replace('#<script[^>]*>([^<]+)</script>#', '$1', $request->gallery);
-
 		if (!$validator->fails()) {
 			$timestamp = microtime(true);
-			if ($edit_gallery->modifyImage($timestamp, $request->photo_name, $gallery, $change_title, $request->modify_one_image)) {
+			if ($edit_gallery->modifyImage($timestamp, $request->photo_name, $request->gallery, $request->change_title, $request->modify_one_image)) {
 				$array = [
 					'timestamp' => $timestamp,
 					'name' => $request->photo_name,
-					'gallery' => htmlspecialchars($gallery),
-					'title' => empty($change_title) ? '' : htmlspecialchars($change_title)
+					'gallery' => $request->gallery,
+					'title' => empty($request->change_title) ? '' : $request->change_title
 				];
 				return $array;
 			} else {

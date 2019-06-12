@@ -1,35 +1,5 @@
 <script type="text/javascript">
     $(function(){
-        $locale = '{{ app()->getLocale() }}';
-
-        $.validator.setDefaults({
-            errorClass: 'errorf alert-error',
-            //onfocusout: false,
-            //onkeyup: false,
-            onclick: false
-        });
-        $.validator.addMethod('selectCheck', function(value) {
-            return (value != '0');
-        }, '<i class="far fa-times-circle"></i>');
-
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-
-        $('.modalReset').on('hidden.bs.modal', function() {
-            $(this).find('.alert-error:not(label)').each(function(i, el) {
-                if ($(el).is('INPUT')) {
-                    $(el).val('');
-                } else {
-                    $(el).val(0);
-                }
-                $(el).removeClass('errorf alert-error');
-                $(el).next().remove();
-            });
-        });
-
         $(this).on('click', '.pageLink', function(e) {
             e.preventDefault();
             if ($(this).attr('href') == 'javascript:;') return false;
@@ -186,12 +156,6 @@
                     document.location.href = $rootUrl;
                 }
             });
-        });
-        $('.toast').toast({
-            delay: 3000
-        });
-        $('.toast').on('show.bs.toast', function () {
-            $('.toast_center').css('z-index', '1000');
         });
     });
 </script>

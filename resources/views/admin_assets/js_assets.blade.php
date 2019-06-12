@@ -14,3 +14,25 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-file-upload/9.31.0/js/jquery.fileupload-process.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-file-upload/9.31.0/js/jquery.fileupload-image.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-file-upload/9.31.0/js/jquery.fileupload-ui.min.js"></script>
+<script type="text/javascript">
+    function escapeHtml(t){var e={"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"};return t.replace(/[&<>"']/g,function(t){return e[t]})}
+    $(function(){
+        $currentMenuOrder = {{ $currentMenuOrder }};
+        $defaultsConfirmModal = {
+            confirmButton: '{{ __("site.ok_button") }}',
+            cancelButton: '{{ __("site.cancel_button") }}',
+            autoFocusOnConfirmBtn: true
+        };
+        $(this).tooltip({
+            selector: '.tooltipz',
+            placement: 'bottom',
+            trigger: 'hover'
+        });
+        $('.toast').toast({
+            delay: 3000
+        });
+        $('.toast').on('show.bs.toast', function () {
+            $('.toast_center').css('z-index', '1000');
+        });
+    });
+</script>

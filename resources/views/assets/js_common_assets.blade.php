@@ -12,3 +12,36 @@
 <script src="{{ asset('js/jquery-timer.js') }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-scrollTo/2.1.2/jquery.scrollTo.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-mousewheel/3.1.13/jquery.mousewheel.min.js"></script>
+<script type="text/javascript">
+    $(function(){
+        $locale = '{{ app()->getLocale() }}';
+        $.validator.setDefaults({
+            errorClass: 'errorf alert-error',
+            //onfocusout: false,
+            //onkeyup: false,
+            onclick: false
+        });
+        $.validator.addMethod('selectCheck', function(value) {
+            return (value != '0');
+        }, '<i class="far fa-times-circle"></i>');
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $('.modalReset').on('hidden.bs.modal', function() {
+            $(this).find('.alert-error:not(label)').each(function(i, el) {
+                if ($(el).is('INPUT')) {
+                    $(el).val('');
+                } else {
+                    $(el).val(0);
+                }
+                $(el).removeClass('errorf alert-error');
+                $(el).next().remove();
+            });
+        });
+        $rootUrl = '{{ $rootUrl }}';
+        $currentPageTitle = '{{ $currentPageTitle }}';
+        $currentSlug = '{{ $currentSlug }}';
+    });
+</script>

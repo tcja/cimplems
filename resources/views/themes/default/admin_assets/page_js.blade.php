@@ -89,7 +89,7 @@
                 $('.modalEditPage').one('hidden.bs.modal', function (e) {
                     $('.sendForm').removeAttr('disabled');
                     $('#content').empty();
-                    if ($.trim($('.note-editable').text()) == '' && $('.note-editable').html().match(/img/) == '') {
+                    if ($.trim($('.note-editable').text()) == '' && !/(img|iframe|canvas)/i.test($('.note-editable').html())) {
                         $('#content').hide();
                     } else {
                         $('#content').show();

@@ -43,15 +43,6 @@
 				}); */
 				//$('.mobileResize').width($('.mobileResize').width() + ($('.mobileResize').width() * 25 / 100));
 				$isMobile = true;
-				$rootUrl = '{{ $rootUrl }}';
-				$currentMenuOrder = {{ $currentMenuOrder }};
-                $currentSlug = '{{ $currentSlug }}';
-                $optionsConfirmModal = {
-                    //messageHeader: '{{ __("site.delete_image_modal") }}',
-                    //modalBoxWidth: '365px',
-                    modalVerticalCenter: false,
-                    fadeAnimation: false
-                };
 			});
 		</script>
 		@if (session('admin') === true)
