@@ -1,13 +1,16 @@
 <?php
 
 namespace App\Libraries;
+
+use Tcja\DOMDXMLParser\DOMDXMLParser;
+
 /*
  *
  * Gallery class.
  *
  * Author : Trim Camaj
  *
- * Description : This is the main class, it serves all functions to display the gallery datas according to the needed infos
+ * Description : This is the main class, it serves all functions to display the gallery data according to the needed infos
  *
  */
 class Gallery
@@ -34,34 +37,34 @@ class Gallery
 	/**
 	 *
 	 *
-	 * @var string _IMAGES_FILE_NAME XML file name for images
+	 * @var string IMAGES_FILE_NAME XML file name for images
 	 * */
-	const _IMAGES_FILE_NAME = 'images.xml';
+	const IMAGES_FILE_NAME = 'images.xml';
 	/**
 	 *
-	 * @var string _GALLERIES_FILE_NAME XML file name for galleries
+	 * @var string GALLERIES_FILE_NAME XML file name for galleries
 	 * */
-	const _GALLERIES_FILE_NAME = 'galleries.xml';
+	const GALLERIES_FILE_NAME = 'galleries.xml';
 	/**
 	 *
-	 *  @var string $_XML_DATA_FILE_PATH XML file for the XML datas files path
+	 *  @var string $XML_DATA_FILE_PATH XML file for the XML data files path
 	 * */
-	const _XML_DATA_FILE_PATH = 'private/datas/';
+	const XML_DATA_FILE_PATH = 'private/data/';
 	/**
 	 *
-	 * @var string _IMAGES_FILE_PATH XML file for images
+	 * @var string IMAGES_FILE_PATH XML file for images
 	 * */
-	const _IMAGES_FILE_PATH = self::_XML_DATA_FILE_PATH . self::_IMAGES_FILE_NAME;
+	const IMAGES_FILE_PATH = self::XML_DATA_FILE_PATH . self::IMAGES_FILE_NAME;
 	/**
 	 *
-	 * @var string _GALLERIES_FILE_PATH XML file for galleries
+	 * @var string GALLERIES_FILE_PATH XML file for galleries
 	 *  */
-	const _GALLERIES_FILE_PATH = self::_XML_DATA_FILE_PATH . self::_GALLERIES_FILE_NAME;
+	const GALLERIES_FILE_PATH = self::XML_DATA_FILE_PATH . self::GALLERIES_FILE_NAME;
 
 	/**
-	 * Constructor used to retrieve datas from any gallery, it also checks whether the XML files exist or not and if not creates them accordingly
+	 * Constructor used to retrieve data from any gallery, it also checks whether the XML files exist or not and if not creates them accordingly
 	 *
-	 * Retrieves datas from a specific gallery by its ID or from all galleries by default and stores them in an array
+	 * Retrieves data from a specific gallery by its ID or from all galleries by default and stores them in an array
 	 *
 	 * @param 	int		$gallery		Gallery's ID to be shown, if not set, defaults to false will show all galleries
 	 * @return	void
@@ -83,22 +86,20 @@ class Gallery
 	 *
 	 * Gets image informations provided from an image XML file and stores them in an array
 	 *
-	 * @param 	string		$image_name		The name of the image to get the datas from
-	 * @return	mixed						Returns an array with the datas found (stores the following datas : the name of the image, its gallery and its title if any), returns false if no data found
+	 * @param 	string		$image_name		The name of the image to get the data from
+	 * @return	mixed						Returns an array with the data found (stores the following data : the name of the image, its gallery and its title if any), returns false if no data found
 	 **/
 	public function getImageInfos($image_name)
 	{
-		$dom = new \DOMDocument('1.0', 'UTF-8');
-		$dom->preserveWhiteSpace = false;
-		$dom->formatOutput = true;
-		$dom->load(storage_path('app/' . self::_IMAGES_FILE_PATH));
+        $xml = new DOMDXMLParser(storage_path('app/' . self::IMAGES_FILE_PATH));
 
-		$xpath = new \DOMXpath($dom);
-		$targets = $xpath->query('/images/title[@fileName="' . $image_name . '"]');
-		if ($targets && $targets->length > 0) {
-			$target = $targets->item(0);
-			return array('name' => $target->getAttribute('fileName'), 'gallery' => $target->getAttribute('gallery'), 'title' => $target->nodeValue);
-		} else {
+        if ($xml->checkNode('fileName', $image_name)) {
+            return [
+                'name' => $xml->pickNode('fileName', $image_name)->getAttr('fileName'),
+                'gallery' => $xml->pickNode('fileName', $image_name)->getAttr('galleryID'),
+                'title' => $xml->pickNode('fileName', $image_name)->getValue()
+            ];
+        } else {
             return false;
         }
 	}
@@ -111,11 +112,9 @@ class Gallery
 	 **/
 	public function getTotalImages()
 	{
-		$doc = new \DOMDocument('1.0', 'UTF-8');
-		$doc->load(storage_path('app/' . self::_IMAGES_FILE_PATH));
-		$datas = $doc->getElementsByTagName('title');
+        $xml = new DOMDXMLParser(storage_path('app/' . self::IMAGES_FILE_PATH));
 
-		return $datas->length;
+        return $xml->getTotalItems();
 	}
 	/**
 	 * Gets highest gallery id
@@ -126,18 +125,9 @@ class Gallery
 	 **/
 	public function getMaxGalleryId()
 	{
-		$doc = new \DOMDocument('1.0', 'UTF-8');
-		$doc->load(storage_path('app/' . self::_GALLERIES_FILE_PATH));
-		$datas = $doc->getElementsByTagName('name');
-		if ($datas->length == 0) {
-            return 0;
-        }
-		$array = [];
-		foreach ($datas as $data) {
-            array_push($array, $data->getAttribute('galleryID'));
-        }
+        $xml = new DOMDXMLParser(storage_path('app/' . self::GALLERIES_FILE_PATH));
 
-		return max($array);
+        return $xml->pickNode('gallery')->getHighestValue('galleryID');
 	}
 	/**
 	 * Gets image data according from its timestamp
@@ -145,50 +135,45 @@ class Gallery
 	 * Gets image informations according to the timestamp provided and returns it in form of an array
 	 *
 	 * @param 	string		$timestamp		The timestamp of the image to get the data from
-	 * @return	mixed						Returns an array with the following datas : the timesamp, the image name and its title (if any) or returns false if no data found
+	 * @return	mixed						Returns an array with the following data : the timesamp, the image name and its title (if any) or returns false if no data found
 	 **/
 	public function getImageFromTimestamp($timestamp)
 	{
-		$dom = new \DOMDocument('1.0', 'UTF-8');
-		$dom->preserveWhiteSpace = FALSE;
-		$dom->formatOutput = TRUE;
-		$dom->load(storage_path('app/' . self::_IMAGES_FILE_PATH));
+        $xml = new DOMDXMLParser(storage_path('app/' . self::IMAGES_FILE_PATH));
 
-		$xpath = new \DOMXpath($dom);
-		$targets = $xpath->query('/images/title[@timestamp="' . $timestamp . '"]');
-		if ($targets && $targets->length > 0) {
-			$target = $targets->item(0);
-			return array('timestamp' => $target->getAttribute('timestamp'), 'fileName' => $target->getAttribute('fileName'), 'title' => $target->nodeValue);
-		} else {
+        if ($xml->checkNode('timestamp', $timestamp)) {
+            return [
+                'timestamp' => $xml->pickNode('timestamp', $timestamp)->getAttr('timestamp'),
+                'fileName' => $xml->pickNode('timestamp', $timestamp)->getAttr('fileName'),
+                'title' => $xml->pickNode('timestamp', $timestamp)->getValue()
+            ];
+        } else {
             return false;
         }
 	}
 	/**
 	 * Fetches the galleries in an array
 	 *
-	 * Fetches all the galleries no matter the gallery and stores them in an array
+	 * Fetches all the galleries and stores them in an array
 	 *
-	 * @return	array	Returns an array with the following datas : the gallery's ID and the gallery's name
+	 * @return	array	Returns an array with the following data : the gallery's ID and the gallery's name
 	 **/
 	protected function fetchGalleries()
 	{
-		$doc = new \DOMDocument('1.0', 'UTF-8');
-		$doc->load(storage_path('app/' . self::_GALLERIES_FILE_PATH));
-		$datas = $doc->getElementsByTagName('name');
-		$array = [];
-		foreach ($datas as $data) {
-            $array[$data->getAttribute('galleryID')] = $data->nodeValue;
-        }
+        $xml = new DOMDXMLParser(storage_path('app/' . self::GALLERIES_FILE_PATH));
+        $id = $xml->pickNode('gallery')->fetchData('galleryID')->toArray();
+        $values = $xml->pickNode('gallery')->fetchData('nodeValue')->toArray();
 
-		return $array;
+        return ($id) ? array_combine($id, $values) : [];
 	}
 	/**
 	 * Fetches the images in an array
 	 *
 	 * Fetches all the images no matter the galley or fetches them from a specific gallery and stores them in an array
 	 *
-	 * @param	bool		$JSON		If set to true it will return the fetched datas in a JSON encoded array, defaults to false will return a plain array
-	 * @return	mixed					Returns false if there is no images in the image XML file or returns an array of the images with the following datas (the gallery ID and name, the timestamp, the image name, its gallery id and the title if any)
+	 * @param	bool		$JSON		If set to true it will return the fetched data in a JSON encoded array, defaults to false will return a plain array
+	 * @return	mixed					Returns false if there is no images in the image XML file or returns an array of the images with the following data (the gallery ID and name, the timestamp,
+     *                                  the image name, its gallery id and the title if any)
 	 **/
 	protected function fetchImages($JSON = false)
 	{
@@ -241,70 +226,51 @@ class Gallery
 	 *
 	 * Fetches the images names from a specific gallery and stores them in an array
 	 *
-	 * @param 	int		$galleryID		The gallery ID to get the datas from, defaults to the ID 1
-	 * @return	array						Returns an array with the following datas : the image name
+	 * @param 	int		$galleryID		The gallery ID to get the data from, defaults to the ID 1
+	 * @return	array						Returns an array with the following data : the image name
 	 **/
 	private function fetchImagesNamesFromGallery($galleryID = 1)
 	{
-		$doc = new \DOMDocument('1.0', 'UTF-8');
-		$doc->load(storage_path('app/' . self::_IMAGES_FILE_PATH));
-		$datas = $doc->getElementsByTagName('title');
-		$i = 0;
-		$array = [];
-		foreach ($datas as $data) {
-			if ($data->getAttribute('gallery') == $galleryID) {
-                $array[$i] = $data->getAttribute('fileName');
-            }
-			$i++;
-		}
-		return $array;
+        $xml = new DOMDXMLParser(storage_path('app/' . self::IMAGES_FILE_PATH));
+        if ($xml->checkNode('galleryID', $galleryID)) {
+            return $xml->pickNode('galleryID', $galleryID)->fetchData('fileName')->toArray();
+        }
+
+        return [];
 	}
 	/**
 	 * Fetches the images titles from a specific gallery
 	 *
 	 * Fetches the images titles from a specific gallery and stores them in an array
 	 *
-	 * @param 	int		$galleryID		The gallery ID to get the datas from, defaults to the ID 1
-	 * @return	array						Returns an array with the following datas : the image title
+	 * @param 	int		$galleryID		The gallery ID to get the data from, defaults to the ID 1
+	 * @return	array						Returns an array with the following data : the image title
 	 **/
 	private function fetchTitlesFromGallery($galleryID = 1)
 	{
-		$doc = new \DOMDocument('1.0', 'UTF-8');
-		$doc->load(storage_path('app/' . self::_IMAGES_FILE_PATH));
-		$datas = $doc->getElementsByTagName('title');
-		$i = 0;
-		$array = [];
-		foreach ($datas as $data) {
-			if ($data->getAttribute('gallery') == $galleryID) {
-                $array[$i] = $data->nodeValue;
-            }
-			$i++;
-		}
-		return $array;
+        $xml = new DOMDXMLParser(storage_path('app/' . self::IMAGES_FILE_PATH));
+        if ($xml->checkNode('galleryID', $galleryID)) {
+            return $xml->pickNode('galleryID', $galleryID)->fetchData('nodeValue')->toArray();
+        }
+
+        return [];
 	}
 	/**
 	 * Fetches the images timestamps from a specific gallery
 	 *
 	 * Fetches the images timestamps from a specific gallery and stores them in an array
 	 *
-	 * @param 	int		$galleryID		The gallery ID to get the datas from, defaults to the ID 1
-	 * @return	array						Returns an array (sorted by timestamp) with the following datas : the image timestamp
+	 * @param 	int		$galleryID		    The gallery ID to get the data from, defaults to the ID 1
+	 * @return	array						Returns an array (sorted by timestamp) with the following data : the image timestamp
 	 **/
 	private function fetchTimestampsFromGallery($galleryID = 1)
 	{
-		$doc = new \DOMDocument('1.0', 'UTF-8');
-		$doc->load(storage_path('app/' . self::_IMAGES_FILE_PATH));
-		$datas = $doc->getElementsByTagName('title');
-		$i = 0;
-		$array = [];
-		foreach ($datas as $data) {
-			if ($data->getAttribute('gallery') == $galleryID) {
-                $array[$i] = $data->getAttribute('timestamp');
-            }
-			$i++;
-		}
-		sort($array);
-		return $array;
+        $xml = new DOMDXMLParser(storage_path('app/' . self::IMAGES_FILE_PATH));
+        if ($xml->checkNode('galleryID', $galleryID)) {
+            return $xml->pickNode('galleryID', $galleryID)->fetchData('timestamp')->sortBy('timestamp')->toArray();
+        }
+
+        return [];
 	}
 	/**
 	 *

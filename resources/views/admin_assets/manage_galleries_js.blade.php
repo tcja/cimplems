@@ -26,8 +26,8 @@
 					url: $rootUrl + '/create_gallery',
 					dataType: 'json',
 					data: data_string
-				}).done(function(datas) {
-					var newGalleryName = escapeHtml(datas);
+				}).done(function(data) {
+					var newGalleryName = escapeHtml(data);
 					var arraygal = [];
 					$('#gallery').children().each(function(i, el) {
 						arraygal.push($(el).val());
@@ -41,13 +41,13 @@
 					if ($('#nogallery').length == 1) {
 						var form_open = '{!! Form::open([url("/abort"), "id" => "modify_gal", "class" => ""]) !!}';
 
-						var galleryz = '<div class="form-group row"><div class="col-2 col-sm-2 col-md-1 text-center"><label for="' + newgallery + '" class="col-form-label">{{ __("site.title") }}</label></div><div class="col-10 col-sm-10 col-md-5 mt-1"><div class="input-group input-group-sm"><input type="text" class="form-control galzor" id="' + newgallery + '" name="' + newgallery + '" value="' + newGalleryName + '"/><div class="input-group-append ml-2 ' + ($isMobile ? "mt-1" : "") + '"><a href="javascript:;" class="delete_gallery" title="{{ __("site.delete_gallery") }}"><i style="'+ ($isMobile ? "font-size: 1.3rem;" : "")+'" class="far fa-trash-alt"></i></a></div></div></div></div><input type="hidden" name="change_gallery_title" value="1"/><button class="mt-1 btn btn-primary btn-sm" style="' + ($isMobile ? "margin-left: 4.9rem;" : "margin-left: 12rem;") + '" type="submit">{{ __("site.apply_changes") }}</button><button style="display:none; '+ ($isMobile ? "margin-left: 4.9rem;" : "margin-left: 12rem;")+'" class="btn btn-primary btn-sm" type="button" disabled><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> {{ __("site.changes_in_progress") }}</button><button style="display:none; ' + ($isMobile ? "margin-left: 4.9rem;" : "margin-left: 12rem;") + '" type="button" class="btn btn-sm btn-success"><i class="far fa-check-circle"></i> <b>{{ __("site.changes_done") }}</b></button>';
+						var galleryz = '<div class="form-group row"><div class="col-2 col-sm-2 col-md-1 text-center"><label for="' + newgallery + '" class="col-form-label">{{ __("site.title") }}</label></div><div class="col-10 col-sm-10 col-md-5 mt-1"><div class="input-group input-group-sm"><input type="text" class="form-control galEdit" id="' + newgallery + '" name="' + newgallery + '" value="' + newGalleryName + '"/><div class="input-group-append ml-2 ' + ($isMobile ? "mt-1" : "") + '"><a href="javascript:;" class="delete_gallery" title="{{ __("site.delete_gallery") }}"><i style="'+ ($isMobile ? "font-size: 1.3rem;" : "")+'" class="far fa-trash-alt"></i></a></div></div></div></div><input type="hidden" name="change_gallery_title" value="1"/><button class="mt-1 btn btn-primary btn-sm" style="' + ($isMobile ? "margin-left: 4.9rem;" : "margin-left: 12rem;") + '" type="submit">{{ __("site.apply_changes") }}</button><button style="display:none; '+ ($isMobile ? "margin-left: 4.9rem;" : "margin-left: 12rem;")+'" class="btn btn-primary btn-sm" type="button" disabled><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> {{ __("site.changes_in_progress") }}</button><button style="display:none; ' + ($isMobile ? "margin-left: 4.9rem;" : "margin-left: 12rem;") + '" type="button" class="btn btn-sm btn-success"><i class="far fa-check-circle"></i> <b>{{ __("site.changes_done") }}</b></button>';
 
 						var form_close =  '{!! Form::close() !!}';
 
 						var full_form = form_open + galleryz + form_close;
 					} else {
-						var galleryz = '<div class="form-group row"><div class="col-2 col-sm-2 col-md-1 text-center"><label for="' + newgallery + '" class="col-form-label">{{ __("site.title") }}</label></div><div class="col-10 col-sm-10 col-md-5 mt-1"><div class="input-group input-group-sm"><input type="text" class="form-control galzor" id="' + newgallery + '" name="' + newgallery + '" value="' + newGalleryName + '"><div class="input-group-append ml-2 "><a href="javascript:;" class="delete_gallery" title="{{ __("site.delete_gallery") }}"><i style="' + ($isMobile ? 'font-size: 1.3rem;' : '') + '" class="far fa-trash-alt"></i></a></div></div></div></div>';
+						var galleryz = '<div class="form-group row"><div class="col-2 col-sm-2 col-md-1 text-center"><label for="' + newgallery + '" class="col-form-label">{{ __("site.title") }}</label></div><div class="col-10 col-sm-10 col-md-5 mt-1"><div class="input-group input-group-sm"><input type="text" class="form-control galEdit" id="' + newgallery + '" name="' + newgallery + '" value="' + newGalleryName + '"><div class="input-group-append ml-2 "><a href="javascript:;" class="delete_gallery" title="{{ __("site.delete_gallery") }}"><i style="' + ($isMobile ? 'font-size: 1.3rem;' : '') + '" class="far fa-trash-alt"></i></a></div></div></div></div>';
 					}
 
 					$.timer(1000, function() {
@@ -105,9 +105,9 @@
 				data_string.append('gallery', $('select[name=gallery]').val());
 				data_string.append('total_files', $fileNumbers);
 
-				function parseDatas(datas, image_numb)
+				function parsedata(data, image_numb)
 				{
-					var image = datas;
+					var image = data;
 					var total_char_images = image.name[image_numb][0].length;
 					var imgf = image.name[image_numb][0].split('.').join("").split('-').join("").split('_').join("");
 					var gallery_nbr = image.gallery;
@@ -251,9 +251,9 @@
 						$('#file_upload').prop('disabled', false);
 					    $('#import').prop('disabled', false);
                     }
-				}).done(function(datas) {
-					for (var i=0; i<datas.name.length; i++) {
-						parseDatas(datas, i);
+				}).done(function(data) {
+					for (var i=0; i<data.name.length; i++) {
+						parsedata(data, i);
                     }
 
 					if ($isMobile) {
@@ -393,7 +393,7 @@
 						var Wwidth = 'col-2 thumb_pre_image';
 						var dimension = 'width:154px; height:169px; position:relative;';
 					}
-					if ($('#import').attr('disabled') === undefined) {
+					if (!$('#import').prop('disabled')) {
 						$('#loader2').removeClass('d-none').addClass('d-flex');
 						$('#file_upload').prop('disabled', true);
 						$('#import').prop('disabled', true);
@@ -411,18 +411,18 @@
 							var type = fileMIMEChecked.type;
 
 							if (type == 'image/gif')
-								typez = '<span class="badge badge-secondary mr-1">GIF</span>';
+								typespan = '<span class="badge badge-secondary mr-1">GIF</span>';
 							else if (type == 'image/png')
-								typez = '<span class="badge badge-secondary mr-1">PNG</span>';
+								typespan = '<span class="badge badge-secondary mr-1">PNG</span>';
 							else if (type == 'image/bmp')
-								typez = '<span class="badge badge-secondary mr-1">BMP</span>';
+								typespan = '<span class="badge badge-secondary mr-1">BMP</span>';
 							else
-								typez = '<span class="badge badge-secondary mr-1">JPG</span>';
+								typespan = '<span class="badge badge-secondary mr-1">JPG</span>';
 
 							$('.' + this.i).removeAttr('style');
 							$('.' + this.i).addClass(Wwidth);
 							$('.' + this.i).empty();
-							$('.' + this.i).append('<img src="' + data + '" class="img-thumbs"><div class="' + thumbs_label + '">'+'<span class="mr-1">' + name.replace(/\.[^/.]+$/, "").substr(0,14) + '</span>' + typez + '<a class="delete_pre_image" title="{{ __("site.remove_from_queue") }}" alt="' + this.i + '" href="javascript:;"><i style="' + ($isMobile ? 'font-size: 1.3rem;' : '') + '" class="far fa-trash-alt"></i></a></div>');
+							$('.' + this.i).append('<img src="' + data + '" class="img-thumbs"><div class="' + thumbs_label + '">'+'<span class="mr-1">' + name.replace(/\.[^/.]+$/, "").substr(0,14) + '</span>' + typespan + '<a class="delete_pre_image" title="{{ __("site.remove_from_queue") }}" alt="' + this.i + '" href="javascript:;"><i style="' + ($isMobile ? 'font-size: 1.3rem;' : '') + '" class="far fa-trash-alt"></i></a></div>');
 
 							if (type == 'image/gif') {
 								$tabz[this.i] = fileMIMEChecked;
@@ -438,7 +438,7 @@
 				}
 			});
 		}).on('fileuploadprocessalways', function (e, data) {
-			if (data.files[0].name == data.originalFiles[data.originalFiles.length-1].name) {
+			if (data.files[0].name == data.originalFiles[data.originalFiles.length-1].name) {console.log('asdd');
 				$('#loader2').removeClass('d-flex').addClass('d-none');
 				$('#file_upload').prop('disabled', false);
 				$('#import').prop('disabled', false);
@@ -500,7 +500,7 @@
 					url: $rootUrl + '/delete_gallery',
 					context: $(obj).parents('div.form-group'),
 					data: data_string
-				}).done(function(datas) {
+				}).done(function(data) {
 					$('#gallery option[value="' + gallery_id + '"]').remove();
 					$('#galeries select option[value="' + gallery_id + '"]').remove();
 					if (total_galleries == 1) {
@@ -546,7 +546,7 @@
 					var data_string = new FormData();
 					var haveData = false;
 					var arraygalleries = [];
-					$('.galzor').each(function() {
+					$('.galEdit').each(function() {
 						var val = $.trim(this.value);
 						var defaultVal = $.trim(this.defaultValue);
 						if (val != defaultVal) {
@@ -556,7 +556,7 @@
 						}
 					});
 					if (!haveData) return false;
-					$('.galzor').prop('disabled', true);
+					$('.galEdit').prop('disabled', true);
 					$.ajax({
 						beforeSend: function() {
 							$(form).find('button').first().hide();
@@ -570,7 +570,7 @@
 						contentType: false,
 						processData: false,
 						data: data_string
-					}).done(function(datas) {
+					}).done(function(data) {
 						arraygalleries.forEach(function(val, i){
 							$('#gallery' + i + ' > h2').html($("<div/>").html(val).text());
 							$('#gallery').children('option[value="' + i + '"]').html($("<div/>").html(val).text());
@@ -584,16 +584,16 @@
 							$.timer(1500, function() {
 								$(form).find('button').last().fadeOut(150, function() {
 									$(form).find('button').first().fadeIn(150);
-									$('.galzor').prop('disabled', false);
+									$('.galEdit').prop('disabled', false);
 								});
 							});
 						});
-					}).fail(function(datas) {
+					}).fail(function(data) {
 						alert('{{ __("site.request_failed") }}');
 					});
 				}
 			});
-			$('.galzor').each(function() {
+			$('.galEdit').each(function() {
 				$(this).rules('add', {
 					required: true,
 					normalizer: function(value) {

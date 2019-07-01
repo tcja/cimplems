@@ -2,6 +2,8 @@
 
 namespace App\Libraries;
 
+use Tcja\DOMDXMLParser\DOMDXMLParser;
+
 //use Illuminate\Support\Arr;
 /*
  *
@@ -27,17 +29,9 @@ class EditUser extends User
 	 **/
 	public static function changeUserEmail($user_email, $new_user_email)
 	{
-		$dom = new \DOMDocument('1.0', 'UTF-8');
-		$dom->preserveWhiteSpace = false;
-		$dom->formatOutput = true;
-		$dom->load(storage_path('app/' . User::_XML_USER_FILE_PATH));
-		$xpath = new \DOMXpath($dom);
-		$targets = $xpath->query('/users/user[@email="' . $user_email . '"]');
-		if ($targets && $targets->length > 0) {
-			$target = $targets->item(0);
-			$target->setAttribute('email', $new_user_email);
-        }
-        $dom->save(storage_path('app/' . User::_XML_USER_FILE_PATH));
+        $xml = new DOMDXMLParser(storage_path('app/' . User::XML_USER_FILE_PATH));
+
+        $xml->pickNode('email', $user_email)->changeData('email', $new_user_email);
 
 		return $new_user_email;
     }
@@ -47,21 +41,13 @@ class EditUser extends User
 	 *
 	 * @param 	string		$user_email			    User's e-mail
 	 * @param 	string		$new_password			User's new password
-	 * @return 	string								Returns the user's new password
+	 * @return 	string								Returns true on change success
 	 **/
 	public static function changeUserPassword($user_email, $new_password)
 	{
-		$dom = new \DOMDocument('1.0', 'UTF-8');
-		$dom->preserveWhiteSpace = false;
-		$dom->formatOutput = true;
-		$dom->load(storage_path('app/' . User::_XML_USER_FILE_PATH));
-		$xpath = new \DOMXpath($dom);
-		$targets = $xpath->query('/users/user[@email="' . $user_email . '"]');
-		if ($targets && $targets->length > 0) {
-			$target = $targets->item(0);
-			$target->setAttribute('password', bcrypt($new_password));
-        }
-        $dom->save(storage_path('app/' . User::_XML_USER_FILE_PATH));
+        $xml = new DOMDXMLParser(storage_path('app/' . User::XML_USER_FILE_PATH));
+
+        $xml->pickNode('email', $user_email)->changeData('password', bcrypt($new_password));
 
 		return true;
 	}

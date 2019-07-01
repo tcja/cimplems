@@ -19,7 +19,7 @@
                     url: $rootUrl + '/delete_image',
                     context: $(obj).parents('.thumbs'),
                     data: data_string
-                }).done(function(datas) {
+                }).done(function(data) {
                     $(this).fadeOut(500, function(el) {
                         if (total_photos_gal == 1) {
                             if (total_galz == 1) {
@@ -32,7 +32,7 @@
                             $(el).remove();
                         }
                     });
-                }).fail(function(datas) {
+                }).fail(function(data) {
                     alert('{{ __("site.request_failed") }}');
                 });
             });
@@ -56,9 +56,9 @@
                     complete: function() {
                         $(this).next('div').remove();
                     }
-                }).done(function(datas) {
+                }).done(function(data) {
                     $(this).attr('href', 'javascript:;');
-                    $(this).parent().append(datas);
+                    $(this).parent().append(data);
                 });
             } else {
                 if ($(this).nextAll('form').css('display') == 'none') {
@@ -97,7 +97,7 @@
                     }
 
                     var name = $(form).children().find("input[name='photo_name']").val();
-                    var form_datas = 'change_title=' + title + '&gallery=' + gallery + '&photo_name=' + name + '&modify_one_image=' + onlyTitleChanged;
+                    var form_data = 'change_title=' + title + '&gallery=' + gallery + '&photo_name=' + name + '&modify_one_image=' + onlyTitleChanged;
 
                     $.ajax({
                         beforeSend: function() {
@@ -105,13 +105,13 @@
                         },
                         type: 'POST',
                         dataType: 'json',
-                        data: form_datas,
+                        data: form_data,
                         url: $rootUrl + '/edit_image',
                         context: form
-                    }).done(function(datas) {
+                    }).done(function(data) {
                         $(this).parent().fadeOut(350, function(el) {
-                            var imgf = datas.name.split('.').join("").split('-').join("").split('_').join("");
-                            var gallery_nbr = datas.gallery;
+                            var imgf = data.name.split('.').join("").split('-').join("").split('_').join("");
+                            var gallery_nbr = data.galleryID;
                             var gallery_name = $(form).children().find("select[name='gallery']").find(":selected").html();
                             var gal_id = 'gallery' + gallery_nbr;
                             var gal_find = '#gallery' + gallery_nbr;
@@ -119,8 +119,8 @@
                             var current_gal_images = $(el).parents('.flex-wrap').children('div').length;
                             var gal_remove = $(el).parents('.flex-wrap').parent();
                             if (onlyTitleChanged) {
-                                $('#galeries img[alt="' + datas.name + '"]').parent().attr('title', $("<div/>").html(datas.title).text());
-                                $('#galeries img[alt="' + datas.name + '"]').parent().nextAll('form').find('input[name="change_title"]')[0].defaultValue = $("<div/>").html(datas.title).text();
+                                $('#galeries img[alt="' + data.name + '"]').parent().attr('title', $("<div/>").html(data.title).text());
+                                $('#galeries img[alt="' + data.name + '"]').parent().nextAll('form').find('input[name="change_title"]')[0].defaultValue = $("<div/>").html(data.title).text();
                                 $(el).fadeIn(500);
                                 return false;
                             }
@@ -132,13 +132,13 @@
                                         gal_remove.remove();
                                     }
                                 }
-                                $('#gallery' + datas.gallery).children('div').append('<div id="' + imgf + '" style="display:none;" class="thumbs"><a href="' + $rootUrl + '/storage/images_gallery/big/' + datas.name + '" rel="gallery1" title="'+escapeHtml($("<div/>").html(datas.title).text())+'" class="fancyboxThumb text-decoration-none"><img alt="' + datas.name + '" src="' + $rootUrl + '/storage/images_gallery/min/' + datas.name + '" class="img-thumbnail img-thumbnailz"></a><a title="{{ __("site.delete_image") }}" alt="delete" class="delete_image" href="javascript:;"><i class="far fa-trash-alt"></i></a><a class="edit_image" alt="' + datas.name + '" title="{{ __("site.edit_image") }}" href="javascript:;"><i class="far fa-edit"></i></a></div>');
+                                $('#gallery' + data.galleryID).children('div').append('<div id="' + imgf + '" style="display:none;" class="thumbs"><a href="' + $rootUrl + '/storage/images_gallery/big/' + data.name + '" rel="gallery1" title="'+escapeHtml($("<div/>").html(data.title).text())+'" class="fancyboxThumb text-decoration-none"><img alt="' + data.name + '" src="' + $rootUrl + '/storage/images_gallery/min/' + data.name + '" class="img-thumbnail img-thumbnailz"></a><a title="{{ __("site.delete_image") }}" alt="delete" class="delete_image" href="javascript:;"><i class="far fa-trash-alt"></i></a><a class="edit_image" alt="' + data.name + '" title="{{ __("site.edit_image") }}" href="javascript:;"><i class="far fa-edit"></i></a></div>');
                                 $('div[id=' + imgf + ']').fadeIn(500);
                             } else {
                                 if (current_gal_images == 1) {
                                     gal_remove.remove();
                                 }
-                                var html = '<div id="' + gal_id + '" style="display:none;" class="row mb-4"><h2>'+gallery_name+'</h2><div class="col-12 d-flex flex-wrap"><div id="' + imgf + '" class="thumbs"><a href="' + $rootUrl + '/storage/images_gallery/big/' + datas.name + '" rel="gallery1" title="'+escapeHtml($("<div/>").html(datas.title).text())+'" class="fancyboxThumb text-decoration-none"><img alt="' + datas.name + '" src="' + $rootUrl + '/storage/images_gallery/min/' + datas.name + '" class="img-thumbnail img-thumbnailz"></a><a class="delete_image" title="{{ __("site.delete_image") }}" href="javascript:;"><i class="far fa-trash-alt"></i></a><a class="edit_image" alt="' + datas.name + '" title="{{ __("site.edit_image") }}" href="javascript:;"><i class="far fa-edit"></i></a></div></div></div>';
+                                var html = '<div id="' + gal_id + '" style="display:none;" class="row mb-4"><h2>'+gallery_name+'</h2><div class="col-12 d-flex flex-wrap"><div id="' + imgf + '" class="thumbs"><a href="' + $rootUrl + '/storage/images_gallery/big/' + data.name + '" rel="gallery1" title="'+escapeHtml($("<div/>").html(data.title).text())+'" class="fancyboxThumb text-decoration-none"><img alt="' + data.name + '" src="' + $rootUrl + '/storage/images_gallery/min/' + data.name + '" class="img-thumbnail img-thumbnailz"></a><a class="delete_image" title="{{ __("site.delete_image") }}" href="javascript:;"><i class="far fa-trash-alt"></i></a><a class="edit_image" alt="' + data.name + '" title="{{ __("site.edit_image") }}" href="javascript:;"><i class="far fa-edit"></i></a></div></div></div>';
 
                                 if (gallery_nbr == 1) {
                                     $('#galeries').prepend(html);

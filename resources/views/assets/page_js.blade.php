@@ -17,22 +17,22 @@
 				}
 			},
 			submitHandler: function(form) {
-				$('.sendForm').attr('disabled', 'disabled');
+				$('.sendForm').prop('disabled', true);
 				var data_string = 'password=' + $('#inputPassword').val() + '&email=' + $('#inputEmail').val();
 				$.ajax({
 					type: 'POST',
-					url: $rootUrl+'/login',
+					url: $rootUrl + '/login',
 					data: data_string,
 					dataType: 'json'
-				}).done(function(datas) {
-					if (datas === 'updateBrowser') {
-						document.location.href = $rootUrl+"/login";
-                    } else if (datas === 'logged') {
+				}).done(function(data) {
+					if (data === 'updateBrowser') {
+						document.location.href = $rootUrl + "/login";
+                    } else if (data === 'logged') {
 						/* $('.toast').toast({
 							delay: 6000
 						});
 						$('.modalLogin').one('hidden.bs.modal', function (e) {
-							$('.sendForm').removeAttr('disabled');
+							$('.sendForm').prop('disabled', false);
 							$('.toast').on('hidden.bs.toast', function () {
 								$('.toast-header').children('strong').html('Opération effectuée !');
 								$('.toast').toast({
@@ -45,8 +45,8 @@
 						});
 						$('.modalLogin').modal('hide'); */
 						document.location.href = $rootUrl + '/' + ($currentSlug == 'home' ? '' : $currentSlug);
-					} else if (datas === 'wrongInputs') {
-						$('.sendForm').removeAttr('disabled');
+					} else if (data === 'wrongInputs') {
+						$('.sendForm').prop('disabled', false);
 						$('#inputPassword').removeClass('valid')/* .addClass('ml-4 errorf alert-error') */;
 						$('#inputPassword').after('<label style="max-width: 90%;" class="ml-4 errorf alert-error">{{ __("site.wrong_inputs") }}</label>');
 						$('#inputPassword').keyup(function() {
@@ -98,14 +98,14 @@
 					},
 				},
 				submitHandler: function(form) {
-					$('.sendForm').attr('disabled', 'disabled');
+					$('.sendForm').prop('disabled', true);
 					var data_string = 'name=' + $(form).find('input[name="name"]').val() + '&email=' + $(form).find('input[name="email"]').val() + '&subject=' + $(form).find('input[name="subject"]').val() + '&message=' + encodeURIComponent($(form).find('textarea[name="message"]').val());
 					$.ajax({
 						beforeSend: function() {
-							$(form).find('input[name="name"]').attr('disabled', 'disabled');
-							$(form).find('input[name="email"]').attr('disabled', 'disabled');
-							$(form).find('input[name="subject"]').attr('disabled', 'disabled');
-							$(form).find('textarea[name="message"]').attr('disabled', 'disabled');
+							$(form).find('input[name="name"]').prop('disabled', true);
+							$(form).find('input[name="email"]').prop('disabled', true);
+							$(form).find('input[name="subject"]').prop('disabled', true);
+							$(form).find('textarea[name="message"]').prop('disabled', true);
 							if ($isMobile) {
                                 $(button).removeClass('d-block');
                                 $(button).addClass('d-none');
@@ -116,20 +116,20 @@
 						},
 						type: 'POST',
 						context: this,
-						url: $rootUrl+'/contact',
+						url: $rootUrl + '/contact',
 						data: data_string,
 						dataType: 'json'
-					}).done(function(datas) {
+					}).done(function(data) {
 						$.timer(1500, function() {
 							$(form).find('input[name="name"]').val('');
 							$(form).find('input[name="email"]').val('');
 							$(form).find('input[name="subject"]').val('');
 							$(form).find('textarea[name="message"]').val('');
-							$('.sendForm').removeAttr('disabled');
-							$(form).find('input[name="name"]').removeAttr('disabled');
-							$(form).find('input[name="email"]').removeAttr('disabled');
-							$(form).find('input[name="subject"]').removeAttr('disabled');
-							$(form).find('textarea[name="message"]').removeAttr('disabled');
+							$('.sendForm').prop('disabled', false);
+							$(form).find('input[name="name"]').prop('disabled', false);
+							$(form).find('input[name="email"]').prop('disabled', false);
+							$(form).find('input[name="subject"]').prop('disabled', false);
+							$(form).find('textarea[name="message"]').prop('disabled', false);
 							$(form).find('.formSending').fadeOut(150, function() {
 								$(form).find('.formSent').fadeIn(150, function() {
 									$.timer(1000, function() {

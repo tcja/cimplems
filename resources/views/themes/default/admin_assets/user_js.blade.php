@@ -7,9 +7,9 @@
                     url: $rootUrl + '/get_user_email',
                     dataType: 'json',
                     context: this
-                }).done(function(datas) {
-                    $('#oldEmailUser').val(datas);
-                    $('#inputEmailUser').val(datas).select();
+                }).done(function(data) {
+                    $('#oldEmailUser').val(data);
+                    $('#inputEmailUser').val(data).select();
                     $('#inputEmailUser').focusin(function() {
                         $(this).select();
                     });
@@ -31,11 +31,11 @@
 			},
             submitHandler: function(form) {
                 if ($('#inputEmailUser').val() == $('#oldEmailUser').val()) return false;
-                $('.sendForm').attr('disabled', 'disabled');
+                $('.sendForm').prop('disabled', true);
                 var data_string = 'old_user_email=' + $('#oldEmailUser').val() + '&new_user_email=' + $('#inputEmailUser').val();
                 $.ajax({
                     beforeSend : function() {
-                        $('#inputEmailUser').attr('disabled', 'disabled');
+                        $('#inputEmailUser').prop('disabled', true);
 						$(form).find('.sendForm').hide();
 						$(form).find('.formSending').fadeIn(0);
 					},
@@ -43,16 +43,16 @@
                     url: $rootUrl + '/change_user_email',
                     data: data_string,
                     dataType: 'json'
-                }).done(function(datas) {
-                    $('#oldEmailUser').val(datas);
+                }).done(function(data) {
+                    $('#oldEmailUser').val(data);
                     $.timer(1000, function() {
 						$(form).find('.formSending').fadeOut(150, function() {
 							$(form).find('.formSent').fadeIn(150);
 						});
 						$.timer(1500, function() {
 							$(form).find('.formSent').fadeOut(150, function() {
-                                $('#inputEmailUser').removeAttr('disabled');
-                                $('.sendForm').removeAttr('disabled');
+                                $('#inputEmailUser').prop('disabled', false);
+                                $('.sendForm').prop('disabled', false);
 								$(form).find('.sendForm').fadeIn(150);
 							});
 						});
@@ -81,24 +81,24 @@
             submitHandler: function(form) {
                 if ($('#inputPasswordUser').val() == '' && $('#inputNewPasswordUser').val() == '' && $('#inputConfirmPasswordUser').val() == '') return false;
 
-                $('.sendForm').attr('disabled', 'disabled');
+                $('.sendForm').prop('disabled', true);
                 var data_string = 'old_password_user=' + $('#inputPasswordUser').val();
                 $.ajax({
                     beforeSend : function() {
-                        $('#inputPasswordUser').attr('disabled', 'disabled');
+                        $('#inputPasswordUser').prop('disabled', true);
                     },
                     type: 'POST',
                     url: $rootUrl + '/check_user_password',
                     data: data_string,
                     dataType: 'json'
-                }).done(function(datas) {
-                    if (datas) {
+                }).done(function(data) {
+                    if (data) {
                         var data_string = 'user_email=' + $('#oldEmailUser').val() + '&new_password_user=' + $('#inputNewPasswordUser').val();
                         $.ajax({
                             beforeSend : function() {
-                                $('#inputPasswordUser').attr('disabled', 'disabled');
-                                $('#inputNewPasswordUser').attr('disabled', 'disabled');
-                                $('#inputConfirmPasswordUser').attr('disabled', 'disabled');
+                                $('#inputPasswordUser').prop('disabled', true);
+                                $('#inputNewPasswordUser').prop('disabled', true);
+                                $('#inputConfirmPasswordUser').prop('disabled', true);
                                 $(form).find('.sendForm').hide();
                                 $(form).find('.formSending').fadeIn(0);
                             },
@@ -106,7 +106,7 @@
                             url: $rootUrl + '/change_user_password',
                             data: data_string,
                             dataType: 'json'
-                        }).done(function(datas) {
+                        }).done(function(data) {
                             $.timer(1000, function() {
                                 $(form).find('.formSending').fadeOut(150, function() {
                                     $(form).find('.formSent').fadeIn(150);
@@ -116,18 +116,18 @@
                                         $('#inputPasswordUser').val('');
                                         $('#inputNewPasswordUser').val('');
                                         $('#inputConfirmPasswordUser').val('');
-                                        $('#inputPasswordUser').removeAttr('disabled');
-                                        $('#inputNewPasswordUser').removeAttr('disabled');
-                                        $('#inputConfirmPasswordUser').removeAttr('disabled');
-                                        $('.sendForm').removeAttr('disabled');
+                                        $('#inputPasswordUser').prop('disabled', false);
+                                        $('#inputNewPasswordUser').prop('disabled', false);
+                                        $('#inputConfirmPasswordUser').prop('disabled', false);
+                                        $('.sendForm').prop('disabled', false);
                                         $(form).find('.sendForm').fadeIn(150);
                                     });
                                 });
                             });
                         });
                     } else {
-                        $('#inputPasswordUser').removeAttr('disabled');
-                        $('.sendForm').removeAttr('disabled');
+                        $('#inputPasswordUser').prop('disabled', false);
+                        $('.sendForm').prop('disabled', false);
                         $('#inputPasswordUser').removeClass('valid').addClass('ml-4 errorf alert-error');
                         $('#inputPasswordUser').after('<label style="max-width: 90%;" class="ml-4 errorf alert-error">{{ __("site.wrong_password") }}</label>');
                         $('#inputPasswordUser').keyup(function() {

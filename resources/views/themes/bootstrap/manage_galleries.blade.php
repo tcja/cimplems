@@ -96,7 +96,7 @@
 								</div>
 								<div class="col-10 col-sm-10 col-md-5 mt-1">
 									<div class="input-group input-group-sm">
-										<input type="text" class="form-control galzor" id="{{ $key }}" name="{{ $key }}" value="{{ $gallery }}"/>
+										<input type="text" class="form-control galEdit" id="{{ $key }}" name="{{ $key }}" value="{{ $gallery }}"/>
 										<div class="input-group-append ml-2 {{ ($isMobile ? 'mt-1' : '') }}">
 											<a href="javascript:;" class="delete_gallery" title="{{ __('site.delete_gallery') }}"><i style="{{ ($isMobile ? 'font-size: 1.3rem;' : '') }}" class="far fa-trash-alt"></i></a>
 										</div>

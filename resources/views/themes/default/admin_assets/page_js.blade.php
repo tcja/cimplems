@@ -46,7 +46,7 @@
                             data.append('image_name', image[0].name.split('.').slice(0, -1).join('.'));
                             $.ajax({
                                 type: 'POST',
-                                url: $rootUrl+'/upload_image',
+                                url: $rootUrl + '/upload_image',
                                 cache: false,
                                 contentType: false,
                                 processData: false,
@@ -65,10 +65,10 @@
                      var data_string = 'image_name=' + target[0].src.split('/')[target[0].src.split('/').length-1];
                      $.ajax({
                         type: 'POST',
-                        url: $rootUrl+'/delete_site_image',
+                        url: $rootUrl + '/delete_site_image',
                         data: data_string,
                         dataType: 'json'
-                    }).done(function(datas) {
+                    }).done(function(data) {
                     }).fail(function(data) {
                         console.log(data);
                     });
@@ -78,16 +78,16 @@
 
         $(this).on('click', '.acceptPageEdit', function(e) {
             e.preventDefault();
-            $('.sendForm').attr('disabled', 'disabled');
+            $('.sendForm').prop('disabled', true);
             $.ajax({
                 type: 'POST',
-                url: $rootUrl+'/edit_page',
+                url: $rootUrl + '/edit_page',
                 data: { content : $('#summernote').val(), slug : $('input[name="slug"]').val() },
                 dataType: 'json',
                 context: this
             }).done(function(content) {
                 $('.modalEditPage').one('hidden.bs.modal', function (e) {
-                    $('.sendForm').removeAttr('disabled');
+                    $('.sendForm').prop('disabled', false);
                     $('#content').empty();
                     if ($.trim($('.note-editable').text()) == '' && !/(img|iframe|canvas)/i.test($('.note-editable').html())) {
                         $('#content').hide();
@@ -110,22 +110,22 @@
                 }
             },
             submitHandler: function(form) {
-                $('.sendForm').attr('disabled', 'disabled');
+                $('.sendForm').prop('disabled', true);
                 var data_string = 'page_name_menu=' + $('#pageNameNew').val() + '&order_menu_new=' + $('#order_menu_new').val();
                 $.ajax({
                     type: 'POST',
-                    url: $rootUrl+'/change_menu_order',
+                    url: $rootUrl + '/change_menu_order',
                     data: data_string,
                     dataType: 'json'
-                }).done(function(datas) {
+                }).done(function(data) {
                     $('#menu').children('span').remove();
-                    $('#menu').children().eq(datas.menuOrder-2).after('<span>'+datas.menu_name+'</span>');
+                    $('#menu').children().eq(data.menuOrder-2).after('<span>'+data.menu_name+'</span>');
 
                     var updatedMenu = [];
-                    if ($currentMenuOrder - datas.menuOrder < 0) {
+                    if ($currentMenuOrder - data.menuOrder < 0) {
                         $('#order_menu_new option').each(function(i, el) {
                             var menuNumber = parseInt(el.value);
-                            if (menuNumber == 0 || menuNumber == 1 || menuNumber < $currentMenuOrder + 1 || menuNumber > datas.menuOrder) {
+                            if (menuNumber == 0 || menuNumber == 1 || menuNumber < $currentMenuOrder + 1 || menuNumber > data.menuOrder) {
                             } else {
                                 updatedMenu.push([menuNumber-1, el.text]);
                                 el.remove();
@@ -139,7 +139,7 @@
                     } else {
                         $('#order_menu_new option').each(function(i, el) {
                             var menuNumber = parseInt(el.value);
-                            if (menuNumber == 0 || menuNumber == 1 || menuNumber > $currentMenuOrder || menuNumber < datas.menuOrder) {
+                            if (menuNumber == 0 || menuNumber == 1 || menuNumber > $currentMenuOrder || menuNumber < data.menuOrder) {
                             } else {
                                 updatedMenu.push([menuNumber+1, el.text]);
                                 el.remove();
@@ -149,19 +149,19 @@
                         for (var i = 0; i < updatedMenu.length; i++) {
                             finalUpdate += '<option value="'+updatedMenu[i][0]+'">'+updatedMenu[i][1]+'</option>';
                         }
-                        $('#order_menu_new').children().eq(datas.menuOrder - 2).after(finalUpdate);
+                        $('#order_menu_new').children().eq(data.menuOrder - 2).after(finalUpdate);
                     }
-                    $currentMenuOrder = datas.menuOrder;
+                    $currentMenuOrder = data.menuOrder;
                     var orderMenuNew = $('#order_menu_new').children('option[value!="0"]').clone();
                     var home = $('#orderList').children('option[value="1"]').clone();
                     $('#orderList').children('option[value!="0"]').remove();
                     $('#orderList').append(home);
                     $('#orderList').append(orderMenuNew);
-                    $('#orderList').children().eq(datas.menuOrder - 1).after('<option value="'+datas.menuOrder+'">'+datas.menu_name+'</option>');
+                    $('#orderList').children().eq(data.menuOrder - 1).after('<option value="'+data.menuOrder+'">'+data.menu_name+'</option>');
 
                     $('.modalChangeOrderMenu').one('hidden.bs.modal', function (e) {
                         $('#order_menu_new').val(0);
-                        $('.sendForm').removeAttr('disabled');
+                        $('.sendForm').prop('disabled', false);
                         $('.toast-body').html('{{ __("site.menu_updated") }}');
                         $('.toast').toast('show');
                     });
@@ -186,25 +186,25 @@
                 }
             },
             submitHandler: function(form) {
-                $('.sendForm').attr('disabled', 'disabled');
+                $('.sendForm').prop('disabled', true);
                 var data_string = 'page_name=' + $('#pageName').val() + '&afterMenu=' + $('#orderList').val();
                 $.ajax({
                     type: 'POST',
-                    url: $rootUrl+'/add_page',
+                    url: $rootUrl + '/add_page',
                     data: data_string,
                     dataType: 'json'
-                }).done(function(datas) {
-                    $('#menu').children().eq(datas.menuOrder-2).after('<a href="'+$rootUrl+'/'+datas.page_link+'" class="pageLink mr-1" title="'+datas.page_name+'">'+datas.page_name+'</a>');
+                }).done(function(data) {
+                    $('#menu').children().eq(data.menuOrder-2).after('<a href="'+$rootUrl + '/'+data.page_link+'" class="pageLink mr-1" title="'+data.page_name+'">'+data.page_name+'</a>');
                     var updatedMenu = [];
                     $('#orderList option').each(function(i, el) {
                         var menuNumber = parseInt(el.value);
-                        if (menuNumber == 0 || menuNumber == 1 || menuNumber < datas.menuOrder) {
+                        if (menuNumber == 0 || menuNumber == 1 || menuNumber < data.menuOrder) {
                         } else {
                             updatedMenu.push([menuNumber+1, el.text]);
                             el.remove();
                         }
                     });
-                    updatedMenu.push([datas.menuOrder, datas.page_name]);
+                    updatedMenu.push([data.menuOrder, data.page_name]);
                     updatedMenu.sort(function(a, b){return a[0]-b[0]});
                     var finalUpdate = '';
                     for (var i = 0; i < updatedMenu.length; i++) {
@@ -221,7 +221,7 @@
                     $('#order_menu_new').val(0);
                     $('.modalAddPage').one('hidden.bs.modal', function (e) {
                         $('#pageName').val('');
-                        $('.sendForm').removeAttr('disabled');
+                        $('.sendForm').prop('disabled', false);
                         $('.toast-body').html('{{ __("site.page_created") }}');
                         $('.toast').toast('show');
                     });
@@ -242,37 +242,38 @@
                 }
             },
             submitHandler: function(form) {
-                $('.sendForm').attr('disabled', 'disabled');
+                $('.sendForm').prop('disabled', true);
                 var data_string = 'page_name_menu_change=' + $('#pageNameChangeNew').val() + '&page_name_old=' + $('#pageNameOld').val();
                 $.ajax({
                     type: 'POST',
-                    url: $rootUrl+'/change_page_name',
+                    url: $rootUrl + '/change_page_name',
                     data: data_string,
                     dataType: 'json'
-                }).done(function(datas) {
+                }).done(function(data) {
                     if (history.pushState) {
-                        $(document).prop('title', datas.new_page_title);
-                        $('#menu').children('span').html(datas.new_page_title);
-                        $('#orderList').children('option[value="'+$currentMenuOrder+'"]').html(datas.new_page_title);
-                        $('#EditPage').find('input[name="slug"]').val(datas.new_page_slug);
-                        if (datas.new_page_slug == 'home') {
-                            window.history.pushState(null, "Title", $rootUrl+"/");
+                        $(document).prop('title', data.new_page_title);
+                        $('#menu').children('span').html(data.new_page_title);
+                        $('#orderList').children('option[value="'+$currentMenuOrder+'"]').html(data.new_page_title);
+                        $('#EditPage').find('input[name="slug"]').val(data.new_page_slug);
+                        if (data.new_page_slug == 'home') {
+                            window.history.pushState(null, "Title", $rootUrl + "/");
                         } else {
-                            window.history.pushState(null, "Title", $rootUrl+"/"+datas.new_page_slug);
+                            window.history.pushState(null, "Title", $rootUrl + "/"+data.new_page_slug);
                         }
-                        $currentSlug = datas.new_page_slug;
+                        $currentSlug = data.new_page_slug;
+                        $currentPageTitle = data.new_page_title;
                         $('.modalChangePageName').one('hidden.bs.modal', function (e) {
-                            $('.sendForm').removeAttr('disabled');
+                            $('.sendForm').prop('disabled', false);
                             $('#pageNameChangeNew').val('');
-                            $('#pageNameOld').val(datas.new_page_slug);
-                            $('#pageNameNew').val(datas.new_page_slug);
-                            $('.page_name_span').html(datas.new_page_title);
+                            $('#pageNameOld').val(data.new_page_slug);
+                            $('#pageNameNew').val(data.new_page_slug);
+                            $('.page_name_span').html(data.new_page_title);
                             $('.toast-body').html('{{ __("site.page_name_changed") }}');
                             $('.toast').toast('show');
                         });
                         $('.modalChangePageName').modal('hide');
                     } else {
-                        document.location.href = $rootUrl+"/"+datas.new_page_slug;
+                        document.location.href = $rootUrl + "/"+data.new_page_slug;
                     }
                 });
             }
@@ -290,38 +291,38 @@
                 $('.note-editable').find('.img-fluidR').each(function(i, el) {
                     array_images[i] = $(el).attr('src').split('/')[$(el).attr('src').split('/').length-1];
                 });
-                var datas = { page_name_delete: slug, array_images: array_images };
+                var data = { page_name_delete: slug, array_images: array_images };
                 $.ajax({
                     type: 'POST',
-                    url: $rootUrl+'/delete_page',
+                    url: $rootUrl + '/delete_page',
                     context: obj,
-                    data: datas,
+                    data: data,
                     dataType: 'json'
-                }).done(function(datas) {
+                }).done(function(data) {
                     if (history.pushState) {
                         $currentMenuOrder = 1;
                         $currentSlug = 'home'
-                        $(document).prop('title', datas.home_page_name);
+                        $(document).prop('title', data.home_page_name);
                         $('#EditPage').find('input[name="slug"]').val('home');
                         $('#summernote').summernote('reset');
-                        $('#summernote').val(datas.content);
-                        $('.note-editable').empty().append(datas.content);
+                        $('#summernote').val(data.content);
+                        $('.note-editable').empty().append(data.content);
                         $('.delete_page').remove();
                         $('.change_menu_order').remove();
                         $('#menu').children('span').remove();
-                        $('#menu').find('a[href="'+$rootUrl+'"]').replaceWith('<span>'+$('#menu').find('a[href="'+$rootUrl+'"]').attr('title')+'</span>');
-                        $('#orderList').find('option[value="'+datas.menuOrder+'"]').remove();
-                        $('.page_name_span').html(datas.home_page_name);
+                        $('#menu').find('a[href="'+$rootUrl + '"]').replaceWith('<span>'+$('#menu').find('a[href="'+$rootUrl + '"]').attr('title')+'</span>');
+                        $('#orderList').find('option[value="'+data.menuOrder+'"]').remove();
+                        $('.page_name_span').html(data.home_page_name);
                         $('#pageNameOld').val('home');
-                        $(datas.menu_update).each(function(i, el) {
+                        $(data.menu_update).each(function(i, el) {
                             $('#orderList').find('option[value="'+el+'"]').val(el-1)
                         });
-                        $(datas.menu_update).each(function(i, el) {
+                        $(data.menu_update).each(function(i, el) {
                             $('#order_menu_new').find('option[value="'+el+'"]').val(el-1)
                         });
                         $('#content').fadeOut(100, function(el) {
                             $(el).empty()
-                            if (datas.publishState === 1) {
+                            if (data.publishState === 1) {
                                 $('.publish').replaceWith('<input class="publish" type="checkbox" checked="checked">');
                                 if ($currentSlug == 'home') {
                                     $('.publish').parent().parent().attr('title', '').attr('data-original-title', '{{ __("site.put_site_in_private") }}');
@@ -336,15 +337,15 @@
                                     $('.publish').parent().parent().attr('title', '').attr('data-original-title', '{{ __("site.put_in_public") }}');
                                 }
                             }
-                            $('#content').append(datas.content).hide().fadeIn(300);
-                            window.history.pushState(null, "Title", $rootUrl+"/");
+                            $('#content').append(data.content).hide().fadeIn(300);
+                            window.history.pushState(null, "Title", $rootUrl + "/");
                             $('.toast-body').html('{{ __("site.page_deleted") }}');
                             $('.toast').toast('show');
                         });
                     } else {
                         document.location.href = $rootUrl;
                     }
-                }).fail(function(datas) {
+                }).fail(function(data) {
                     alert('{{ __("site.request_failed") }}');
                 });
             });
@@ -376,12 +377,12 @@
             var data_string = 'page_name=' + $currentSlug + '&page_state=' + state;
             $.ajax({
                 type: 'POST',
-                url: $rootUrl+'/change_page_state',
+                url: $rootUrl + '/change_page_state',
                 context: this,
                 data: data_string,
                 dataType: 'json'
-            }).done(function(datas) {
-                if (datas) {
+            }).done(function(data) {
+                if (data) {
                     if ($currentSlug == 'home') {
                         $('.toast-body').html('{{ __("site.site_public") }}');
                     } else {
@@ -401,16 +402,16 @@
 
         $(this).on('click', '.view_as_visitor', function(e) {
             e.preventDefault();
-            $(this).attr('disabled', 'disabled');
+            $(this).prop('disabled', true);
             if ($currentSlug == 'home' && $('.publish').attr('checked') === undefined) {
                 if ($('.button_visitor_warning').length === 0) {
                     $.ajax({
                         type: 'GET',
-                        url: $rootUrl+'/list_private_pages',
+                        url: $rootUrl + '/list_private_pages',
                         dataType: 'json',
                         context: this
-                    }).done(function(datas) {
-                        $(datas).each(function(i, el) {
+                    }).done(function(data) {
+                        $(data).each(function(i, el) {
                             if (el == $('#menu').children('a[title="'+el+'"]').html()) {
                                 $('#menu').children('a[title="'+el+'"]').fadeOut();
                             }
@@ -419,7 +420,7 @@
                         $('#page_admin_menu').fadeOut();
                         $('.configure_user').fadeOut();
                         $('.view_as_visitor').before('<button type="button" style="top: 0; right: 2.4rem; cursor: default;" class="tooltipz button_visitor_warning position-absolute page_osption_icon mt-1 mr-2 btn btn-danger btn-sm" title="" data-original-title="{{ __("site.site_in_constr_warning_label") }}"><i class="fas fa-lock"></i>&nbsp;&nbsp;{{ __("site.site_in_constr_warning_title") }}</button>');
-                        $(this).removeAttr('disabled');
+                        $(this).prop('disabled', false);
                         $(this).attr('title', '').attr('data-original-title', '{{ __("site.view_as_admin") }}');
                         $(this).children().removeClass('fa-eye').addClass('fa-eye-slash');
                     });
@@ -433,7 +434,7 @@
                     $('#page_admin_menu').fadeIn();
                     $('.configure_user').fadeIn();
                     $('.button_visitor_warning').remove();
-                    $(this).removeAttr('disabled');
+                    $(this).prop('disabled', false);
                     $(this).attr('title', '').attr('data-original-title', '{{ __("site.view_as_visitor") }}');
                     $(this).children().removeClass('fa-eye-slash').addClass('fa-eye');
                 }
@@ -441,14 +442,14 @@
                 if ($('#admin_menu').css('opacity') == 1) {
                     $.ajax({
                         type: 'GET',
-                        url: $rootUrl+'/list_private_pages',
+                        url: $rootUrl + '/list_private_pages',
                         dataType: 'json',
                         context: this
-                    }).done(function(datas) {
-                        $(this).removeAttr('disabled');
+                    }).done(function(data) {
+                        $(this).prop('disabled', false);
                         $(this).attr('title', '').attr('data-original-title', '{{ __("site.view_as_admin") }}');
                         $(this).children().removeClass('fa-eye').addClass('fa-eye-slash');
-                        $(datas).each(function(i, el) {
+                        $(data).each(function(i, el) {
                             if (el == $('#menu').children('a[title="'+el+'"]').html()) {
                                 $('#menu').children('a[title="'+el+'"]').fadeOut();
                             } else {
@@ -472,7 +473,7 @@
                         if ($('.publish').attr('checked') === undefined) {
                             $.ajax({
                                 type: 'GET',
-                                url: $rootUrl+'/show_home_page',
+                                url: $rootUrl + '/show_home_page',
                                 dataType: 'json',
                                 context: this
                             }).done(function(data) {
@@ -505,14 +506,14 @@
                                     $('#menu').children('span').replaceWith('<a href="' + $rootUrl + '/' + slugLink + '" class="pageLink mr-1" title="' + titleLink + '">' + titleLink + '</a>');
                                     $('#menu').children('a[title="' + titleLink + '"]').css({ opacity: '0', display: 'none' });
                                     $('#menu').children().first().replaceWith('<span>' + $('#menu').children().first().html() + '</span>');
-                                    window.history.pushState(null, "Title", $rootUrl+"/");
+                                    window.history.pushState(null, "Title", $rootUrl + "/");
                                     $(document).prop('title', $('#menu').children('span').html());
                                 });
                             });
                         } else {
                             $.ajax({
                                 type: 'GET',
-                                url: $rootUrl+'/show_home_page',
+                                url: $rootUrl + '/show_home_page',
                                 dataType: 'json',
                                 context: this
                             }).done(function(data) {
@@ -530,7 +531,7 @@
                         }
                     });
                 } else {
-                    $(this).removeAttr('disabled');
+                    $(this).prop('disabled', false);
                     $(this).attr('title', '').attr('data-original-title', '{{ __("site.view_as_visitor") }}');
                     $(this).children().removeClass('fa-eye-slash').addClass('fa-eye');
                     $('#menu').children().each(function(i, el) {

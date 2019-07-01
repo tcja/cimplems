@@ -2,6 +2,8 @@
 
 namespace App\Libraries;
 
+use Tcja\DOMDXMLParser\DOMDXMLParser;
+
 //use Illuminate\Support\Arr;
 /*
  *
@@ -30,9 +32,9 @@ class User
 
 	/**
 	 *
-	 *  @var string $_XML_PAGE_FOLDER_PATH Default pages folder location
+	 *  @var string $XML_PAGE_FOLDER_PATH Default pages folder location
 	 * */
-	const _XML_USER_FILE_PATH = 'private/users/users.xml';
+	const XML_USER_FILE_PATH = 'private/users/users.xml';
 
 	/**
 	 *
@@ -49,10 +51,10 @@ class User
 	 *
 	 * @return	array	Returns an array of the user
 	 **/
-	private function fetchUser()
+	/* private function fetchUser()
 	{
 
-	}
+	} */
 	/**
 	 * Fetches the admin password
 	 *
@@ -60,14 +62,9 @@ class User
 	 **/
 	private function fetchAdminPassword()
 	{
-		$doc = new \DOMDocument('1.0', 'UTF-8');
-		$password = null;
-		$doc->load(storage_path('app/' . self::_XML_USER_FILE_PATH));
-		$datas = $doc->getElementsByTagName('user');
-		foreach ($datas as $data) {
-            $password = $data->getAttribute('password');
-        }
-		return $password;
+        $xml = new DOMDXMLParser(storage_path('app/' . self::XML_USER_FILE_PATH));
+
+        return $xml->pickNode('user')->getAttr('password');
     }
     /**
 	 * Fetches the admin e-mail
@@ -76,14 +73,9 @@ class User
 	 **/
 	private function fetchAdminEmail()
 	{
-		$doc = new \DOMDocument('1.0', 'UTF-8');
-		$email = null;
-		$doc->load(storage_path('app/' . self::_XML_USER_FILE_PATH));
-		$datas = $doc->getElementsByTagName('user');
-		foreach ($datas as $data) {
-            $email = $data->getAttribute('email');
-        }
-		return $email;
+        $xml = new DOMDXMLParser(storage_path('app/' . self::XML_USER_FILE_PATH));
+
+        return $xml->pickNode('user')->getAttr('email');
 	}
 	/**
 	 * Gets admin's password

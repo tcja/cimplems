@@ -26,6 +26,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Page transition style
+    |--------------------------------------------------------------------------
+    |
+    | This defines if the page transitions should be done via ajax or just
+    | the standard way by always refreshing the whole page
+    |
+    */
+
+    'page_ajax_transition' => true,
+
+    /*
+    |--------------------------------------------------------------------------
     | Default theme
     |--------------------------------------------------------------------------
     |

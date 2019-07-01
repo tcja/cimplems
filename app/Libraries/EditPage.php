@@ -4,6 +4,8 @@ namespace App\Libraries;
 
 use Illuminate\Support\Str;
 use Illuminate\Support\Arr;
+use Tcja\DOMDXMLParser\DOMDXMLParser;
+
 /*
  *
  * Edit Page class.
@@ -29,25 +31,15 @@ class EditPage extends Page
 	 **/
 	public function editPage($page, $content)
 	{
-		$page = strtolower(str_replace('-', '_', $page));
-		$dom = new \DOMDocument('1.0', 'UTF-8');
-		$dom->preserveWhiteSpace = false;
-		$dom->formatOutput = true;
 		parent::__construct('GET', 'ALL_PAGES_LIST');
 		if (array_key_exists($page, $this->pages_default_list)) {
-            $page_path = Page::_XML_PAGE_DEFAULT_FOLDER_PATH . $this->pages_default_list[$page] . '.xml';
+            $page_path = Page::XML_PAGE_DEFAULT_FOLDER_PATH . $this->pages_default_list[$page] . '.xml';
         } else {
-            $page_path = Page::_XML_PAGE_FOLDER_PATH . $page . '.xml';
+            $page_path = Page::XML_PAGE_FOLDER_PATH . $page . '.xml';
         }
-		$dom->load(storage_path('app/' . $page_path));
-		$xpath = new \DOMXpath($dom);
-		$targets = $xpath->query('/page');
-		if ($targets && $targets->length > 0) {
-			$target = $targets->item(0);
-			$cdata = $dom->createCDATASection($content);
-			$target->replaceChild($cdata, $target->firstChild);
-		}
-		$dom->save(storage_path('app/' . $page_path));
+
+        $xml = new DOMDXMLParser(storage_path('app/' . $page_path));
+        $xml->pickNode('page')->changeData('CDATA', $content);
 
 		return $content;
 	}
@@ -62,28 +54,20 @@ class EditPage extends Page
 	 **/
 	public function changePageName($new_page_name, $page_name_old)
 	{
-		$dom = new \DOMDocument('1.0', 'UTF-8');
-		$dom->preserveWhiteSpace = false;
-		$dom->formatOutput = true;
 		parent::__construct('GET', 'ALL_PAGES_LIST');
 		$page_name_slug = str_replace('-', '_', Str::slug($new_page_name));
 		$page_name_old = strtolower(str_replace('-', '_', $page_name_old));
 		if (array_key_exists($page_name_old, $this->pages_default_list)) {
-			$page_path = Page::_XML_PAGE_DEFAULT_FOLDER_PATH . $this->pages_default_list[$page_name_old] . '.xml';
-			$page_path_new = Page::_XML_PAGE_DEFAULT_FOLDER_PATH . $page_name_slug . '__' . $page_name_old . '.xml';
+			$page_path = Page::XML_PAGE_DEFAULT_FOLDER_PATH . $this->pages_default_list[$page_name_old] . '.xml';
+			$page_path_new = Page::XML_PAGE_DEFAULT_FOLDER_PATH . $page_name_slug . '__' . $page_name_old . '.xml';
 			$page_name_slug = $page_name_old;
 		} else {
-			$page_path = Page::_XML_PAGE_FOLDER_PATH . $page_name_old . '.xml';
-			$page_path_new = Page::_XML_PAGE_FOLDER_PATH . $page_name_slug . '.xml';
+			$page_path = Page::XML_PAGE_FOLDER_PATH . $page_name_old . '.xml';
+			$page_path_new = Page::XML_PAGE_FOLDER_PATH . $page_name_slug . '.xml';
 		}
-		$dom->load(storage_path('app/' . $page_path));
-		$xpath = new \DOMXpath($dom);
-		$targets = $xpath->query('/page');
-		if ($targets && $targets->length > 0) {
-			$target = $targets->item(0);
-			$target->setAttribute('menuName', $new_page_name);
-		}
-		$dom->save(storage_path('app/' . $page_path));
+
+        $xml = new DOMDXMLParser(storage_path('app/' . $page_path));
+        $xml->pickNode('page')->changeData('menuName', $new_page_name);
 
 		if ($page_path != $page_path_new) {
             \Storage::move($page_path, $page_path_new);
@@ -104,24 +88,16 @@ class EditPage extends Page
 	 **/
 	public function changePageState($page, $state = false)
 	{
-		$dom = new \DOMDocument('1.0', 'UTF-8');
-		$dom->preserveWhiteSpace = false;
-		$dom->formatOutput = true;
 		parent::__construct('GET', 'ALL_PAGES_LIST');
 		$page = strtolower(str_replace('-', '_', $page));
 		if (array_key_exists($page, $this->pages_default_list)) {
-            $page_path = Page::_XML_PAGE_DEFAULT_FOLDER_PATH . $this->pages_default_list[$page] . '.xml';
+            $page_path = Page::XML_PAGE_DEFAULT_FOLDER_PATH . $this->pages_default_list[$page] . '.xml';
         } else {
-            $page_path = Page::_XML_PAGE_FOLDER_PATH . $page . '.xml';
+            $page_path = Page::XML_PAGE_FOLDER_PATH . $page . '.xml';
         }
-		$dom->load(storage_path('app/' . $page_path));
-		$xpath = new \DOMXpath($dom);
-		$targets = $xpath->query('/page');
-		if ($targets && $targets->length > 0) {
-			$target = $targets->item(0);
-			$target->setAttribute('public', $state ? 1 : 0);
-		}
-		$dom->save(storage_path('app/' . $page_path));
+
+        $xml = new DOMDXMLParser(storage_path('app/' . $page_path));
+        $xml->pickNode('page')->changeData('public', ($state) ? 1 : 0);
 
 		return (bool) $state;
 	}
@@ -145,9 +121,6 @@ class EditPage extends Page
 		$pageMenuFiles = array_map(function($val) {
 			return str_replace('-', '_', Str::slug($val));
 		}, $pageMenuNames);
-		$dom = new \DOMDocument('1.0', 'UTF-8');
-		$dom->preserveWhiteSpace = false;
-		$dom->formatOutput = true;
 		if (!empty($pageMenuFiles))	{
 			foreach ($pageMenuFiles as $pageToEdit)	{
 				$pageToEditCheck = Arr::where($this->pages_default_list, function ($val) use ($pageToEdit) {
@@ -157,45 +130,31 @@ class EditPage extends Page
                     $pageToEdit = str_replace('__', '', strstr(Arr::flatten($pageToEditCheck)[0], '__'));
                 }
 				if (array_key_exists($pageToEdit, $this->pages_default_list)) {
-                    $page_path = Page::_XML_PAGE_DEFAULT_FOLDER_PATH . $this->pages_default_list[$pageToEdit].'.xml';
+                    $page_path = Page::XML_PAGE_DEFAULT_FOLDER_PATH . $this->pages_default_list[$pageToEdit].'.xml';
                 } else {
-                    $page_path = Page::_XML_PAGE_FOLDER_PATH . $pageToEdit . '.xml';
-                }
-				$dom->load(storage_path('app/' . $page_path));
-				$xpath = new \DOMXpath($dom);
-				$targets = $xpath->query('/page');
-				$datas = $dom->getElementsByTagName('page');
-				foreach ($datas as $data) {
-                    $menuOrder = $data->getAttribute('menuOrder');
+                    $page_path = Page::XML_PAGE_FOLDER_PATH . $pageToEdit . '.xml';
                 }
 
-				if ($targets && $targets->length > 0) {
-					$target = $targets->item(0);
-					$target->setAttribute('menuOrder', $menuOrder + 1);
-				}
-				$dom->save(storage_path('app/' . $page_path));
+                $xml = new DOMDXMLParser(storage_path('app/' . $page_path));
+                $xml->pickNode('page')->changeData('menuOrder', $xml->pickNode('page')->getAttr('menuOrder') + 1);
 			}
 		}
 		/* Adds new page with the correct menu order number */
 		$page_name_slug = str_replace('-', '_', Str::slug($page_name));
-		\Storage::put(Page::_XML_PAGE_FOLDER_PATH . $page_name_slug . '.xml', '<?xml version="1.0" encoding="UTF-8"?><page><![CDATA[]]></page>');
+		\Storage::put(Page::XML_PAGE_FOLDER_PATH . $page_name_slug . '.xml', '<?xml version="1.0" encoding="UTF-8"?><data><page public="0"><![CDATA[]]></page></data>');
 		if (array_key_exists($page_name_slug, $this->pages_default_list)) {
-            $page_path = Page::_XML_PAGE_DEFAULT_FOLDER_PATH . $this->pages_default_list[$page_name_slug] . '.xml';
+            $page_path = Page::XML_PAGE_DEFAULT_FOLDER_PATH . $this->pages_default_list[$page_name_slug] . '.xml';
         } else {
-            $page_path = Page::_XML_PAGE_FOLDER_PATH . $page_name_slug . '.xml';
+            $page_path = Page::XML_PAGE_FOLDER_PATH . $page_name_slug . '.xml';
         }
-		$dom->load(storage_path('app/' . $page_path));
-		$xpath = new \DOMXpath($dom);
-		$targets = $xpath->query('/page');
-		if ($targets && $targets->length > 0) {
-			$target = $targets->item(0);
-			$target->setAttribute('public', 0);
-			$target->setAttribute('menuOrder', $order_menu + 1);
-			$target->setAttribute('menuName', $page_name);
-			$cdata = $dom->createCDATASection($content);
-			$target->replaceChild($cdata, $target->firstChild);
-		}
-		$dom->save(storage_path('app/' . $page_path));
+
+        $xml = new DOMDXMLParser(storage_path('app/' . $page_path));
+        $xml->pickNode('page')->changeData([
+            'public' => 0,
+            'menuOrder' => $order_menu + 1,
+            'menuName' => $page_name,
+            'CDATA' => $content
+        ]);
 
 		return [
 			'menuOrder' => (int) $order_menu + 1,
@@ -231,9 +190,6 @@ class EditPage extends Page
 		$pageMenuFiles = array_map(function($val) {
 			return str_replace('-', '_', Str::slug($val));
 		}, $pageMenuNames);
-		$dom = new \DOMDocument('1.0', 'UTF-8');
-		$dom->preserveWhiteSpace = false;
-		$dom->formatOutput = true;
 
 		if (!empty($pageMenuFiles))	{
 			foreach ($pageMenuFiles as $pageToEdit)	{
@@ -245,53 +201,28 @@ class EditPage extends Page
                 }
 
 				if (array_key_exists($pageToEdit, $this->pages_default_list)) {
-                    $page_path = Page::_XML_PAGE_DEFAULT_FOLDER_PATH . $this->pages_default_list[$pageToEdit] . '.xml';
+                    $page_path = Page::XML_PAGE_DEFAULT_FOLDER_PATH . $this->pages_default_list[$pageToEdit] . '.xml';
                 } else {
-                    $page_path = Page::_XML_PAGE_FOLDER_PATH . $pageToEdit . '.xml';
-                }
-				$dom->load(storage_path('app/' . $page_path));
-				$xpath = new \DOMXpath($dom);
-				$targets = $xpath->query('/page');
-				$datas = $dom->getElementsByTagName('page');
-				foreach ($datas as $data) {
-                    $menuOrder = $data->getAttribute('menuOrder');
+                    $page_path = Page::XML_PAGE_FOLDER_PATH . $pageToEdit . '.xml';
                 }
 
-				if ($targets && $targets->length > 0) {
-					$target = $targets->item(0);
-					if ($op) {
-                        $target->setAttribute('menuOrder', $menuOrder + 1);
-                    } else {
-                        $target->setAttribute('menuOrder', $menuOrder - 1);
-                    }
-				}
-				$dom->save(storage_path('app/' . $page_path));
+                $xml = new DOMDXMLParser(storage_path('app/' . $page_path));
+                $xml->pickNode('page')->changeData('menuOrder', ($op) ? $xml->pickNode('page')->getAttr('menuOrder') + 1 : $xml->pickNode('page')->getAttr('menuOrder') - 1);
 			}
 		}
 		/* Updates new page with the correct menu order number */
 		if (array_key_exists($page_name, $this->pages_default_list)) {
-            $page_path = Page::_XML_PAGE_DEFAULT_FOLDER_PATH . $this->pages_default_list[$page_name] . '.xml';
+            $page_path = Page::XML_PAGE_DEFAULT_FOLDER_PATH . $this->pages_default_list[$page_name] . '.xml';
         } else {
-            $page_path = Page::_XML_PAGE_FOLDER_PATH . $page_name . '.xml';
+            $page_path = Page::XML_PAGE_FOLDER_PATH . $page_name . '.xml';
         }
-		$dom->load(storage_path('app/' . $page_path));
-		$xpath = new \DOMXpath($dom);
-		$targets = $xpath->query('/page');
-		$datas = $dom->getElementsByTagName('page');
-		foreach ($datas as $data) {
-			$menuOrder = $data->getAttribute('menuOrder');
-			$menuName = $data->getAttribute('menuName');
-		}
 
-		if ($targets && $targets->length > 0) {
-			$target = $targets->item(0);
-			$target->setAttribute('menuOrder', $order_menu_new);
-		}
-		$dom->save(storage_path('app/' . $page_path));
+        $xml = new DOMDXMLParser(storage_path('app/' . $page_path));
+        $xml->pickNode('page')->changeData('menuOrder', $order_menu_new);
 
 		return [
 			'menuOrder' => (int) $order_menu_new,
-			'menu_name' => $menuName,
+			'menu_name' => $xml->pickNode('page')->getAttr('menuName'),
 			'page_name' => str_replace('_', '-', $page_name),
 		];
 	}
@@ -314,11 +245,8 @@ class EditPage extends Page
 		$pageMenuNames = Arr::flatten($pageMenu);
 		$pageMenuFiles = array_map(function($val) {
 			return str_replace('-', '_', Str::slug($val));
-		}, $pageMenuNames);
-		$dom = new \DOMDocument('1.0', 'UTF-8');
-		$dom->preserveWhiteSpace = false;
-		$dom->formatOutput = true;
-		$arrayMenuOrderUpdate = [];
+        }, $pageMenuNames);
+        $arrayMenuOrderUpdate = [];
 		if (!empty($pageMenuFiles))	{
 			foreach ($pageMenuFiles as $pageToEdit)	{
 				$pageToEditCheck = Arr::where($this->pages_default_list, function ($val) use ($pageToEdit) {
@@ -328,27 +256,19 @@ class EditPage extends Page
                     $pageToEdit = str_replace('__', '', strstr(Arr::flatten($pageToEditCheck)[0], '__'));
                 }
 				if (array_key_exists($pageToEdit, $this->pages_default_list)) {
-                    $page_path = Page::_XML_PAGE_DEFAULT_FOLDER_PATH . $this->pages_default_list[$pageToEdit] . '.xml';
+                    $page_path = Page::XML_PAGE_DEFAULT_FOLDER_PATH . $this->pages_default_list[$pageToEdit] . '.xml';
                 } else {
-                    $page_path = Page::_XML_PAGE_FOLDER_PATH . $pageToEdit . '.xml';
+                    $page_path = Page::XML_PAGE_FOLDER_PATH . $pageToEdit . '.xml';
                 }
-				$dom->load(storage_path('app/' . $page_path));
-				$xpath = new \DOMXpath($dom);
-				$targets = $xpath->query('/page');
-				$datas = $dom->getElementsByTagName('page');
-				foreach ($datas as $data) {
-					$menuOrder = $data->getAttribute('menuOrder');
-					array_push($arrayMenuOrderUpdate, $data->getAttribute('menuOrder'));
-				}
-				if ($targets && $targets->length > 0) {
-					$target = $targets->item(0);
-					$target->setAttribute('menuOrder', $menuOrder - 1);
-				}
-				$dom->save(storage_path('app/' . $page_path));
+
+                $xml = new DOMDXMLParser(storage_path('app/' . $page_path));
+                $arrayMenuOrderUpdate[] = $xml->pickNode('page')->getAttr('menuOrder');
+                $xml->pickNode('page')->changeData('menuOrder', $xml->pickNode('page')->getAttr('menuOrder') - 1);
 			}
 		}
-		\File::delete(storage_path('app/' . Page::_XML_PAGE_FOLDER_PATH . $page_name . '.xml'));
-		parent::__construct('home', 'CONTENT_AND_PAGE_NAME_AND_PAGE_STATE');
+		\Storage::delete(Page::XML_PAGE_FOLDER_PATH . $page_name . '.xml');
+        parent::__construct('home', 'CONTENT_AND_PAGE_NAME_AND_PAGE_STATE');
+
 		return [
 			'content' => $this->getContent(),
 			'publishState' => $this->getPageState(),

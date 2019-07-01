@@ -10,6 +10,10 @@ use App\Libraries\CheckDefaultFiles;
 //use App\Libraries\User;
 //use App\Libraries\EditUser;
 use App\Libraries\EditPage;
+use App\Libraries\EditGallery;
+use App\Libraries\Gallery;
+use App\Libraries\User;
+
 //use Illuminate\Support\Facades\Hash;
 //use Illuminate\Support\Facades\Mail;
 //use Illuminate\Support\Arr;
@@ -25,6 +29,9 @@ class PageController extends Controller
         //echo __('passwords.token');
         //$test->fetchPublicPages();
         //dd($test->fetchPrivatePages());
+        //$test = new User();
+        //$test->fetchTimestampsFromGallery(2);
+        //dd();
 
         $this->listPrivatePages();
         CheckDefaultFiles::checkDefaultFiles();
@@ -36,7 +43,7 @@ class PageController extends Controller
         }
 
         $slug = strtolower(str_replace('-', '_', $slug));
-        $pages_list = new Page($slug, 'ALL_PAGES_LIST');//dd($pages_list->getAllPagesList());
+        $pages_list = new Page($slug, 'ALL_PAGES_LIST');
         if (array_key_exists($slug, $pages_list->getAllPagesList())) {
             $checkHome = new Page('home');
             if ($checkHome->getRealSlug() == 'home' && !$checkHome->getPageState() && empty(session('admin'))) {
@@ -80,11 +87,11 @@ class PageController extends Controller
             'slug' => 'required',
             'content' => 'nullable',
         ]);
-        if (!$validator->fails()) {
-            return response()->json($edit_page->editPage($request->slug, $request->content));
-        } else {
+        if ($validator->fails()) {
             return response()->json('fail');
         }
+
+        return response()->json($edit_page->editPage($request->slug, $request->content));
     }
 
     public function addPage(Request $request, EditPage $edit_page)
@@ -93,11 +100,11 @@ class PageController extends Controller
             'page_name' => 'required',
             'afterMenu' => 'required|numeric'
         ]);
-        if (!$validator->fails()) {
-            return $edit_page->addPage($request->page_name, $request->afterMenu);
-        } else {
+        if ($validator->fails()) {
             return response()->json('fail');
         }
+
+        return $edit_page->addPage($request->page_name, $request->afterMenu);
     }
 
     public function deletePage(Request $request, EditPage $edit_page)
@@ -105,18 +112,18 @@ class PageController extends Controller
         $validator = \Validator::make($request->all(), [
             'page_name_delete' => 'required'
         ]);
-        if (!$validator->fails()) {
-            if (!empty($request->array_images)) {
-                foreach ($request->array_images as $image_name) {
-                    if (!\Storage::exists(storage_path('app/public/images_site/' . $image_name))) {
-                        \File::delete(storage_path('app/public/images_site/' . $image_name));
-                    }
-                }
-            }
-            return $edit_page->deletePage($request->page_name_delete);
-        } else {
+        if ($validator->fails()) {
             return response()->json('fail');
         }
+
+        if (!empty($request->array_images)) {
+            foreach ($request->array_images as $image_name) {
+                if (!\Storage::exists(storage_path('app/public/images_site/' . $image_name))) {
+                    \File::delete(storage_path('app/public/images_site/' . $image_name));
+                }
+            }
+        }
+        return $edit_page->deletePage($request->page_name_delete);
     }
 
     public function showPageAjax(Request $request)
@@ -124,18 +131,18 @@ class PageController extends Controller
         $validator = \Validator::make($request->all(), [
             'page_name_show' => 'required'
         ]);
-        if (!$validator->fails()) {
-            $page = new Page($request->page_name_show, 'CONTENT_AND_MENU_ORDER_NUMBER_AND_SLUG_AND_PAGE_STATE_AND_PAGE_TITLE');
-            return [
-                'content' => $page->getContent(),
-                'currentMenuOrder' => $page->getMenuOrder(),
-                'currentPageTitle' => $page->getPageName(),
-                'currentSlug' => str_replace('_', '-', $page->getRealSlug()),
-                'publishState' => $page->getPageState()
-            ];
-        } else {
+        if ($validator->fails()) {
             return response()->json('fail');
         }
+
+        $page = new Page($request->page_name_show, 'CONTENT_AND_MENU_ORDER_NUMBER_AND_SLUG_AND_PAGE_STATE_AND_PAGE_TITLE');
+        return [
+            'content' => $page->getContent(),
+            'currentMenuOrder' => $page->getMenuOrder(),
+            'currentPageTitle' => $page->getPageName(),
+            'currentSlug' => str_replace('_', '-', $page->getRealSlug()),
+            'publishState' => $page->getPageState()
+        ];
     }
 
     public function changeMenuOrder(Request $request, EditPage $edit_page)
@@ -144,11 +151,11 @@ class PageController extends Controller
             'page_name_menu' => 'required',
             'order_menu_new' => 'required|numeric'
         ]);
-        if (!$validator->fails()) {
-            return $edit_page->changeMenuOrder($request->page_name_menu, $request->order_menu_new);
-        } else {
+        if ($validator->fails()) {
             return response()->json('fail');
         }
+
+        return $edit_page->changeMenuOrder($request->page_name_menu, $request->order_menu_new);
     }
 
     public function changePageName(Request $request, EditPage $edit_page)
@@ -156,11 +163,11 @@ class PageController extends Controller
         $validator = \Validator::make($request->all(), [
             'page_name_menu_change' => 'required'
         ]);
-        if (!$validator->fails()) {
-            return $edit_page->changePageName($request->page_name_menu_change, $request->page_name_old);
-        } else {
+        if ($validator->fails()) {
             return response()->json('fail');
         }
+
+        return $edit_page->changePageName($request->page_name_menu_change, $request->page_name_old);
     }
 
     public function changePageState(Request $request, EditPage $edit_page)
@@ -169,11 +176,11 @@ class PageController extends Controller
             'page_name' => 'required',
             'page_state' => 'required|numeric'
         ]);
-        if (!$validator->fails()) {
-            return response()->json($edit_page->changePageState($request->page_name, $request->page_state));
-        } else {
+        if ($validator->fails()) {
             return response()->json('fail');
         }
+
+        return response()->json($edit_page->changePageState($request->page_name, $request->page_state));
     }
 
     public function uploadImage(Request $request)
@@ -182,44 +189,44 @@ class PageController extends Controller
             'image' => 'required',
             'image_name' => 'required'
         ]);
-        if (!$validator->fails()) {
-            $upload_path = storage_path('app/public/images_site/');
-            $widen_width = 1280;
+        if ($validator->fails()) {
+            return response()->json('fail');
+        }
 
-            if ($request->total_files === 0) {
-                return response()->json('erreur, veuillez rééessayer');
+        $upload_path = storage_path('app/public/images_site/');
+        $widen_width = 1280;
+
+        if ($request->total_files === 0) {
+            return response()->json('erreur, veuillez rééessayer');
+        }
+
+        $file = $request->file('image');
+
+        if (in_array($file->getMimeType(), array('image/gif', 'image/png', 'image/bmp', 'image/jpeg'))) {
+            if ($file->getMimeType() == 'image/gif') {
+                $ext = '.gif';
+            } elseif ($file->getMimeType() == 'image/png') {
+                $ext = '.png';
+            } else {
+                $ext = '.jpg';
             }
 
-            $file = $request->file('image');
+            $new_file_name = \Illuminate\Support\Str::slug($request->image_name).$ext;
 
-            if (in_array($file->getMimeType(), array('image/gif', 'image/png', 'image/bmp', 'image/jpeg'))) {
-                if ($file->getMimeType() == 'image/gif') {
-                    $ext = '.gif';
-                } elseif ($file->getMimeType() == 'image/png') {
-                    $ext = '.png';
+            $width = getimagesize($file->getRealPath());
+            if ($width[0] <= $widen_width) {
+                if ($upload_done = $file->move($upload_path, $new_file_name)) {
                 } else {
-                    $ext = '.jpg';
-                }
-
-                $new_file_name = \Illuminate\Support\Str::slug($request->image_name).$ext;
-
-                $width = getimagesize($file->getRealPath());
-                if ($width[0] <= $widen_width) {
-                    if ($upload_done = $file->move($upload_path, $new_file_name)) {
-                    } else {
-                        return json_encode($upload_done->getMessage());
-                    }
-                } else {
-                    \Image::make($file->getRealPath())->widen($widen_width, function ($constraint) { $constraint->upsize(); })->save($upload_path.$new_file_name);
+                    return json_encode($upload_done->getMessage());
                 }
             } else {
-                return response()->json('fail');
+                \Image::make($file->getRealPath())->widen($widen_width, function ($constraint) { $constraint->upsize(); })->save($upload_path.$new_file_name);
             }
-
-            return response()->json($new_file_name);
         } else {
             return response()->json('fail');
         }
+
+        return response()->json($new_file_name);
     }
 
     public function deleteSiteImage(Request $request)
@@ -227,17 +234,17 @@ class PageController extends Controller
         $validator = \Validator::make($request->all(), [
             'image_name' => 'required'
         ]);
-        if (!$validator->fails()) {
-            if (!\Storage::exists(storage_path('app/public/images_site/' . $request->image_name))) {
-                \File::delete(storage_path('app/public/images_site/' . $request->image_name));
-            } else {
-                return response()->json('file_not_found');
-            }
-
-            return response()->json('file_removed');
-        } else {
+        if ($validator->fails()) {
             return response()->json('fail');
         }
+
+        if (!\Storage::exists(storage_path('app/public/images_site/' . $request->image_name))) {
+            \File::delete(storage_path('app/public/images_site/' . $request->image_name));
+        } else {
+            return response()->json('file_not_found');
+        }
+
+        return response()->json('file_removed');
     }
 
     public function listPrivatePages()

@@ -20,11 +20,11 @@ class UserController extends Controller
             'old_user_email' => 'required|email',
             'new_user_email' => 'required|email'
         ]);
-        if (!$validator->fails()) {
-            return response()->json(EditUser::changeUserEmail($request->old_user_email, $request->new_user_email));
-        } else {
+        if ($validator->fails()) {
             return response()->json('fail');
         }
+
+        return response()->json(EditUser::changeUserEmail($request->old_user_email, $request->new_user_email));
     }
 
     public function changeUserPassword(Request $request)
@@ -33,11 +33,11 @@ class UserController extends Controller
             'user_email' => 'required|email',
             'new_password_user' => 'required',
         ]);
-        if (!$validator->fails()) {
-            return response()->json(EditUser::changeUserPassword($request->user_email, $request->new_password_user));
-        } else {
+        if ($validator->fails()) {
             return response()->json('fail');
         }
+
+        return response()->json(EditUser::changeUserPassword($request->user_email, $request->new_password_user));
     }
 
     public function checkUserPassword(Request $request, User $user)

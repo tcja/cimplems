@@ -44,10 +44,14 @@
 		</script>
         @if (session('admin') === true)
             @include('admin_assets/js_assets')
-            @include(config('site.theme_dir') . config('site.theme') . '/' . 'admin_assets/misc_admin_js')
+            @if (config('site.page_ajax_transition'))
+                @include(config('site.theme_dir') . config('site.theme') . '/' . 'admin_assets/misc_admin_js')
+            @endif
             @include(config('site.theme_dir') . config('site.theme') . '/' . 'admin_assets/user_js')
         @else
-            <script src="{{ asset(config('site.theme_dir') . config('site.theme') . '/' . 'js/misc.js') }}"></script>
+            @if (config('site.page_ajax_transition'))
+                @include(config('site.theme_dir') . config('site.theme') . '/' . 'assets/misc_js')
+            @endif
         @endif
     </head>
     <body>

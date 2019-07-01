@@ -22,20 +22,20 @@ class ContactController extends Controller
             'subject' => 'required|min:3|max:60',
             'message' => 'required|min:3|max:1000'
         ]);
-        if (!$validator->fails()) {
-            $title = __('site.contact_mail_pre_header');
-            $to_email = $user->getAdminEmail();
-            $data = ['name' => $request->name, 'email' => $request->email, 'messageForm' => $request->message, 'urlSite' => url('/')];
-
-            Mail::send('emails/contact_mail', $data, function($message) use ($title, $to_email, $request) {
-                $message->from($to_email, $title)
-                        ->to($to_email)
-                        ->subject($request->subject);
-            });
-
-            return response()->json('win');
-        } else {
+        if ($validator->fails()) {
             return response()->json('fail');
         }
+
+        $title = __('site.contact_mail_pre_header');
+        $to_email = $user->getAdminEmail();
+        $data = ['name' => $request->name, 'email' => $request->email, 'messageForm' => $request->message, 'urlSite' => url('/')];
+
+        Mail::send('emails/contact_mail', $data, function($message) use ($title, $to_email, $request) {
+            $message->from($to_email, $title)
+                    ->to($to_email)
+                    ->subject($request->subject);
+        });
+
+        return response()->json('win');
     }
 }

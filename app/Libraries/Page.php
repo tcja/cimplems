@@ -4,6 +4,7 @@ namespace App\Libraries;
 
 use Illuminate\Support\Arr;
 use Mobile_Detect;
+use Tcja\DOMDXMLParser\DOMDXMLParser;
 
 /*
  *
@@ -79,14 +80,14 @@ class Page
 
 	/**
 	 *
-	 *  @var string $_XML_PAGE_FOLDER_PATH Default pages folder location
+	 *  @var string $XML_PAGE_FOLDER_PATH Default pages folder location
 	 * */
-	const _XML_PAGE_FOLDER_PATH = 'private/pages/';
+	const XML_PAGE_FOLDER_PATH = 'private/pages/';
 	/**
 	 *
-	 *  @var string $_XML_PAGE_FOLDER_PATH Default pages folder location
+	 *  @var string $XML_PAGE_FOLDER_PATH Default pages folder location
 	 * */
-	const _XML_PAGE_DEFAULT_FOLDER_PATH = 'private/pages_default/';
+	const XML_PAGE_DEFAULT_FOLDER_PATH = 'private/pages_default/';
 
 	/**
 	 * Constructor used to retrieve content from an html page
@@ -177,7 +178,7 @@ class Page
 		$galleries = false;
 		if ($page == 'home' || $page == 'gallery' || $page == 'contact') {
 			$default_page = $this->fetchPagesDefault($page);
-			$page_path = self::_XML_PAGE_DEFAULT_FOLDER_PATH . $default_page . '.xml';
+			$page_path = self::XML_PAGE_DEFAULT_FOLDER_PATH . $default_page . '.xml';
 			if ($page == 'contact') {
                 $contactForm = view(config('site.theme_dir') . config('site.theme') . '/' . 'contact')->render();
             } elseif ($page == 'gallery') {
@@ -208,15 +209,12 @@ class Page
 				}
 			}
 		} else {
-            $page_path = self::_XML_PAGE_FOLDER_PATH . $page . '.xml';
+            $page_path = self::XML_PAGE_FOLDER_PATH . $page . '.xml';
         }
 
-		$doc = new \DOMDocument('1.0', 'UTF-8');
-		$doc->load(storage_path('app/' . $page_path));
-		$datas = $doc->getElementsByTagName('page');
-		foreach ($datas as $data) {	//[$data->getAttribute('menuName')]
-            $content = $data->nodeValue;
-        }
+        $xml = new DOMDXMLParser(storage_path('app/' . $page_path));
+        $content = $xml->pickNode('page')->getValue();
+
 
 		if ($contactForm) {
             return ['content' => $content, 'contactForm' => $contactForm];
@@ -231,30 +229,27 @@ class Page
 	 *
 	 * Fetches the current's page menu order number
 	 *
-	 * @param 	string		$page		Page's name to fetch the datas from
+	 * @param 	string		$page		Page's name to fetch the data from
 	 * @return	int						Returns the page's menu order number
 	 **/
 	protected function fetchMenuOrder($page)
 	{
-		$doc = new \DOMDocument('1.0', 'UTF-8');
 		if ($page == 'home' || $page == 'gallery' || $page == 'contact') {
 			$default_page = $this->fetchPagesDefault($page);
-			$page_path = self::_XML_PAGE_DEFAULT_FOLDER_PATH . $default_page . '.xml';
+			$page_path = self::XML_PAGE_DEFAULT_FOLDER_PATH . $default_page . '.xml';
 		} else {
 			if (array_key_exists($page, $this->pages_default_list)) {
-                $page_path = Page::_XML_PAGE_DEFAULT_FOLDER_PATH . $this->pages_default_list[$page] . '.xml';
+                $page_path = Page::XML_PAGE_DEFAULT_FOLDER_PATH . $this->pages_default_list[$page] . '.xml';
             } elseif (!in_array($page, $this->pages_list)) {
                 return;
             } else {
-                $page_path = self::_XML_PAGE_FOLDER_PATH . $page . '.xml';
+                $page_path = self::XML_PAGE_FOLDER_PATH . $page . '.xml';
             }
 		}
-		$doc->load(storage_path('app/' . $page_path));
-		$datas = $doc->getElementsByTagName('page');
-		foreach ($datas as $data) {
-            $orderNumber = (int) $data->getAttribute('menuOrder');
-        }
-		return $orderNumber;
+
+        $xml = new DOMDXMLParser(storage_path('app/' . $page_path));
+
+		return (int) $xml->pickNode('page')->getAttr('menuOrder');
 	}
 	/**
 	 * Fetches the default pages
@@ -262,7 +257,8 @@ class Page
 	 * Fetches the default pages and returns them in an array
 	 *
 	 * @param 	bool		$real_name		If set to true, will return the default pages real names, defaults to false returns the pages name without _home/_gallery/_contact
-	 * @return	mixed						Return the list of the default pages by default (if set to false) or returns the full default page name if specified from $real_name param or returns false if the specific default page was not found
+	 * @return	mixed						Return the list of the default pages by default (if set to false) or returns the full default page name if specified from $real_name param or returns
+     *                                      false if the specific default page was not found
 	 **/
 	public function fetchPagesDefault($real_name = false)
 	{
@@ -279,28 +275,10 @@ class Page
 				$page = Arr::where($pages_list, function ($val) use ($real_name) {
 					return strpos($val, '__'.$real_name);
 				});
-				/* if (!empty(Arr::flatten($page)[0]))
-					return Arr::flatten($page)[0];
-				else
-					return false; */
 				return !empty(Arr::flatten($page)[0]) ? Arr::flatten($page)[0] : false;
 			} else {
                 return false;
             }
-			/*elseif ($real_name == 'gallery')
-			{
-				$page = Arr::where($pages_list, function ($val) {
-					return strpos($val, '__gallery');
-				});
-				return Arr::flatten($page)[0];
-			}
-			elseif ($real_name == 'contact')
-			{
-				$page = Arr::where($pages_list, function ($val) {
-					return strpos($val, '__contact');
-				});
-				return Arr::flatten($page)[0];
-			} */
 		} else {
 			$pages_list = scandir(storage_path('app/private/pages_default'));
 			Arr::pull($pages_list, 0);
@@ -402,23 +380,20 @@ class Page
 	protected function fetchPagesLinksTitles()
 	{
 		$pages_list = $this->all_pages_list;
-		$doc = new \DOMDocument('1.0', 'UTF-8');
 		$array = [];
 		foreach ($pages_list as $slug => $page) {
 			if (in_array($page, $this->pages_default_list)) {
-                $page_path = self::_XML_PAGE_DEFAULT_FOLDER_PATH . $page . '.xml';
+                $page_path = self::XML_PAGE_DEFAULT_FOLDER_PATH . $page . '.xml';
             } else {
-				$page_path = self::_XML_PAGE_FOLDER_PATH . $page . '.xml';
+				$page_path = self::XML_PAGE_FOLDER_PATH . $page . '.xml';
 				$slug = $page;
-			}
-
-			$doc->load(storage_path('app/' . $page_path));
-			$datas = $doc->getElementsByTagName('page');
-			foreach ($datas as $data) {
-                $array[$data->getAttribute('menuOrder')] = [$slug => $data->getAttribute('menuName')];
             }
+
+            $xml = new DOMDXMLParser(storage_path('app/' . $page_path));
+            $array[$xml->pickNode('page')->getAttr('menuOrder')] = [$slug => $xml->pickNode('page')->getAttr('menuName')];
 		}
-		ksort($array);
+        ksort($array);
+
 		return $array;
 	}
 	/**
@@ -426,7 +401,7 @@ class Page
 	 *
 	 * Fetches the real slug of a given page
 	 *
-	 * @param 	string		$page		Page's name to fetch the datas from
+	 * @param 	string		$page		Page's name to fetch the data from
 	 * @return	string					Returns the real slug
 	 **/
 	protected function fetchRealSlug($page)
@@ -447,62 +422,54 @@ class Page
 	 *
 	 * Fetches the page's title name of a given page
 	 *
-	 * @param 	string		$page		Page's name to fetch the datas from
+	 * @param 	string		$page		Page's name to fetch the data from
 	 * @return	string					Returns the page's title name
 	 **/
 	protected function fetchPageName($page)
 	{
-		$doc = new \DOMDocument('1.0', 'UTF-8');
 		if ($page == 'home' || $page == 'gallery' || $page == 'contact') {
 			$default_page = $this->fetchPagesDefault($page);
-			$page_path = self::_XML_PAGE_DEFAULT_FOLDER_PATH . $default_page . '.xml';
+			$page_path = self::XML_PAGE_DEFAULT_FOLDER_PATH . $default_page . '.xml';
 		} else {
 			if (array_key_exists($page, $this->pages_default_list)) {
-                $page_path = self::_XML_PAGE_DEFAULT_FOLDER_PATH . $this->pages_default_list[$page] . '.xml';
+                $page_path = self::XML_PAGE_DEFAULT_FOLDER_PATH . $this->pages_default_list[$page] . '.xml';
             } elseif (in_array($page, $this->pages_default_list)) {
-                $page_path = self::_XML_PAGE_DEFAULT_FOLDER_PATH . $page . '.xml';
+                $page_path = self::XML_PAGE_DEFAULT_FOLDER_PATH . $page . '.xml';
             } elseif (!in_array($page, $this->pages_list)) {
                 return;
             } else {
-                $page_path = self::_XML_PAGE_FOLDER_PATH . $page . '.xml';
+                $page_path = self::XML_PAGE_FOLDER_PATH . $page . '.xml';
             }
 		}
-		$doc->load(storage_path('app/' . $page_path));
-		$datas = $doc->getElementsByTagName('page');
-		foreach ($datas as $data) {
-            $menuName = $data->getAttribute('menuName');
-        }
-		return $menuName;
+        $xml = new DOMDXMLParser(storage_path('app/' . $page_path));
+
+		return $xml->pickNode('page')->getAttr('menuName');
 	}
 	/**
 	 * Fetches the page's publish state
 	 *
 	 * Fetches the page's publish state
 	 *
-	 * @param 	string		$page		Page's name to fetch the datas from
+	 * @param 	string		$page		Page's name to fetch the data from
 	 * @return	bool					Return true (1) if the page is published and false (0) if not
 	 **/
 	protected function fetchPageState($page)
 	{
-		$doc = new \DOMDocument('1.0', 'UTF-8');
 		if ($page == 'home' || $page == 'gallery' || $page == 'contact') {
 			$default_page = $this->fetchPagesDefault($page);
-			$page_path = self::_XML_PAGE_DEFAULT_FOLDER_PATH . $default_page . '.xml';
+			$page_path = self::XML_PAGE_DEFAULT_FOLDER_PATH . $default_page . '.xml';
 		} else {
 			if (array_key_exists($page, $this->pages_default_list)) {
-                $page_path = self::_XML_PAGE_DEFAULT_FOLDER_PATH . $this->pages_default_list[$page] . '.xml';
+                $page_path = self::XML_PAGE_DEFAULT_FOLDER_PATH . $this->pages_default_list[$page] . '.xml';
             } elseif (!in_array($page, $this->pages_list)) {
                 return;
             } else {
-                $page_path = self::_XML_PAGE_FOLDER_PATH . $page . '.xml';
+                $page_path = self::XML_PAGE_FOLDER_PATH . $page . '.xml';
             }
 		}
-		$doc->load(storage_path('app/' . $page_path));
-		$datas = $doc->getElementsByTagName('page');
-		foreach ($datas as $data) {
-            $public = (int) $data->getAttribute('public');
-        }
-		return $public;
+        $xml = new DOMDXMLParser(storage_path('app/' . $page_path));
+
+		return (int) $xml->pickNode('page')->getAttr('public');
 	}
 	/**
 	 * Gets page's content from its property

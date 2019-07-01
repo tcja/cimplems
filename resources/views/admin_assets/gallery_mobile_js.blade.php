@@ -18,10 +18,10 @@
                 $('.accept').prop('disabled', true);
                 $.ajax({
                     type: 'POST',
-                    url: $rootUrl+'/delete_image',
+                    url: $rootUrl + '/delete_image',
                     context: $(obj).parents('div.thumbs_resp'),
                     data: data_string
-                }).done(function(datas) {
+                }).done(function(data) {
                         $(this).children('div.edit_image_mobile').modal('hide');
                         $(this).children('div.edit_image_mobile').on('hidden.bs.modal', function () {
                             $(this).parent().fadeOut(600, function(el) {
@@ -58,11 +58,11 @@
                 $.ajax({
                     type: 'POST',
                     dataType: 'json',
-                    url: $rootUrl+'/edit_image_show_form',
+                    url: $rootUrl + '/edit_image_show_form',
                     data: data_string,
                     context: this
-                }).done(function(datas) {
-                    $(this).parent().append(datas);
+                }).done(function(data) {
+                    $(this).parent().append(data);
                     $(this).parent().find('.modal').modal('show');
                 });
             } else {
@@ -107,21 +107,21 @@
                         onlyTitleChanged = 1;
                     }
                     var name = $(form).children().find("input[name='photo_name']").val();
-                    var form_datas = 'change_title=' + title + '&gallery=' + gallery + '&photo_name=' + name + '&modify_one_image=' + onlyTitleChanged;
+                    var form_data = 'change_title=' + title + '&gallery=' + gallery + '&photo_name=' + name + '&modify_one_image=' + onlyTitleChanged;
                     $('.accept').prop('disabled', true);
                     $.ajax({
                         type: 'POST',
                         dataType: 'json',
-                        data: form_datas,
-                        url: $rootUrl+'/edit_image',
+                        data: form_data,
+                        url: $rootUrl + '/edit_image',
                         context: form
-                    }).done(function(datas) {
+                    }).done(function(data) {
                         $(this).parent().parent().parent().parent().modal('hide');
                         $(this).parent().parent().parent().parent().on('hidden.bs.modal', function () {
                             $(this).parent().fadeOut(350, function(el) {
                                 $('.accept').prop('disabled', false);
-                                var imgf = datas.name.split('.').join("").split('-').join("").split('_').join("");
-                                var gallery_nbr = datas.gallery;
+                                var imgf = data.name.split('.').join("").split('-').join("").split('_').join("");
+                                var gallery_nbr = data.galleryID;
                                 var gallery_name = $(form).children().find("select[name='gallery']").find(":selected").html();
                                 var gal_id = 'gallery'+gallery_nbr;
                                 var gal_find = '#gallery' + gallery_nbr;
@@ -129,8 +129,8 @@
                                 var current_gal_images = $(el).parents('.flex-wrap').children('div').length;
                                 var gal_remove = $(el).parents('.flex-wrap').parent();
                                 if (onlyTitleChanged) {
-                                    $('#galeries a[alt="'+datas.name+'"]').attr('title', datas.title);
-                                    $('#galeries a[alt="'+datas.name+'"]').next().find('input[name="change_title"]')[0].defaultValue = datas.title;
+                                    $('#galeries a[alt="'+data.name+'"]').attr('title', data.title);
+                                    $('#galeries a[alt="'+data.name+'"]').next().find('input[name="change_title"]')[0].defaultValue = data.title;
                                     $(el).fadeIn(500);
                                     $('.thumb_resp2').off('contextmenu');
                                     $('.thumb_resp2').on('contextmenu',function(e){ e.preventDefault(); });
@@ -148,13 +148,13 @@
                                             gal_remove.remove();
                                         }
                                     }
-                                    $('#gallery'+datas.gallery).children('div').append('<div id="'+imgf+'" style="display:none;" class="thumb_resp thumbs_resp"><a href="'+$rootUrl+'/storage/images_gallery/big/'+datas.name+'" rel="external" title="'+$("<div/>").html(datas.title).text()+'" data-size="1280x960" data-med="'+$rootUrl+'/storage/images_gallery/big/'+datas.name+'" data-med-size="1280x960" alt="'+datas.name+'" class="phswipe"><img alt="" src="'+$rootUrl+'/storage/images_gallery/min/'+datas.name+'" class="thumb_resp2 img-fluid"></a></div>');
+                                    $('#gallery'+data.galleryID).children('div').append('<div id="'+imgf+'" style="display:none;" class="thumb_resp thumbs_resp"><a href="'+$rootUrl + '/storage/images_gallery/big/'+data.name+'" rel="external" title="'+$("<div/>").html(data.title).text()+'" data-size="1280x960" data-med="'+$rootUrl + '/storage/images_gallery/big/'+data.name+'" data-med-size="1280x960" alt="'+data.name+'" class="phswipe"><img alt="" src="'+$rootUrl + '/storage/images_gallery/min/'+data.name+'" class="thumb_resp2 img-fluid"></a></div>');
                                     $('div[id='+imgf+']').fadeIn(500);
                                 } else {
                                     if (current_gal_images == 1) {
                                         gal_remove.remove();
                                     }
-                                    var html = '<div id="'+gal_id+'" style="display:none;" class="row mb-4"><h2>'+gallery_name+'</h2><div class="col-12 d-flex flex-wrap"><div id="'+imgf+'" class="thumb_resp thumbs_resp"><a href="'+$rootUrl+'/storage/images_gallery/big/'+datas.name+'" rel="external" title="'+$("<div/>").html(datas.title).text()+'" data-size="1280x960" data-med="'+$rootUrl+'/storage/images_gallery/big/'+datas.name+'" data-med-size="1280x960" alt="'+datas.name+'" class="phswipe"><img alt="" src="'+$rootUrl+'/storage/images_gallery/min/'+datas.name+'" class="thumb_resp2 img-fluid"></a></div></div></div>';
+                                    var html = '<div id="'+gal_id+'" style="display:none;" class="row mb-4"><h2>'+gallery_name+'</h2><div class="col-12 d-flex flex-wrap"><div id="'+imgf+'" class="thumb_resp thumbs_resp"><a href="'+$rootUrl + '/storage/images_gallery/big/'+data.name+'" rel="external" title="'+$("<div/>").html(data.title).text()+'" data-size="1280x960" data-med="'+$rootUrl + '/storage/images_gallery/big/'+data.name+'" data-med-size="1280x960" alt="'+data.name+'" class="phswipe"><img alt="" src="'+$rootUrl + '/storage/images_gallery/min/'+data.name+'" class="thumb_resp2 img-fluid"></a></div></div></div>';
 
                                     if (gallery_nbr == 1) {
                                         $('#galeries').prepend(html);
