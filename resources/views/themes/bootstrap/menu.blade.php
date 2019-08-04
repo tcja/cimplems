@@ -10,7 +10,7 @@
                     <div id="view_as_visitor" style="margin-top: -15px;" class="d-inline">
                         <button style="width: 33px;" type="button" class="tooltipz view_as_visitor page_option_icon mt-3 mb-3 btn btn-warning btn-sm" title="{{ __('site.view_as_visitor') }}"><i class="far fa-eye"></i></button>
                     </div>
-                    @if ($currentSlug != 'home')
+                    @if ($pageSlug != 'home')
                         <button type="button" class="tooltipz change_menu_order mt-3 mb-3 page_option_icon ml-1 btn btn-secondary btn-sm" data-toggle="modal" title="{{ __('site.change_pos_menu') }}" data-target="#ChangeOrderMenu"><i class="fas fa-exchange-alt"></i></button>
                     @endif
                     <button type="button" class="tooltipz change_page_name mt-3 mb-3 page_option_icon ml-1 btn btn-info btn-sm" data-toggle="modal" title="{{ __('site.change_page_name_menu') }}" data-target="#ChangePageName"><i class="fas fa-pen-square"></i></button>
@@ -20,7 +20,7 @@
             <ul id="menu" class="navbar-nav ml-auto">
                 @foreach ($pageLinks as $links)
 					@foreach ($links as $link => $title)
-						@if ($link == $currentSlug)
+						@if ($link == $pageName)
                             <li class="nav-item active">
                                 <span class="nav-link">{{ $title }}</span>
                             </li>

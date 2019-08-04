@@ -34,7 +34,7 @@ class User
 	 *
 	 *  @var string $XML_PAGE_FOLDER_PATH Default pages folder location
 	 * */
-	const XML_USER_FILE_PATH = 'private/users/users.xml';
+	const XML_USER_FILE_PATH = 'database/users/users.xml';
 
 	/**
 	 *

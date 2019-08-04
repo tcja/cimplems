@@ -56,15 +56,21 @@ class Page
 	/**
 	 *
 	 *
-	 * @var string $real_slug page's real slug
+	 * @var string $page_slug page's slug
 	 * */
-	protected $real_slug;
+	protected $page_slug;
 	/**
 	 *
 	 *
-	 * @var string $page_name page's title name
+	 * @var string $page_name page's real name
 	 * */
 	protected $page_name;
+	/**
+	 *
+	 *
+	 * @var string $page_title page's title name
+	 * */
+	protected $page_title;
 	/**
 	 *
 	 *
@@ -82,29 +88,29 @@ class Page
 	 *
 	 *  @var string $XML_PAGE_FOLDER_PATH Default pages folder location
 	 * */
-	const XML_PAGE_FOLDER_PATH = 'private/pages/';
+	const XML_PAGE_FOLDER_PATH = 'database/pages/pages_custom/';
 	/**
 	 *
 	 *  @var string $XML_PAGE_FOLDER_PATH Default pages folder location
 	 * */
-	const XML_PAGE_DEFAULT_FOLDER_PATH = 'private/pages_default/';
+	const XML_PAGE_DEFAULT_FOLDER_PATH = 'database/pages/pages_default/';
 
 	/**
 	 * Constructor used to retrieve content from an html page
 	 *
 	 * Retrieves content from an html page and stores it in $content property
 	 *
-	 * @param 	int			$page		Page name to be retrieved, if not set defaults to home if no page provided
+	 * @param 	int			$slug		Slug of the page to be retrieved, if not set defaults to home if no page provided
 	 * @param 	string		$action		The action te be performed
 	 * @return	void
 	 **/
- 	public function __construct($page = 'home', $action = null)
+ 	public function __construct($slug = 'home', $action = null)
 	{
         if ($action === 'CHECK_FILES') {
             return;
         }
 
-		$page = strtolower(str_replace('-', '_', $page));
+		$slug = strtolower(str_replace('-', '_', $slug));
 		$this->pages_default_list = $this->fetchPagesDefault();
 		$this->pages_list = $this->fetchPages();
 		if (session('admin') === true) {
@@ -114,54 +120,58 @@ class Page
         }
 		if ($action === 'ALL_PAGES_LIST') {
             return;
-        } elseif ($action === 'PAGE_NAME') {
-            $this->page_name = $this->fetchPageName($page);
+        } elseif ($action === 'PAGE_TITLE') {
+            $this->page_title = $this->fetchPageTitle($slug);
         } elseif ($action === 'PRIVATE_PAGES') {
             $this->private_pages = $this->fetchPrivatePages();
         } elseif ($action === 'PAGES_TITLES_LINKS') {
             $this->pages_links_titles = $this->fetchPagesLinksTitles();
         } elseif ($action === 'PAGES_TITLES_LINKS_AND_MENU_ORDER_NUMBER') {
 			$this->pages_links_titles = $this->fetchPagesLinksTitles();
-			$this->menu_order = $this->fetchMenuOrder($page);
+			$this->menu_order = $this->fetchMenuOrder($slug);
 		} elseif ($action === 'CURRENT_PAGE_MENU_ORDER_NUMBER') {
-            $this->menu_order = $this->fetchMenuOrder($page);
+            $this->menu_order = $this->fetchMenuOrder($slug);
         } elseif ($action === 'PAGES_LINKS_AND_MENU_ORDER') {
 			$this->pages_links_titles = $this->fetchPagesLinksTitles();
-			$this->menu_order = $this->fetchMenuOrder($page);
+			$this->menu_order = $this->fetchMenuOrder($slug);
 		} elseif ($action === 'CONTENT') {
-            $this->content = $this->fetchContent($page);
-        } elseif ($action === 'CONTENT_AND_PAGE_NAME') {
-			$this->content = $this->fetchContent($page);
-			$this->page_name = $this->fetchPageName($page);
-		} elseif ($action === 'CONTENT_AND_PAGE_NAME_AND_PAGE_STATE') {
-			$this->content = $this->fetchContent($page);
-			$this->page_state = $this->fetchPageState($page);
-			$this->page_name = $this->fetchPageName($page);
+            $this->content = $this->fetchContent($slug);
+        } elseif ($action === 'CONTENT_AND_PAGE_TITLE') {
+			$this->content = $this->fetchContent($slug);
+			$this->page_title = $this->fetchPageTitle($slug);
+		} elseif ($action === 'CONTENT_AND_PAGE_TITLE_AND_PAGE_STATE') {
+			$this->content = $this->fetchContent($slug);
+			$this->page_state = $this->fetchPageState($slug);
+			$this->page_title = $this->fetchPageTitle($slug);
 		} elseif ($action === 'CONTENT_AND_MENU_ORDER_NUMBER') {
-			$this->content = $this->fetchContent($page);
-			$this->menu_order = $this->fetchMenuOrder($page);
+			$this->content = $this->fetchContent($slug);
+			$this->menu_order = $this->fetchMenuOrder($slug);
 		} elseif ($action === 'CONTENT_AND_MENU_ORDER_NUMBER_AND_SLUG') {
-			$this->content = $this->fetchContent($page);
-			$this->menu_order = $this->fetchMenuOrder($page);
-			$this->real_slug = $this->fetchRealSlug($page);
+			$this->content = $this->fetchContent($slug);
+			$this->menu_order = $this->fetchMenuOrder($slug);
+            $this->page_slug = $this->fetchPageSlug($slug);
+            $this->page_name = $this->fetchPageName($slug);
 		} elseif ($action === 'CONTENT_AND_MENU_ORDER_NUMBER_AND_SLUG_AND_PAGE_STATE_AND_PAGE_TITLE') {
-			$this->content = $this->fetchContent($page);
-			$this->page_name = $this->fetchPageName($page);
-			$this->page_state = $this->fetchPageState($page);
-			$this->menu_order = $this->fetchMenuOrder($page);
-			$this->real_slug = $this->fetchRealSlug($page);
+			$this->content = $this->fetchContent($slug);
+			$this->page_title = $this->fetchPageTitle($slug);
+			$this->page_state = $this->fetchPageState($slug);
+			$this->menu_order = $this->fetchMenuOrder($slug);
+			$this->page_slug = $this->fetchPageSlug($slug);
+			$this->page_name = $this->fetchPageName($slug);
 		} elseif ($action === 'CONTENT_AND_MENU_ORDER_NUMBER_AND_SLUG_AND_PAGE_STATE') {
-			$this->content = $this->fetchContent($page);
-			$this->page_state = $this->fetchPageState($page);
-			$this->menu_order = $this->fetchMenuOrder($page);
-			$this->real_slug = $this->fetchRealSlug($page);
+			$this->content = $this->fetchContent($slug);
+			$this->page_state = $this->fetchPageState($slug);
+			$this->menu_order = $this->fetchMenuOrder($slug);
+            $this->page_slug = $this->fetchPageSlug($slug);
+            $this->page_name = $this->fetchPageName($slug);
 		} else {
-			$this->content = $this->fetchContent($page);
-			$this->page_name = $this->fetchPageName($page);
-			$this->page_state = $this->fetchPageState($page);
-			$this->menu_order = $this->fetchMenuOrder($page);
+			$this->content = $this->fetchContent($slug);
+			$this->page_title = $this->fetchPageTitle($slug);
+			$this->page_state = $this->fetchPageState($slug);
+			$this->menu_order = $this->fetchMenuOrder($slug);
 			$this->pages_links_titles = $this->fetchPagesLinksTitles();
-			$this->real_slug = $this->fetchRealSlug($page);
+            $this->page_slug = $this->fetchPageSlug($slug);
+            $this->page_name = $this->fetchPageName($slug);
 		}
 	}
 	/**
@@ -185,27 +195,21 @@ class Page
 				$gallery = new Gallery;
 				$array_images = $gallery->getImagesArray();
 				$galleries_names = $gallery->getGalleriesArray();
-				$mobile_detect = new Mobile_Detect;
+                $mobile_detect = new Mobile_Detect;
+                $data = [
+                    'rootUrl' => url('/'),
+                    'pageLinks' => $this->pages_links_titles,
+                    'pageSlug' => 'gallery',
+                    'menuOrder' => $this->menu_order,
+                    'array_images' => $array_images,
+                    'galleries_names' => $galleries_names
+                ];
 				if ($mobile_detect->isMobile() || $mobile_detect->isTablet()) {
-					$galleries = view(config('site.theme_dir') . config('site.theme') . '/' . 'gallery_mobile', [
-						'rootUrl' => url('/'),
-						'isMobile' => true,
-						'pageLinks' => $this->pages_links_titles,
-						'currentSlug' => 'gallery',
-						'currentMenuOrder' => $this->menu_order,
-						'array_images' => $array_images,
-						'galleries_names' => $galleries_names
-					])->render();
+                    $data['isMobile'] = true;
+					$galleries = view(config('site.theme_dir') . config('site.theme') . '/' . 'gallery_mobile', $data)->render();
 				} else {
-					$galleries = view(config('site.theme_dir') . config('site.theme') . '/' . 'gallery', [
-						'rootUrl' => url('/'),
-						'isMobile' => false,
-						'pageLinks' => $this->pages_links_titles,
-						'currentSlug' => 'gallery',
-						'currentMenuOrder' => $this->menu_order,
-						'array_images' => $array_images,
-						'galleries_names' => $galleries_names
-					])->render();
+                    $data['isMobile'] = false;
+					$galleries = view(config('site.theme_dir') . config('site.theme') . '/' . 'gallery', $data)->render();
 				}
 			}
 		} else {
@@ -214,7 +218,6 @@ class Page
 
         $xml = new DOMDXMLParser(storage_path('app/' . $page_path));
         $content = $xml->pickNode('page')->getValue();
-
 
 		if ($contactForm) {
             return ['content' => $content, 'contactForm' => $contactForm];
@@ -239,7 +242,7 @@ class Page
 			$page_path = self::XML_PAGE_DEFAULT_FOLDER_PATH . $default_page . '.xml';
 		} else {
 			if (array_key_exists($page, $this->pages_default_list)) {
-                $page_path = Page::XML_PAGE_DEFAULT_FOLDER_PATH . $this->pages_default_list[$page] . '.xml';
+                $page_path = self::XML_PAGE_DEFAULT_FOLDER_PATH . $this->pages_default_list[$page] . '.xml';
             } elseif (!in_array($page, $this->pages_list)) {
                 return;
             } else {
@@ -263,7 +266,7 @@ class Page
 	public function fetchPagesDefault($real_name = false)
 	{
 		if ($real_name) {
-			$pages_list = scandir(storage_path('app/private/pages_default'));
+			$pages_list = scandir(storage_path('app/database/pages/pages_default/'));
 			Arr::pull($pages_list, 0);
 			Arr::pull($pages_list, 1);
 			$pages_list = array_values($pages_list);
@@ -280,7 +283,7 @@ class Page
                 return false;
             }
 		} else {
-			$pages_list = scandir(storage_path('app/private/pages_default'));
+			$pages_list = scandir(storage_path('app/database/pages/pages_default/'));
 			Arr::pull($pages_list, 0);
 			Arr::pull($pages_list, 1);
 			$pages_list = array_values($pages_list);
@@ -288,7 +291,8 @@ class Page
 				return [str_replace('__', '', strstr(strstr($page, '.', true), '__')) => strstr($page, '.', true)];
 			}, $pages_list);
 			$pages_list = Arr::collapse($pages_list);
-		}
+        }
+
 		return $pages_list;
 	}
 	/**
@@ -300,7 +304,7 @@ class Page
 	 **/
 	protected function fetchPages()
 	{
-		$pages_list = scandir(storage_path('app/private/pages'));
+		$pages_list = scandir(storage_path('app/database/pages/pages_custom/'));
         Arr::pull($pages_list, 0);
         Arr::pull($pages_list, 1);
 
@@ -347,7 +351,7 @@ class Page
         $array = [];
         foreach ($pages_list as $slug => $page) {
             if ($this->fetchPageState($slug) === 0) {
-                $array[$slug] = $this->fetchPageName($page);
+                $array[$slug] = $this->fetchPageTitle($page);
             }
         }
         return array_values($array);
@@ -365,7 +369,7 @@ class Page
         $array = [];
         foreach ($pages_list as $slug => $page) {
             if ($this->fetchPageState($slug) === 1) {
-                $array[$slug] = $this->fetchPageName($page);
+                $array[$slug] = $this->fetchPageTitle($page);
             }
         }
         return $array;
@@ -397,25 +401,38 @@ class Page
 		return $array;
 	}
 	/**
-	 * Fetches the real slug
+	 * Fetches the page's slug
 	 *
-	 * Fetches the real slug of a given page
+	 * Fetches the page's slug of a given page
 	 *
-	 * @param 	string		$page		Page's name to fetch the data from
-	 * @return	string					Returns the real slug
+	 * @param 	string		$slug		Page's slug to fetch the data from
+	 * @return	string					Returns the page's slug
 	 **/
-	protected function fetchRealSlug($page)
+	protected function fetchPageSlug($slug)
 	{
-		if ($page == 'home' || $page == 'gallery' || $page == 'contact') {
-            $real_slug = $page;
+		return str_replace('_', '-', $this->fetchPageName($slug));
+	}
+	/**
+	 * Fetches the page's name
+	 *
+	 * Fetches the page's name of a given page
+	 *
+	 * @param 	string		$slug		Page's slug to fetch the data from
+	 * @return	string					Returns the page's name
+	 **/
+	protected function fetchPageName($slug)
+	{
+		if ($slug == 'home' || $slug == 'gallery' || $slug == 'contact') {
+            $page_name = $slug;
         } else {
-			if (array_key_exists($page, $this->pages_default_list)) {
-                $real_slug = $page;
-            } elseif (in_array($page, $this->pages_list)) {
-                $real_slug = $page;
+			if (array_key_exists($slug, $this->pages_default_list)) {
+                $page_name = $slug;
+            } elseif (in_array($slug, $this->pages_list)) {
+                $page_name = $slug;
             }
-		}
-		return $real_slug;
+        }
+
+		return $page_name;
 	}
 	/**
 	 * Fetches the page's title name
@@ -425,7 +442,7 @@ class Page
 	 * @param 	string		$page		Page's name to fetch the data from
 	 * @return	string					Returns the page's title name
 	 **/
-	protected function fetchPageName($page)
+	protected function fetchPageTitle($page)
 	{
 		if ($page == 'home' || $page == 'gallery' || $page == 'contact') {
 			$default_page = $this->fetchPagesDefault($page);
@@ -532,20 +549,30 @@ class Page
 		return $this->menu_order;
 	}
 	/**
-	 * Gets pages's real slug
+	 * Gets pages's real
 	 *
 	 *
-	 * @return 	string	Returns the pages's real slug
+	 * @return 	string	Returns the pages's slug
 	 **/
-	public function getRealSlug()
+	public function getPageSlug()
 	{
-		return $this->real_slug;
+		return $this->page_slug;
 	}
 	/**
-	 * Gets pages's name title
+	 * Gets pages's title
 	 *
 	 *
-	 * @return 	string	Returns the pages's name title
+	 * @return 	string	Returns the pages's title
+	 **/
+	public function getPageTitle()
+	{
+		return $this->page_title;
+	}
+	/**
+	 * Gets pages's name
+	 *
+	 *
+	 * @return 	string	Returns the pages's name
 	 **/
 	public function getPageName()
 	{

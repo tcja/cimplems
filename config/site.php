@@ -4,14 +4,16 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Website's name
+    | Website's name and footer credentials
     |--------------------------------------------------------------------------
     |
-    | This is the website's default name
+    | This is the website's default name and footer credits
     |
     */
 
     'name' => 'Your website',
+
+    'footer_credits' => '<span style="left: 0; right: 0;" class="d-inline-block position-absolute text-center text-white small">&copy; Your Website 2019</span>',
 
     /*
     |--------------------------------------------------------------------------
@@ -29,8 +31,7 @@ return [
     | Page transition style
     |--------------------------------------------------------------------------
     |
-    | This defines if the page transitions should be done via ajax or just
-    | the standard way by always refreshing the whole page
+    | This defines if the page transitions should be done via ajax or not
     |
     */
 

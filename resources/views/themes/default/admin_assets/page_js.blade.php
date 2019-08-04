@@ -53,7 +53,7 @@
                                 data: data,
                                 dataType: 'json'
                             }).done(function(image_name) {
-                                var image = $('<img>').attr({src: './storage/images_site/'+image_name, class: 'img-fluidR' });
+                                var image = $('<img>').attr({src: './storage/images_site/' + image_name, class: 'img-fluidR' });
                                 $('#summernote').summernote("insertNode", image[0]);
                             }).fail(function(data){
                                 console.log(data);
@@ -62,7 +62,7 @@
                     });
                 },
                 onMediaDelete : function(target) {
-                     var data_string = 'image_name=' + target[0].src.split('/')[target[0].src.split('/').length-1];
+                     var data_string = 'image_name=' + target[0].src.split('/')[target[0].src.split('/').length - 1];
                      $.ajax({
                         type: 'POST',
                         url: $rootUrl + '/delete_site_image',
@@ -119,45 +119,45 @@
                     dataType: 'json'
                 }).done(function(data) {
                     $('#menu').children('span').remove();
-                    $('#menu').children().eq(data.menuOrder-2).after('<span>'+data.menu_name+'</span>');
+                    $('#menu').children().eq(data.menuOrder-2).after('<span>' + data.menu_name + '</span>');
 
                     var updatedMenu = [];
-                    if ($currentMenuOrder - data.menuOrder < 0) {
+                    if ($menuOrder - data.menuOrder < 0) {
                         $('#order_menu_new option').each(function(i, el) {
                             var menuNumber = parseInt(el.value);
-                            if (menuNumber == 0 || menuNumber == 1 || menuNumber < $currentMenuOrder + 1 || menuNumber > data.menuOrder) {
+                            if (menuNumber == 0 || menuNumber == 1 || menuNumber < $menuOrder + 1 || menuNumber > data.menuOrder) {
                             } else {
-                                updatedMenu.push([menuNumber-1, el.text]);
+                                updatedMenu.push([menuNumber - 1, el.text]);
                                 el.remove();
                             }
                         });
                         var finalUpdate = '';
                         for (var i = 0; i < updatedMenu.length; i++) {
-                            finalUpdate += '<option value="'+updatedMenu[i][0]+'">'+updatedMenu[i][1]+'</option>';
+                            finalUpdate += '<option value="' + updatedMenu[i][0] + '">' + updatedMenu[i][1] + '</option>';
                         }
-                        $('#order_menu_new').children().eq($currentMenuOrder - 2).after(finalUpdate);
+                        $('#order_menu_new').children().eq($menuOrder - 2).after(finalUpdate);
                     } else {
                         $('#order_menu_new option').each(function(i, el) {
                             var menuNumber = parseInt(el.value);
-                            if (menuNumber == 0 || menuNumber == 1 || menuNumber > $currentMenuOrder || menuNumber < data.menuOrder) {
+                            if (menuNumber == 0 || menuNumber == 1 || menuNumber > $menuOrder || menuNumber < data.menuOrder) {
                             } else {
-                                updatedMenu.push([menuNumber+1, el.text]);
+                                updatedMenu.push([menuNumber + 1, el.text]);
                                 el.remove();
                             }
                         });
                         var finalUpdate = '';
                         for (var i = 0; i < updatedMenu.length; i++) {
-                            finalUpdate += '<option value="'+updatedMenu[i][0]+'">'+updatedMenu[i][1]+'</option>';
+                            finalUpdate += '<option value="' + updatedMenu[i][0] + '">' + updatedMenu[i][1] + '</option>';
                         }
                         $('#order_menu_new').children().eq(data.menuOrder - 2).after(finalUpdate);
                     }
-                    $currentMenuOrder = data.menuOrder;
+                    $menuOrder = data.menuOrder;
                     var orderMenuNew = $('#order_menu_new').children('option[value!="0"]').clone();
                     var home = $('#orderList').children('option[value="1"]').clone();
                     $('#orderList').children('option[value!="0"]').remove();
                     $('#orderList').append(home);
                     $('#orderList').append(orderMenuNew);
-                    $('#orderList').children().eq(data.menuOrder - 1).after('<option value="'+data.menuOrder+'">'+data.menu_name+'</option>');
+                    $('#orderList').children().eq(data.menuOrder - 1).after('<option value="' + data.menuOrder + '">' + data.menu_name + '</option>');
 
                     $('.modalChangeOrderMenu').one('hidden.bs.modal', function (e) {
                         $('#order_menu_new').val(0);
@@ -194,13 +194,13 @@
                     data: data_string,
                     dataType: 'json'
                 }).done(function(data) {
-                    $('#menu').children().eq(data.menuOrder-2).after('<a href="'+$rootUrl + '/'+data.page_link+'" class="pageLink mr-1" title="'+data.page_name+'">'+data.page_name+'</a>');
+                    $('#menu').children().eq(data.menuOrder-2).after('<a href="' + $rootUrl + '/' + data.page_link + '" class="pageLink mr-1" title="' + data.page_name + '">' + data.page_name + '</a>');
                     var updatedMenu = [];
                     $('#orderList option').each(function(i, el) {
                         var menuNumber = parseInt(el.value);
                         if (menuNumber == 0 || menuNumber == 1 || menuNumber < data.menuOrder) {
                         } else {
-                            updatedMenu.push([menuNumber+1, el.text]);
+                            updatedMenu.push([menuNumber + 1, el.text]);
                             el.remove();
                         }
                     });
@@ -208,7 +208,7 @@
                     updatedMenu.sort(function(a, b){return a[0]-b[0]});
                     var finalUpdate = '';
                     for (var i = 0; i < updatedMenu.length; i++) {
-                        finalUpdate += '<option value="'+updatedMenu[i][0]+'">'+updatedMenu[i][1]+'</option>';
+                        finalUpdate += '<option value="' + updatedMenu[i][0] + '">' + updatedMenu[i][1] + '</option>';
                     }
                     $('#orderList').append(finalUpdate);
                     $('#orderList').val(0);
@@ -216,7 +216,7 @@
                     $('#order_menu_new').children().remove();
                     $('#order_menu_new').append(orderList);
                     $('#order_menu_new').children('option[value="1"]').remove();
-                    $('#order_menu_new').children('option[value="'+$currentMenuOrder+'"]').remove();
+                    $('#order_menu_new').children('option[value="' + $menuOrder + '"]').remove();
                     $('#order_menu_new').prepend('<option value="0">{{ __("site.in_the_menu_instead_of") }}</option>');
                     $('#order_menu_new').val(0);
                     $('.modalAddPage').one('hidden.bs.modal', function (e) {
@@ -253,15 +253,15 @@
                     if (history.pushState) {
                         $(document).prop('title', data.new_page_title);
                         $('#menu').children('span').html(data.new_page_title);
-                        $('#orderList').children('option[value="'+$currentMenuOrder+'"]').html(data.new_page_title);
+                        $('#orderList').children('option[value="' + $menuOrder + '"]').html(data.new_page_title);
                         $('#EditPage').find('input[name="slug"]').val(data.new_page_slug);
                         if (data.new_page_slug == 'home') {
                             window.history.pushState(null, "Title", $rootUrl + "/");
                         } else {
-                            window.history.pushState(null, "Title", $rootUrl + "/"+data.new_page_slug);
+                            window.history.pushState(null, "Title", $rootUrl + "/" + data.new_page_slug);
                         }
-                        $currentSlug = data.new_page_slug;
-                        $currentPageTitle = data.new_page_title;
+                        $pageSlug = data.new_page_slug;
+                        $pageTitle = data.new_page_title;
                         $('.modalChangePageName').one('hidden.bs.modal', function (e) {
                             $('.sendForm').prop('disabled', false);
                             $('#pageNameChangeNew').val('');
@@ -273,7 +273,7 @@
                         });
                         $('.modalChangePageName').modal('hide');
                     } else {
-                        document.location.href = $rootUrl + "/"+data.new_page_slug;
+                        document.location.href = $rootUrl + "/" + data.new_page_slug;
                     }
                 });
             }
@@ -300,8 +300,8 @@
                     dataType: 'json'
                 }).done(function(data) {
                     if (history.pushState) {
-                        $currentMenuOrder = 1;
-                        $currentSlug = 'home'
+                        $menuOrder = 1;
+                        $pageSlug = 'home'
                         $(document).prop('title', data.home_page_name);
                         $('#EditPage').find('input[name="slug"]').val('home');
                         $('#summernote').summernote('reset');
@@ -310,28 +310,28 @@
                         $('.delete_page').remove();
                         $('.change_menu_order').remove();
                         $('#menu').children('span').remove();
-                        $('#menu').find('a[href="'+$rootUrl + '"]').replaceWith('<span>'+$('#menu').find('a[href="'+$rootUrl + '"]').attr('title')+'</span>');
-                        $('#orderList').find('option[value="'+data.menuOrder+'"]').remove();
+                        $('#menu').find('a[href="' + $rootUrl + '"]').replaceWith('<span>'+$('#menu').find('a[href="' + $rootUrl + '"]').attr('title')+'</span>');
+                        $('#orderList').find('option[value="' + data.menuOrder + '"]').remove();
                         $('.page_name_span').html(data.home_page_name);
                         $('#pageNameOld').val('home');
                         $(data.menu_update).each(function(i, el) {
-                            $('#orderList').find('option[value="'+el+'"]').val(el-1)
+                            $('#orderList').find('option[value="' + el + '"]').val(el - 1)
                         });
                         $(data.menu_update).each(function(i, el) {
-                            $('#order_menu_new').find('option[value="'+el+'"]').val(el-1)
+                            $('#order_menu_new').find('option[value="' + el + '"]').val(el - 1)
                         });
                         $('#content').fadeOut(100, function(el) {
                             $(el).empty()
                             if (data.publishState === 1) {
                                 $('.publish').replaceWith('<input class="publish" type="checkbox" checked="checked">');
-                                if ($currentSlug == 'home') {
+                                if ($pageSlug == 'home') {
                                     $('.publish').parent().parent().attr('title', '').attr('data-original-title', '{{ __("site.put_site_in_private") }}');
                                 } else {
                                     $('.publish').parent().parent().attr('title', '').attr('data-original-title', '{{ __("site.put_in_private") }}');
                                 }
                             } else {
                                 $('.publish').replaceWith('<input class="publish" type="checkbox">');
-                                if ($currentSlug == 'home') {
+                                if ($pageSlug == 'home') {
                                     $('.publish').parent().parent().attr('title', '').attr('data-original-title', '{{ __("site.put_site_in_public") }}');
                                 } else {
                                     $('.publish').parent().parent().attr('title', '').attr('data-original-title', '{{ __("site.put_in_public") }}');
@@ -350,16 +350,16 @@
                 });
             });
             if ($('.modalConfirm').find('.modal-title > span').length == 0) {
-                $('.modalConfirm').find('.modal-title').append('<span class="page_name_span badge badge-dark">' + $currentPageTitle + '</span>');
+                $('.modalConfirm').find('.modal-title').append('<span class="page_name_span badge badge-dark">' + $pageTitle + '</span>');
             } else {
-                $('.modalConfirm').find('.modal-title > span').html($currentPageTitle);
+                $('.modalConfirm').find('.modal-title > span').html($pageTitle);
             }
         });
 
         $(this).on('click', '.publish', function(e) {
             if ($(this).attr('checked') === undefined) {
                 $(this).attr('checked', 'checked');
-                if ($currentSlug == 'home') {
+                if ($pageSlug == 'home') {
                     $(this).parent().parent().attr('title', '').attr('data-original-title', '{{ __("site.put_site_in_private") }}');
                 } else {
                     $(this).parent().parent().attr('title', '').attr('data-original-title', '{{ __("site.put_in_private") }}');
@@ -367,14 +367,14 @@
                 var state = 1;
             } else {
                 $(this).removeAttr('checked');
-                if ($currentSlug == 'home') {
+                if ($pageSlug == 'home') {
                     $(this).parent().parent().attr('title', '').attr('data-original-title', '{{ __("site.put_site_in_public") }}');
                 } else {
                     $(this).parent().parent().attr('title', '').attr('data-original-title', '{{ __("site.put_in_public") }}');
                 }
                 var state = 0;
             }
-            var data_string = 'page_name=' + $currentSlug + '&page_state=' + state;
+            var data_string = 'page_name=' + $pageSlug + '&page_state=' + state;
             $.ajax({
                 type: 'POST',
                 url: $rootUrl + '/change_page_state',
@@ -383,14 +383,14 @@
                 dataType: 'json'
             }).done(function(data) {
                 if (data) {
-                    if ($currentSlug == 'home') {
+                    if ($pageSlug == 'home') {
                         $('.toast-body').html('{{ __("site.site_public") }}');
                     } else {
                         $('.toast-body').html('{{ __("site.page_public") }}');
                     }
                     $('.toast').toast('show');
                 } else {
-                    if ($currentSlug == 'home') {
+                    if ($pageSlug == 'home') {
                         $('.toast-body').html('{{ __("site.site_private") }}');
                     } else {
                         $('.toast-body').html('{{ __("site.page_private") }}');
@@ -403,7 +403,7 @@
         $(this).on('click', '.view_as_visitor', function(e) {
             e.preventDefault();
             $(this).prop('disabled', true);
-            if ($currentSlug == 'home' && $('.publish').attr('checked') === undefined) {
+            if ($pageSlug == 'home' && $('.publish').attr('checked') === undefined) {
                 if ($('.button_visitor_warning').length === 0) {
                     $.ajax({
                         type: 'GET',
@@ -412,8 +412,8 @@
                         context: this
                     }).done(function(data) {
                         $(data).each(function(i, el) {
-                            if (el == $('#menu').children('a[title="'+el+'"]').html()) {
-                                $('#menu').children('a[title="'+el+'"]').fadeOut();
+                            if (el == $('#menu').children('a[title="' + el + '"]').html()) {
+                                $('#menu').children('a[title="' + el + '"]').fadeOut();
                             }
                         });
                         $('#admin_menu').fadeOut();
@@ -450,8 +450,8 @@
                         $(this).attr('title', '').attr('data-original-title', '{{ __("site.view_as_admin") }}');
                         $(this).children().removeClass('fa-eye').addClass('fa-eye-slash');
                         $(data).each(function(i, el) {
-                            if (el == $('#menu').children('a[title="'+el+'"]').html()) {
-                                $('#menu').children('a[title="'+el+'"]').fadeOut();
+                            if (el == $('#menu').children('a[title="' + el + '"]').html()) {
+                                $('#menu').children('a[title="' + el + '"]').fadeOut();
                             } else {
                                 $('#menu').children('span').fadeOut();
                             }
@@ -479,13 +479,13 @@
                             }).done(function(data) {
                                 $('.delete_page').remove();
                                 $('.change_menu_order').remove();
-                                $currentSlug = 'home';
+                                $pageSlug = 'home';
                                 $('#content').fadeOut(100, function(content) {
                                     $(content).empty();
                                     $(content).next().remove();
                                     if (data.publishState === 1) {
                                         $('.publish').replaceWith('<input class="publish" type="checkbox" checked="checked">');
-                                        if ($currentSlug == 'home') {
+                                        if ($pageSlug == 'home') {
                                             $('.publish').parent().parent().attr('title', '').attr('data-original-title', '{{ __("site.put_site_in_private") }}');
                                         } else {
                                             $('.publish').parent().parent().attr('title', '').attr('data-original-title', '{{ __("site.put_in_private") }}');
@@ -493,7 +493,7 @@
                                     } else {
                                         $('.publish').replaceWith('<input class="publish" type="checkbox">');
                                         $('.view_as_visitor').before('<button type="button" style="top: 0; right: 2.4rem; cursor: default;" class="tooltipz button_visitor_warning position-absolute page_osption_icon mt-1 mr-2 btn btn-danger btn-sm" title="" data-original-title="{{ __("site.site_in_constr_warning_label") }}"><i class="fas fa-lock"></i>&nbsp;&nbsp;{{ __("site.site_in_constr_warning_title") }}</button>');
-                                        if ($currentSlug == 'home') {
+                                        if ($pageSlug == 'home') {
                                             $('.publish').parent().parent().attr('title', '').attr('data-original-title', '{{ __("site.put_site_in_public") }}');
                                         } else {
                                             $('.publish').parent().parent().attr('title', '').attr('data-original-title', '{{ __("site.put_in_public") }}');
@@ -518,8 +518,8 @@
                                 context: this
                             }).done(function(data) {
                                 $(data).each(function(i, el) {
-                                    if (el == $('#menu').children('a[title="'+el+'"]').html()) {
-                                        $('#menu').children('a[title="'+el+'"]').fadeOut();
+                                    if (el == $('#menu').children('a[title="' + el + '"]').html()) {
+                                        $('#menu').children('a[title="' + el + '"]').fadeOut();
                                     }
                                 });
                                 if (data.publishState === 0) {

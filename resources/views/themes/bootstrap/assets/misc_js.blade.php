@@ -38,19 +38,19 @@
                     $('.navbar-collapse').collapse('hide');
                     var targetTitleLink = $(this).attr('title');
                     var originTitleLink = $('#menu').children('.nav-item.active').children().html();
-                    var originSlug = $currentSlug;
-                    //$currentPageTitle = data.currentPageTitle;
-                    $currentSlug = data.currentSlug;
-                    $(document).prop('title', data.currentPageTitle);
+                    var originSlug = $pageSlug;
+                    //$pageTitle = data.pageTitle;
+                    $pageSlug = data.slug;
+                    $(document).prop('title', data.pageTitle);
                     originSlug = originSlug.replace(/_/gi,'-');
                     if (originSlug == 'home' || originSlug == 'contact' || originSlug == 'gallery') {
                         if (originSlug == 'contact' || originSlug == 'gallery') {
-                            $('#menu').children('.nav-item.active').replaceWith('<li class="nav-item"><a href="'+$rootUrl + '/'+originSlug+'" class="pageLink nav-link" title="'+originTitleLink+'">'+originTitleLink+'</a></li>');
+                            $('#menu').children('.nav-item.active').replaceWith('<li class="nav-item"><a href="' + $rootUrl + '/'+originSlug+'" class="pageLink nav-link" title="'+originTitleLink+'">'+originTitleLink+'</a></li>');
                         } else {
-                            $('#menu').children('.nav-item.active').replaceWith('<li class="nav-item"><a href="'+$rootUrl + '" class="pageLink nav-link" title="'+originTitleLink+'">'+originTitleLink+'</a></li>');
+                            $('#menu').children('.nav-item.active').replaceWith('<li class="nav-item"><a href="' + $rootUrl + '" class="pageLink nav-link" title="'+originTitleLink+'">'+originTitleLink+'</a></li>');
                         }
                     } else {
-                        $('#menu').children('.nav-item.active').replaceWith('<li class="nav-item"><a href="'+$rootUrl + '/'+originSlug+'" class="pageLink nav-link" title="'+originTitleLink+'">'+originTitleLink+'</a></li>');
+                        $('#menu').children('.nav-item.active').replaceWith('<li class="nav-item"><a href="' + $rootUrl + '/'+originSlug+'" class="pageLink nav-link" title="'+originTitleLink+'">'+originTitleLink+'</a></li>');
                     }
                     $(this).parent().replaceWith('<li class="nav-item active"><span class="nav-link">'+targetTitleLink+'</span></li>');
 

@@ -9,15 +9,6 @@ use App\Libraries\User;
 
 class LoginController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Login Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller handles authenticating users for the application.
-    |
-    */
-
     /**
      * Check user login
      *

@@ -10,9 +10,9 @@ use App\Libraries\CheckDefaultFiles;
 //use App\Libraries\User;
 //use App\Libraries\EditUser;
 use App\Libraries\EditPage;
-use App\Libraries\EditGallery;
+/* use App\Libraries\EditGallery;
 use App\Libraries\Gallery;
-use App\Libraries\User;
+use App\Libraries\User; */
 
 //use Illuminate\Support\Facades\Hash;
 //use Illuminate\Support\Facades\Mail;
@@ -21,7 +21,7 @@ use App\Libraries\User;
 
 class PageController extends Controller
 {
-    public function index($slug = 'home', Mobile_Detect $mobile_detect/*  , Request $request */)
+    public function index($slug = 'home', Mobile_Detect $mobile_detect)
     {
         /* $lolz = ['asd', 'asdy', 'asd', 'asdy', 'asdd', 'asfdy', 'ased', 'asdsy', 'asxd', 'asfdy', 'asgd', 'agsdy', 'ahsd', 'asdy', 'agsd', 'asdjy', 'arsd', 'asd3y', 'awsd', 'assdy', 'asd', 'asxdy'];
         $bise = new LengthAwarePaginator($lolz, count($lolz), 6, 1);
@@ -42,38 +42,29 @@ class PageController extends Controller
             $isMobile = false;
         }
 
-        $slug = strtolower(str_replace('-', '_', $slug));
         $pages_list = new Page($slug, 'ALL_PAGES_LIST');
-        if (array_key_exists($slug, $pages_list->getAllPagesList())) {
+        if (array_key_exists(strtolower(str_replace('-', '_', $slug)), $pages_list->getAllPagesList())) {
             $checkHome = new Page('home');
-            if ($checkHome->getRealSlug() == 'home' && !$checkHome->getPageState() && empty(session('admin'))) {
+            if ($checkHome->getPageSlug() == 'home' && !$checkHome->getPageState() && empty(session('admin'))) {
                 return view('under_construction', ['rootUrl' => url('/')]);
             } else {
                 $page = new Page($slug);
+                $data = [
+                    'rootUrl' => url('/'),
+                    'isMobile' => $isMobile,
+                    'pageLinks' => $page->getPagesLinksTitles(),
+                    'page' => 'page',
+                    'publishState' => $page->getPageState(),
+                    'pageTitle' => $page->getPageTitle(),
+                    'pageSlug' => $page->getPageSlug(),
+                    'pageName' => $page->getPageName(),
+                    'menuOrder' => $page->getMenuOrder(),
+                    'content' => $page->getContent()
+                ];
                 if ($isMobile) {
-                    return view(config('site.theme_dir') . config('site.theme') . '/' . 'site_mobile', [
-                        'rootUrl' => url('/'),
-                        'isMobile' => $isMobile,
-                        'pageLinks' => $page->getPagesLinksTitles(),
-                        'page' => 'page',
-                        'publishState' => $page->getPageState(),
-                        'currentPageTitle' => $page->getPageName(),
-                        'currentSlug' => $page->getRealSlug(),
-                        'currentMenuOrder' => $page->getMenuOrder(),
-                        'content' => $page->getContent()
-                    ]);
+                    return view('site_mobile', $data);
                 } else {
-                    return view(config('site.theme_dir') . config('site.theme') . '/' . 'site', [
-                        'rootUrl' => url('/'),
-                        'isMobile' => $isMobile,
-                        'pageLinks' => $page->getPagesLinksTitles(),
-                        'page' => 'page',
-                        'publishState' => $page->getPageState(),
-                        'currentPageTitle' => $page->getPageName(),
-                        'currentSlug' => $page->getRealSlug(),
-                        'currentMenuOrder' => $page->getMenuOrder(),
-                        'content' => $page->getContent()
-                    ]);
+                    return view('site', $data);
                 }
             }
         } else {
@@ -91,7 +82,7 @@ class PageController extends Controller
             return response()->json('fail');
         }
 
-        return response()->json($edit_page->editPage($request->slug, $request->content));
+        return response()->json($edit_page->editPage(str_replace('-', '_', $request->slug), $request->content));
     }
 
     public function addPage(Request $request, EditPage $edit_page)
@@ -138,9 +129,10 @@ class PageController extends Controller
         $page = new Page($request->page_name_show, 'CONTENT_AND_MENU_ORDER_NUMBER_AND_SLUG_AND_PAGE_STATE_AND_PAGE_TITLE');
         return [
             'content' => $page->getContent(),
-            'currentMenuOrder' => $page->getMenuOrder(),
-            'currentPageTitle' => $page->getPageName(),
-            'currentSlug' => str_replace('_', '-', $page->getRealSlug()),
+            'menuOrder' => $page->getMenuOrder(),
+            'pageTitle' => $page->getPageTitle(),
+            'pageName' => $page->getPageName(),
+            'slug' => $page->getPageSlug(),
             'publishState' => $page->getPageState()
         ];
     }
@@ -255,7 +247,7 @@ class PageController extends Controller
 
     public function showHomePage()
     {
-        $page = new Page('home', 'CONTENT_AND_PAGE_NAME_AND_PAGE_STATE');
+        $page = new Page('home', 'CONTENT_AND_PAGE_TITLE_AND_PAGE_STATE');
         return ['publishState' => $page->getPageState(), 'content' => $page->getContent()];
     }
 }

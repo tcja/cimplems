@@ -36,19 +36,19 @@
                 if (history.pushState) {
                     var targetTitleLink = $(this).attr('title');
                     var originTitleLink = $('#menu').children('span').html();
-                    var originSlug = $currentSlug;
-                    //$currentPageTitle = data.currentPageTitle;
-                    $currentSlug = data.currentSlug;
-                    $(document).prop('title', data.currentPageTitle);
+                    var originSlug = $pageSlug;
+                    //$pageTitle = data.pageTitle;
+                    $pageSlug = data.slug;
+                    $(document).prop('title', data.pageTitle);
                     originSlug = originSlug.replace(/_/gi,'-');
                     if (originSlug == 'home' || originSlug == 'contact' || originSlug == 'gallery') {
                         if (originSlug == 'contact' || originSlug == 'gallery') {
-                            $('#menu').children('span').replaceWith('<a href="'+$rootUrl + '/'+originSlug+'" class="pageLink mr-1" title="'+originTitleLink+'">'+originTitleLink+'</a>');
+                            $('#menu').children('span').replaceWith('<a href="' + $rootUrl + '/'+originSlug+'" class="pageLink mr-1" title="'+originTitleLink+'">'+originTitleLink+'</a>');
                         } else {
-                            $('#menu').children('span').replaceWith('<a href="'+$rootUrl + '" class="pageLink mr-1" title="'+originTitleLink+'">'+originTitleLink+'</a>');
+                            $('#menu').children('span').replaceWith('<a href="' + $rootUrl + '" class="pageLink mr-1" title="'+originTitleLink+'">'+originTitleLink+'</a>');
                         }
                     } else {
-                        $('#menu').children('span').replaceWith('<a href="'+$rootUrl + '/'+originSlug+'" class="pageLink mr-1" title="'+originTitleLink+'">'+originTitleLink+'</a>');
+                        $('#menu').children('span').replaceWith('<a href="' + $rootUrl + '/'+originSlug+'" class="pageLink mr-1" title="'+originTitleLink+'">'+originTitleLink+'</a>');
                     }
                     $(this).replaceWith('<span>'+targetTitleLink+'</span>');
 

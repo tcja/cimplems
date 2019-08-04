@@ -49,7 +49,7 @@ class Gallery
 	 *
 	 *  @var string $XML_DATA_FILE_PATH XML file for the XML data files path
 	 * */
-	const XML_DATA_FILE_PATH = 'private/data/';
+	const XML_DATA_FILE_PATH = 'database/galleries/';
 	/**
 	 *
 	 * @var string IMAGES_FILE_PATH XML file for images

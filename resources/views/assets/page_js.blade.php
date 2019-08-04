@@ -44,7 +44,7 @@
 							$('.toast').toast('show');
 						});
 						$('.modalLogin').modal('hide'); */
-						document.location.href = $rootUrl + '/' + ($currentSlug == 'home' ? '' : $currentSlug);
+						document.location.href = $rootUrl + '/' + ($pageSlug == 'home' ? '' : $pageSlug);
 					} else if (data === 'wrongInputs') {
 						$('.sendForm').prop('disabled', false);
 						$('#inputPassword').removeClass('valid')/* .addClass('ml-4 errorf alert-error') */;

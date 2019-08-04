@@ -10,9 +10,9 @@
             </div>
             <div class="modal-body">
                 {!! Form::open(['url' => url('/abort'), 'id' => '', 'class' => '']) !!}
-                    <input type="hidden" name="slug" value="{{ $currentSlug }}">
+                    <input type="hidden" name="slug" value="{{ $pageSlug }}">
                     <textarea id="summernote" name="editordata">
-                        @if ($currentSlug == 'contact' || $currentSlug == 'gallery')
+                        @if ($pageSlug == 'contact' || $pageSlug == 'gallery')
                             {{ $content['content'] }}
                         @else
                             {{ $content }}
@@ -51,8 +51,8 @@
                             <select size="1" id="orderList" name="orderList" class="mt-1 form-control form-control-sm">
                                 <option value="0">{{ __('site.appearance_order_after') }}</option>
                                 @foreach ($pageLinks as $orderNumber => $page)
-                                    @foreach ($page as $slug => $pageName)
-                                        <option value="{{ $orderNumber }}">{{ $pageName }}</option>
+                                    @foreach ($page as $slug => $title)
+                                        <option value="{{ $orderNumber }}">{{ $title }}</option>
                                     @endforeach
                                 @endforeach
                             </select>
@@ -67,28 +67,28 @@
         </div>
     </div>
 </div>
-{{-- Change menu order modal // ***&& $orderNumber != $currentMenuOrder - 1*** --}}
+{{-- Change menu order modal // ***&& $orderNumber != $menuOrder - 1*** --}}
 <div class="modal modalReset fade modalChangeOrderMenu" id="ChangeOrderMenu" tabindex="-1" role="dialog" aria-labelledby="ChangeOrderMenu" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div style="padding-top: 10px; padding-bottom: 10px;" class="modal-header">
-                <h5 class="modal-title">{{ __('site.change_appearance_order') }} <span class="page_name_span badge badge-dark">{{ $pageLinks[$currentMenuOrder][$currentSlug] }}</span></h5>
+                <h5 class="modal-title">{{ __('site.change_appearance_order') }} <span class="page_name_span badge badge-dark">{{ $pageLinks[$menuOrder][$pageName] }}</span></h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             {!! Form::open(['url' => url('/abort'), 'id' => 'change_menu_order', 'class' => '']) !!}
                 <div class="modal-body">
-                    <input type="hidden" id="pageNameNew" name="page_name_menu" value="{{ $currentSlug }}">
+                    <input type="hidden" id="pageNameNew" name="page_name_menu" value="{{ $pageSlug }}">
                     <div class="form-group row">
                         <label for="order_menu_new" class="col-auto">{{ __('site.appearance_order') }}</label>
                         <div class="col-12 col-md-7" style="margin-top: -5px;">
                             <select size="1" id="order_menu_new" name="order_menu_new" class="mt-1 form-control form-control-sm">
                                 <option value="0">{{ __('site.in_the_menu_instead_of') }}</option>
                                 @foreach ($pageLinks as $orderNumber => $page)
-                                    @foreach ($page as $slug => $pageName)
-                                        @if ($slug != $currentSlug && $slug != 'home')
-                                            <option value="{{ $orderNumber }}">{{ $pageName }}</option>
+                                    @foreach ($page as $slug => $title)
+                                        @if ($slug != $pageSlug && $slug != 'home')
+                                            <option value="{{ $orderNumber }}">{{ $title }}</option>
                                         @endif
                                     @endforeach
                                 @endforeach
@@ -109,14 +109,14 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div style="padding-top: 10px; padding-bottom: 10px;" class="modal-header">
-                <h5 class="modal-title">{{ __('site.change_page_name') }} <span class="page_name_span badge badge-dark">{{ $pageLinks[$currentMenuOrder][$currentSlug] }}</span></h5>
+                <h5 class="modal-title">{{ __('site.change_page_name') }} <span class="page_name_span badge badge-dark">{{ $pageLinks[$menuOrder][$pageName] }}</span></h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             {!! Form::open(['url' => url('/abort'), 'id' => 'change_page_name', 'class' => '']) !!}
                 <div class="modal-body">
-                    <input type="hidden" id="pageNameOld" name="page_name_old" value="{{ $currentSlug }}">
+                    <input type="hidden" id="pageNameOld" name="page_name_old" value="{{ $pageSlug }}">
                     <div class="form-group row">
                         <label for="pageNameChangeNew" class="col-auto col-form-label">{{ __('site.new_name') }}</label>
                         <div class="col-12 col-md-7 mt-1" style="msargin-left: -45px;">

@@ -41,7 +41,7 @@
             });
         });
         $rootUrl = '{{ $rootUrl }}';
-        $currentPageTitle = '{{ $currentPageTitle }}';
-        $currentSlug = '{{ $currentSlug }}';
+        $pageTitle = '{{ $pageTitle }}';
+        $pageSlug = '{{ $pageSlug }}';
     });
 </script>

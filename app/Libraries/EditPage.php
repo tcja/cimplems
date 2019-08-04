@@ -267,7 +267,7 @@ class EditPage extends Page
 			}
 		}
 		\Storage::delete(Page::XML_PAGE_FOLDER_PATH . $page_name . '.xml');
-        parent::__construct('home', 'CONTENT_AND_PAGE_NAME_AND_PAGE_STATE');
+        parent::__construct('home', 'CONTENT_AND_PAGE_TITLE_AND_PAGE_STATE');
 
 		return [
 			'content' => $this->getContent(),

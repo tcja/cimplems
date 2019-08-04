@@ -17,7 +17,7 @@
 <script type="text/javascript">
     function escapeHtml(t){var e={"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"};return t.replace(/[&<>"']/g,function(t){return e[t]})}
     $(function(){
-        $currentMenuOrder = {{ $currentMenuOrder }};
+        $menuOrder = {{ $menuOrder }};
         $defaultsConfirmModal = {
             confirmButton: '{{ __("site.ok_button") }}',
             cancelButton: '{{ __("site.cancel_button") }}',
