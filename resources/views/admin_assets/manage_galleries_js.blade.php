@@ -14,7 +14,7 @@
 				}
 			},
 			submitHandler: function(form) {
-				var gallery = $("<div/>").html($.trim($(form).find('input[name="gallery_title"]').val())).text();
+				var gallery = $('<div/>').html($.trim($(form).find('input[name="gallery_title"]').val())).text();
 				var data_string = 'gallery_title=' + gallery;
 				$(form).find('input[name="gallery_title"]').prop('disabled', true);
 				$.ajax({
@@ -107,11 +107,11 @@
 
 				function parsedata(data, image_numb)
 				{
-					var image = data;
-					var total_char_images = image.name[image_numb][0].length;
-					var imgf = image.name[image_numb][0].split('.').join("").split('-').join("").split('_').join("");
-					var gallery_nbr = image.gallery;
-					var gallery_name = $('select[name=gallery]').find(":selected").html();
+					var image = data.images;
+					var total_char_images = image[image_numb].fileName.length;
+					var imgf = image[image_numb].fileName.split('.').join('').split('-').join('').split('_').join('');
+					var gallery_nbr = data.gallery;
+					var gallery_name = $('select[name=gallery]').find(':selected').html();
 					var gal_id = 'gallery' + gallery_nbr;
 					var gal_find = '#gallery' + gallery_nbr;
 					var gal_exist = $(document.body).find(gal_find).length;
@@ -122,53 +122,58 @@
 							$('#files_list').append(image.errors[0] + '<br>');
 						} else {
 							if (gal_exist == 1) {
-								$('#gallery'+image.gallery).children('div').append('<div id="' + imgf + '" style="display:none;" class="thumb_resp thumbs_resp"><a href="' + $rootUrl + '/storage/images_gallery/big/' + image.name[image_numb][0] + '" rel="external" title="' + escapeHtml($("<div/>").html(image.title).text()) + '" data-size="1280x960" data-med="' + $rootUrl + '/storage/images_gallery/big/' + image.name[image_numb][0] + '" data-med-size="1280x960" alt="' + image.name[image_numb][0] + '" class="phswipe"><img alt="" src="' + $rootUrl + '/storage/images_gallery/min/' + image.name[image_numb][0] + '" class="thumb_resp2 img-fluid"></a></div>');
+                                var html = '<div id="' + imgf + '" style="display:none;" class="thumb_resp thumbs_resp"><a href="' + $rootUrl + '/storage/images_gallery/big/' + image[image_numb].fileName + '" rel="external" title="' + escapeHtml($('<div/>').html(image[image_numb].title).text()) + '" data-size="1280x960" data-med="' + $rootUrl + '/storage/images_gallery/big/' + image[image_numb].fileName + '" data-med-size="1280x960" alt="' + image[image_numb].fileName + '" class="phswipe"><img timestamp="' + image[image_numb].timestamp + '" alt="' + image[image_numb].fileName + '" src="' + $rootUrl + '/storage/images_gallery/min/' + image[image_numb].fileName + '" class="thumb_resp2 img-fluid"></a></div>';
+                                if ($('#gallery' + data.gallery).find('img[alt="' + image[0].fileName + '"]').length) {
+                                    $('#gallery' + data.gallery).find('img[alt="' + image[image_numb - 1].fileName + '"]').closest('.thumbs_resp').after(html);
+                                } else {
+                                    $('#gallery' + data.gallery).children('div').children().first().before(html);
+                                }
 								if (image_numb === 0) {
                                     $.scrollTo('#' + gal_id, 600, {
                                         onAfter: function() {
-                                            $('div[id=' + imgf + ']').fadeIn(600);
+                                            $('div[id="' + imgf + '"]').fadeIn(600);
                                         }
                                     });
                                 } else {
-                                    $('div[id=' + imgf + ']').fadeIn(600);
+                                    $('div[id="' + imgf + '"]').fadeIn(600);
                                 }
 							} else if (has_no_galeries == 1) {
-								$('#noimage').remove();
-								$('#galeries').append('<div id="' + gal_id + '" style="display:none;" class="row mb-4"><h2>' + gallery_name + '</h2><div class="col-12 d-flex flex-wrap"><div id="' + imgf + '" class="thumb_resp thumbs_resp"><a href="' + $rootUrl + '/storage/images_gallery/big/' + image.name[image_numb][0] + '" rel="external" title="' + escapeHtml($("<div/>").html(image.title).text()) + '" data-size="1280x960" data-med="' + $rootUrl + '/storage/images_gallery/big/' + image.name[image_numb][0] + '" data-med-size="1280x960" alt="' + image.name[image_numb][0] + '" class="phswipe"><img alt="" src="' + $rootUrl + '/storage/images_gallery/min/' + image.name[image_numb][0] + '" class="thumb_resp2 img-fluid"></a></div></div></div>');
-								$('div[id=' + gal_id + ']').css('opacity', '0').css('display', '');
+								$('#galeries').empty();
+								$('#galeries').append('<div id="' + gal_id + '" style="display:none;" class="row mb-4"><h2 style="word-break: break-all;">' + gallery_name + '</h2><div class="col-12 d-flex flex-wrap"><div id="' + imgf + '" class="thumb_resp thumbs_resp"><a href="' + $rootUrl + '/storage/images_gallery/big/' + image[image_numb].fileName + '" rel="external" title="' + escapeHtml($('<div/>').html(image[image_numb].title).text()) + '" data-size="1280x960" data-med="' + $rootUrl + '/storage/images_gallery/big/' + image[image_numb].fileName + '" data-med-size="1280x960" alt="' + image[image_numb].fileName + '" class="phswipe"><img alt="' + image[image_numb].fileName + '" src="' + $rootUrl + '/storage/images_gallery/min/' + image[image_numb].fileName + '" class="thumb_resp2 img-fluid"></a></div></div></div>');
+								$('div[id="' + gal_id + '"]').css('opacity', '0').css('display', '');
                                 $.scrollTo('#' + gal_id, 600, {
                                     onAfter: function() {
-                                        $('div[id=' + gal_id + ']').fadeIn(600);
+                                        $('div[id="' + gal_id + '"]').fadeIn(600);
                                     }
                                 });
 							} else {
-								var html = '<div id="' + gal_id + '" style="display:none;" class="row mb-4"><h2>' + gallery_name + '</h2><div class="col-12 d-flex flex-wrap"><div id="' + imgf + '" class="thumb_resp thumbs_resp"><a href="' + $rootUrl + '/storage/images_gallery/big/' + image.name[image_numb][0] + '" rel="external" title="' + escapeHtml($("<div/>").html(image.title).text()) + '" data-size="1280x960" data-med="' + $rootUrl + '/storage/images_gallery/big/' + image.name[image_numb][0] + '" data-med-size="1280x960" alt="' + image.name[image_numb][0] + '" class="phswipe"><img alt="" src="' + $rootUrl + '/storage/images_gallery/min/' + image.name[image_numb][0] + '" class="thumb_resp2 img-fluid"></a></div></div></div>';
+								var html = '<div id="' + gal_id + '" style="display:none;" class="row mb-4"><h2 style="word-break: break-all;">' + gallery_name + '</h2><div class="col-12 d-flex flex-wrap"><div id="' + imgf + '" class="thumb_resp thumbs_resp"><a href="' + $rootUrl + '/storage/images_gallery/big/' + image[image_numb].fileName + '" rel="external" title="' + escapeHtml($('<div/>').html(image[image_numb].title).text()) + '" data-size="1280x960" data-med="' + $rootUrl + '/storage/images_gallery/big/' + image[image_numb].fileName + '" data-med-size="1280x960" alt="' + image[image_numb].fileName + '" class="phswipe"><img alt="' + image[image_numb].fileName + '" src="' + $rootUrl + '/storage/images_gallery/min/' + image[image_numb].fileName + '" class="thumb_resp2 img-fluid"></a></div></div></div>';
 
 								if (gallery_nbr == 1) {
 									$('#galeries').prepend(html);
                                 } else {
-									var galtabz = [];
+									var galtab = [];
 									gallery_nbr = parseInt(gallery_nbr);
 									$("#galeries > div").each(function(i) {
-										galtabz.push(parseInt($( this ).attr('id').replace(/[^0-9]/gi,'')));
+										galtab.push(parseInt($(this).attr('id').replace(/[^0-9]/gi,'')));
 									});
-									galtabz.push(gallery_nbr);
+									galtab.push(gallery_nbr);
 									function sortNumbers(a, b)
 									{
 										return a - b;
 									}
-									galtabz.sort(sortNumbers);
-									var index = galtabz.findIndex(key => key == gallery_nbr);
+									galtab.sort(sortNumbers);
+									var index = galtab.findIndex(key => key == gallery_nbr);
 									if (index == 0) {
 										$('#galeries').prepend(html);
                                     } else {
 										$('#galeries > div').eq(index - 1).after(html);
                                     }
 								}
-								$('div[id=' + gal_id + ']').css('opacity', '0').css('display', '');
+								$('div[id="' + gal_id + '"]').css('opacity', '0').css('display', '');
                                 $.scrollTo('#' + gal_id, 600, {
                                     onAfter: function() {
-                                        $('div[id=' + gal_id + ']').fadeIn(600);
+                                        $('div[id="' + gal_id + '"]').fadeIn(600);
                                     }
                                 });
 							}
@@ -178,53 +183,58 @@
 							$('#files_list').append(image.errors + '<br>');
 						} else {
 							if (gal_exist == 1) {
-                                $('#gallery' + image.gallery).children('div').append('<div id="' + imgf + '" style="display:none;" class="thumbs"><a href="' + $rootUrl + '/storage/images_gallery/big/' + image.name[image_numb][0] + '" rel="gallery1" title="' + escapeHtml($("<div/>").html(image.title).text()) + '" class="fancyboxThumb text-decoration-none"><img alt="' + image.name[image_numb][0] + '" src="' + $rootUrl + '/storage/images_gallery/min/' + image.name[image_numb][0] + '" class="img-thumbnail img-thumbnailz"></a><a title="{{ __("site.delete_image") }}" alt="' + image.name[image_numb][0] + '" class="delete_image" href="javascript:;"><i class="far fa-trash-alt"></i></a><a class="edit_image" alt="' + image.name[image_numb][0] + '" title="{{ __("site.edit_image") }}" href="javascript:;"><i class="far fa-edit"></i></a></div>');
+                                var html = '<div id="' + imgf + '" style="display:none;" class="thumbs"><a href="' + $rootUrl + '/storage/images_gallery/big/' + image[image_numb].fileName + '" rel="external" title="' + escapeHtml($('<div/>').html(image[image_numb].title).text()) + '" class="fancyboxThumb text-decoration-none"><img timestamp="' + image[image_numb].timestamp + '" alt="' + image[image_numb].fileName + '" src="' + $rootUrl + '/storage/images_gallery/min/' + image[image_numb].fileName + '" class="img-thumbnail img-thumbnailz"></a><a title="{{ __("site.delete_image") }}" alt="' + image[image_numb].fileName + '" class="delete_image" href="javascript:;"><i class="far fa-trash-alt"></i></a><a class="edit_image" alt="' + image[image_numb].fileName + '" title="{{ __("site.edit_image") }}" href="javascript:;"><i class="far fa-edit"></i></a></div>';
+                                if ($('#gallery' + data.gallery).find('img[alt="' + image[0].fileName + '"]').length) {
+                                    $('#gallery' + data.gallery).find('img[alt="' + image[image_numb - 1].fileName + '"]').closest('.thumbs').after(html);
+                                } else {
+                                    $('#gallery' + data.gallery).children('div').children().first().before(html);
+                                }
                                 if (image_numb === 0) {
                                     $.scrollTo('#' + gal_id, 600, {
                                         onAfter: function() {
-                                            $('div[id=' + imgf + ']').fadeIn(600);
+                                            $('div[id="' + imgf + '"]').fadeIn(600);
                                         }
                                     });
                                 } else {
-                                    $('div[id=' + imgf + ']').fadeIn(600);
+                                    $('div[id="' + imgf + '"]').fadeIn(600);
                                 }
 							} else if (has_no_galeries == 1) {
-								$('#galeries').empty();
-								$('#galeries').append('<div id="' + gal_id + '" style="display:none;" class="row mb-4"><h2>' + gallery_name + '</h2><div class="col-12 d-flex flex-wrap"><div id="' + imgf + '" class="thumbs"><a href="' + $rootUrl + '/storage/images_gallery/big/' + image.name[image_numb][0] + '" rel="gallery1" title="' + escapeHtml($("<div/>").html(image.title).text()) + '" class="fancyboxThumb text-decoration-none"><img alt="' + image.name[image_numb][0] + '" src="' + $rootUrl + '/storage/images_gallery/min/' + image.name[image_numb][0] + '" class="img-thumbnail img-thumbnailz"></a><a class="delete_image" title="{{ __("site.delete_image") }}" alt="' + image.name[image_numb][0] + '" href="javascript:;"><i class="far fa-trash-alt"></i></a><a class="edit_image" alt="' + image.name[image_numb][0] + '" title="{{ __("site.edit_image") }}" href="javascript:;"><i class="far fa-edit"></i></a></div></div></div>');
-                                $('div[id=' + gal_id + ']').css('opacity', '0').css('display', '');
+                                $('#galeries').empty();
+                                $('#galeries').append('<div id="' + gal_id + '" style="display:none;" class="row mb-4"><h2 style="word-break: break-all;">' + gallery_name + '</h2><div class="col-12 d-flex flex-wrap"><div id="' + imgf + '" class="thumbs"><a href="' + $rootUrl + '/storage/images_gallery/big/' + image[image_numb].fileName + '" rel="external" title="' + escapeHtml($('<div/>').html(image[image_numb].title).text()) + '" class="fancyboxThumb text-decoration-none"><img alt="' + image[image_numb].fileName + '" src="' + $rootUrl + '/storage/images_gallery/min/' + image[image_numb].fileName + '" class="img-thumbnail img-thumbnailz"></a><a class="delete_image" title="{{ __("site.delete_image") }}" alt="' + image[image_numb].fileName + '" href="javascript:;"><i class="far fa-trash-alt"></i></a><a class="edit_image" alt="' + image[image_numb].fileName + '" title="{{ __("site.edit_image") }}" href="javascript:;"><i class="far fa-edit"></i></a></div></div></div>');
+                                $('div[id="' + gal_id + '"]').css('opacity', '0').css('display', '');
                                 $.scrollTo('#' + gal_id, 600, {
                                     onAfter: function() {
-                                        $('div[id=' + gal_id + ']').fadeIn(600);
+                                        $('div[id="' + gal_id + '"]').fadeIn(600);
                                     }
                                 });
 							} else {
-								var html = '<div id="' + gal_id + '" style="display:none;" class="row mb-4"><h2>' + gallery_name + '</h2><div class="col-12 d-flex flex-wrap"><div id="' + imgf + '" class="thumbs"><a href="' + $rootUrl + '/storage/images_gallery/big/' + image.name[image_numb][0] + '" rel="gallery1" title="' + escapeHtml($("<div/>").html(image.title).text()) + '" class="fancyboxThumb text-decoration-none"><img alt="' + image.name[image_numb][0] + '" src="' + $rootUrl + '/storage/images_gallery/min/' + image.name[image_numb][0] + '" class="img-thumbnail img-thumbnailz"></a><a class="delete_image" alt="' + image.name[image_numb][0] + '" title="{{ __("site.delete_image") }}" href="javascript:;"><i class="far fa-trash-alt"></i></a><a class="edit_image" alt="' + image.name[image_numb][0] + '" title="{{ __("site.edit_image") }}" href="javascript:;"><i class="far fa-edit"></i></a></div></div></div>';
+								var html = '<div id="' + gal_id + '" style="display:none;" class="row mb-4"><h2 style="word-break: break-all;">' + gallery_name + '</h2><div class="col-12 d-flex flex-wrap"><div id="' + imgf + '" class="thumbs"><a href="' + $rootUrl + '/storage/images_gallery/big/' + image[image_numb].fileName + '" rel="external" title="' + escapeHtml($('<div/>').html(image[image_numb].title).text()) + '" class="fancyboxThumb text-decoration-none"><img alt="' + image[image_numb].fileName + '" src="' + $rootUrl + '/storage/images_gallery/min/' + image[image_numb].fileName + '" class="img-thumbnail img-thumbnailz"></a><a class="delete_image" alt="' + image[image_numb].fileName + '" title="{{ __("site.delete_image") }}" href="javascript:;"><i class="far fa-trash-alt"></i></a><a class="edit_image" alt="' + image[image_numb].fileName + '" title="{{ __("site.edit_image") }}" href="javascript:;"><i class="far fa-edit"></i></a></div></div></div>';
 
 								if (gallery_nbr == 1) {
 									$('#galeries').prepend(html);
                                 } else {
-									var galtabz = [];
+									var galtab = [];
 									gallery_nbr = parseInt(gallery_nbr);
 									$("#galeries > div").each(function(i) {
-										galtabz.push(parseInt($( this ).attr('id').replace(/[^0-9]/gi,'')));
+										galtab.push(parseInt($(this).attr('id').replace(/[^0-9]/gi,'')));
 									});
-									galtabz.push(gallery_nbr);
+									galtab.push(gallery_nbr);
 									function sortNumbers(a, b)
 									{
 										return a - b;
 									}
-									galtabz.sort(sortNumbers);
-									var index = galtabz.findIndex(key => key == gallery_nbr);
+									galtab.sort(sortNumbers);
+									var index = galtab.findIndex(key => key == gallery_nbr);
 									if (index == 0) {
 										$('#galeries').prepend(html);
                                     } else {
 										$('#galeries > div').eq(index - 1).after(html);
                                     }
                                 }
-                                $('div[id=' + gal_id + ']').css('opacity', '0').css('display', '');
+                                $('div[id="' + gal_id + '"]').css('opacity', '0').css('display', '');
                                 $.scrollTo('#' + gal_id, 600, {
                                     onAfter: function() {
-                                        $('div[id=' + gal_id + ']').fadeIn(600);
+                                        $('div[id="' + gal_id + '"]').fadeIn(600);
                                     }
                                 });
 							}
@@ -232,7 +242,7 @@
 					}
 				}
 
-				for (var i=0; i<$fileNumbers; i++) {
+				for (var i = 0; i < $fileNumbers; i++) {
 					data_string.append($('#file_upload').attr('name'), $tabz[i]);
 					data_string.append('image_number_' + i, i);
 				}
@@ -252,9 +262,26 @@
 					    $('#import').prop('disabled', false);
                     }
 				}).done(function(data) {
-					for (var i=0; i<data.name.length; i++) {
+                    if (!$('#placeholder1337').length) {
+                        $('#gallery' + data.gallery).children('div.flex-wrap').empty().append('<div id="placeholder1337"></div>');
+                    }
+					for (var i = 0; i < Object.keys(data.images).length; i++) {
 						parsedata(data, i);
                     }
+					if ($('#placeholder1337').length) {
+						$('#placeholder1337').remove();
+					}
+
+                    var paginator = data.galleryInfos.paginatorHTML;
+                    window.history.pushState(null, 'Title', $rootUrl + '/gallery?galid=' + data.gallery + '&p=1#gallery' + $('select[name=gallery]').val());
+
+                    if (data.galleryInfos.paginator.last_page > 1) {
+                        if (!$('#gallery' + data.gallery).children().last().children('ul').length) {
+                            $('#gallery' + data.gallery).append(paginator);
+                        } else {
+                            $('#gallery' + data.gallery).children().last().replaceWith(paginator);
+                        }
+					}
 
 					if ($isMobile) {
 						$('.thumb_resp2').off('contextmenu');
@@ -347,7 +374,7 @@
 				if (e.target.readyState === FileReader.DONE) {
 					var bytes = new Uint8Array(e.target.result);
 
-					for (var i=0, l = mimes.length; i<l; ++i) {
+					for (var i = 0, l = mimes.length; i<l; ++i) {
 						if (check(bytes, mimes[i])) return callback(mimes[i].mime);
 					}
 
@@ -438,7 +465,7 @@
 				}
 			});
 		}).on('fileuploadprocessalways', function (e, data) {
-			if (data.files[0].name == data.originalFiles[data.originalFiles.length-1].name) {console.log('asdd');
+			if (data.files[0].name == data.originalFiles[data.originalFiles.length-1].name) {
 				$('#loader2').removeClass('d-flex').addClass('d-none');
 				$('#file_upload').prop('disabled', false);
 				$('#import').prop('disabled', false);
@@ -533,9 +560,9 @@
 				});
             });
             if ($('.modalConfirm').find('.modal-title > span').length == 0) {
-                $('.modalConfirm').find('.modal-title').append('<span class="page_name_span badge badge-dark">' + $("<div/>").html($(this).parent().prev().val()).text() + '</span>');
+                $('.modalConfirm').find('.modal-title').append('<span class="page_name_span badge badge-dark">' + $('<div/>').html($(this).parent().prev().val()).text() + '</span>');
             } else {
-                $('.modalConfirm').find('.modal-title > span').html($("<div/>").html($(this).parent().prev().val()).text());
+                $('.modalConfirm').find('.modal-title > span').html($('<div/>').html($(this).parent().prev().val()).text());
             }
 		});
 
@@ -572,10 +599,10 @@
 						data: data_string
 					}).done(function(data) {
 						arraygalleries.forEach(function(val, i){
-							$('#gallery' + i + ' > h2').html($("<div/>").html(val).text());
-							$('#gallery').children('option[value="' + i + '"]').html($("<div/>").html(val).text());
-							$('#galeries').find('select').children('option[value="' + i + '"]').html($("<div/>").html(val).text());
-							$(form).find('input[name="' + i + '"]')[0].defaultValue = $("<div/>").html(val).text();
+							$('#gallery' + i + ' > h2').html($('<div/>').html(val).text());
+							$('#gallery').children('option[value="' + i + '"]').html($('<div/>').html(val).text());
+							$('#galeries').find('select').children('option[value="' + i + '"]').html($('<div/>').html(val).text());
+							$(form).find('input[name="' + i + '"]')[0].defaultValue = $('<div/>').html(val).text();
 						});
 						$.timer(1000, function() {
 							$(form).find('button').first().next().fadeOut(150, function() {

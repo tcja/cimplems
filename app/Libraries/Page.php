@@ -4,7 +4,11 @@ namespace App\Libraries;
 
 use Illuminate\Support\Arr;
 use Mobile_Detect;
-use Tcja\DOMDXMLParser\DOMDXMLParser;
+use Tcja\DOMDXMLParser;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
 
 /*
  *
@@ -192,8 +196,13 @@ class Page
 			if ($page == 'contact') {
                 $contactForm = view(config('site.theme_dir') . config('site.theme') . '/' . 'contact')->render();
             } elseif ($page == 'gallery') {
-				$gallery = new Gallery;
-				$array_images = $gallery->getImagesArray();
+				$gallery = new Gallery();
+                $array_images = $gallery->getImagesArray();
+
+                if ($array_images) {
+                    $array_images_filtered = $gallery->paginateGalleries();
+                }
+
 				$galleries_names = $gallery->getGalleriesArray();
                 $mobile_detect = new Mobile_Detect;
                 $data = [
@@ -201,7 +210,7 @@ class Page
                     'pageLinks' => $this->pages_links_titles,
                     'pageSlug' => 'gallery',
                     'menuOrder' => $this->menu_order,
-                    'array_images' => $array_images,
+                    'array_images' => (!empty($array_images_filtered)) ? $array_images_filtered : $array_images,
                     'galleries_names' => $galleries_names
                 ];
 				if ($mobile_detect->isMobile() || $mobile_detect->isTablet()) {

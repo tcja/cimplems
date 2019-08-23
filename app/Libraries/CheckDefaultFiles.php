@@ -2,7 +2,7 @@
 
 namespace App\Libraries;
 
-use Tcja\DOMDXMLParser\DOMDXMLParser;
+use Tcja\DOMDXMLParser;
 
 /*
  *

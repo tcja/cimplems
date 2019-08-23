@@ -2,7 +2,9 @@
 
 namespace App\Libraries;
 
-use Tcja\DOMDXMLParser\DOMDXMLParser;
+use Tcja\DOMDXMLParser;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Mobile_Detect;
 
 /*
  *
@@ -73,10 +75,10 @@ class Gallery
 	{
 		$this->galleries_array = $this->fetchGalleries();
 		if ($gallery) {
-			if (array_key_exists($gallery[0], $this->galleries_array)) {
-                $this->gallery = $gallery[0];
+			if (array_key_exists($gallery, $this->galleries_array)) {
+                $this->gallery = $gallery;
             } else {
-                $this->gallery = 1;
+                $this->gallery = array_key_first($this->galleries_array);
             }
 		}
 		$this->images_array = $this->fetchImages();
@@ -130,7 +132,7 @@ class Gallery
         return $xml->pickNode('gallery')->getHighestValue('galleryID');
 	}
 	/**
-	 * Gets image data according from its timestamp
+	 * Gets image data according to its timestamp
 	 *
 	 * Gets image informations according to the timestamp provided and returns it in form of an array
 	 *
@@ -156,7 +158,7 @@ class Gallery
 	 *
 	 * Fetches all the galleries and stores them in an array
 	 *
-	 * @return	array	Returns an array with the following data : the gallery's ID and the gallery's name
+	 * @return	array	Returns an array with the following data : the gallery's ID and the gallery's name or false if no gallery found
 	 **/
 	protected function fetchGalleries()
 	{
@@ -175,7 +177,7 @@ class Gallery
 	 * @return	mixed					Returns false if there is no images in the image XML file or returns an array of the images with the following data (the gallery ID and name, the timestamp,
      *                                  the image name, its gallery id and the title if any)
 	 **/
-	protected function fetchImages($JSON = false)
+	public function fetchImages($JSON = false)
 	{
 		$galleryNames = $this->galleries_array;
 		$array = [];
@@ -185,24 +187,33 @@ class Gallery
             return false;
         }
 		elseif ($this->gallery)	{
-			$array_sub = array('galleryID' => (int) $this->gallery, 'gallery' => $galleryNames[$this->gallery]);
-			$array[$this->gallery]['galleryInfos'] = $array_sub;
-			$timestamps = $this->fetchTimestampsFromGallery($this->gallery);
+            $timestamps = array_reverse($this->fetchTimestampsFromGallery($this->gallery));
+            $array_sub = [
+                'galleryID' => (int) $this->gallery,
+                'gallery' => $galleryNames[$this->gallery],
+                'totalImages' => count($timestamps)
+            ];
+            $array[$this->gallery]['galleryInfos'] = $array_sub;
 			foreach ($timestamps as $ktimestamp => $timestamp) {
 				$imageInfos = $this->getImageFromTimestamp($timestamp);
 				$array[$this->gallery][$ktimestamp] = $imageInfos;
-			}
+            }
 		} else {
 			foreach ($galleryNames as $kgallery => $galleryName) {
-				$array_sub = array('galleryID' => (int) $kgallery, 'gallery' => $galleryNames[$kgallery]);
-				$array[$kgallery]['galleryInfos'] = $array_sub;
-				$timestamps = $this->fetchTimestampsFromGallery($kgallery);
+                $timestamps = array_reverse($this->fetchTimestampsFromGallery($kgallery));
+                $array_sub = [
+                    'galleryID' => (int) $kgallery,
+                    'gallery' => $galleryNames[$kgallery],
+                    'totalImages' => count($timestamps)
+                ];
+                $array[$kgallery]['galleryInfos'] = $array_sub;
 				foreach ($timestamps as $ktimestamp => $timestamp) {
 					$imageInfos = $this->getImageFromTimestamp($timestamp);
 					$array[$kgallery][$ktimestamp] = $imageInfos;
-				}
+                }
 			}
-		}
+        }
+
 		if ($this->gallery != false) {
 			if ($JSON) {
                 return json_encode($array[$this->gallery]);
@@ -220,6 +231,86 @@ class Gallery
                 return false;
             }
 		}
+	}
+	/**
+	 * Paginates all galleries
+	 *
+	 * Paginates all galleries and stores all needed data in an array
+	 *
+     * @param	int		$page	            Sets a specific page to display for each gallery
+	 * @return	array					    Returns an array with data for each gallery such as : gallery's name, total images number,
+     *                                      all gallery's images, the specific gallery's images to display for the current page (or $page) and so on...
+     *
+	 **/
+	public function paginateGalleries($page = null)
+	{
+        $array_images_filtered = [];
+        if (!empty($this->images_array['galleryInfos'])) {
+            $array_images = [$this->images_array];
+        } else {
+            $array_images = $this->images_array;
+        }
+
+        array_walk($array_images, function($val, $key) use (&$array_images_filtered, $page) {
+            $galleryInfos = $val['galleryInfos'];
+            if (!empty($page)) {
+                $pageToShow = $page;
+            } else if ((int) request()->get('galid')) {
+                if (strstr(url()->previous(), 'gallery') && !empty(parse_url(url()->previous())['query'])) {
+                    $prevGaleryID = (int) preg_replace('/\D/', '', explode('&', parse_url(url()->previous())['query'])[0]);
+                    $prevPage = (int) preg_replace('/\D/', '', explode('&', parse_url(url()->previous())['query'])[1]);
+                    if ($galleryInfos['galleryID'] === (int) request()->get('galid')) {
+                        $pageToShow = (int) request()->get('p');
+                    } elseif ($galleryInfos['galleryID'] === $prevGaleryID) {
+                        $pageToShow = $prevPage;
+                    } else {
+                        $pageToShow = 1;
+                    }
+                } elseif ((int) request()->get('galid')) {
+                    if ($galleryInfos['galleryID'] === (int) request()->get('galid')) {
+                        $pageToShow = (int) request()->get('p');
+                    } else {
+                        $pageToShow = 1;
+                    }
+                } else {
+                    $pageToShow = null;
+                }
+            } else {
+                $pageToShow = null;
+            }
+
+            unset($val['galleryInfos']);
+            $mobile = new Mobile_Detect;
+            if ($mobile->isMobile() || $mobile->isTablet()) {
+                $isMobile = true;
+            } else {
+                $isMobile = false;
+            }
+            $pagination = new LengthAwarePaginator($val, count($val), config('site.images_per_page'), $pageToShow, [
+                'path'=> 'gallery',
+                'query' => ['galid' => $galleryInfos['galleryID']],
+                'pageName' => 'p',
+                'fragment' => 'gallery' . $galleryInfos['galleryID'],
+                'isMobile' => $isMobile
+            ]);
+            $pagination->onEachSide(1);
+            $galleryInfos['paginator'] = $pagination;
+            $galleryInfos['paginatorHTML'] = $pagination->render()->toHtml();
+            $array_images_filtered[$key]['galleryInfos'] = $galleryInfos;
+            $array_images_to_display = $pagination->forPage($pagination->currentPage(), $pagination->perPage())->all();
+            if ($array_images_to_display) {
+                array_walk($array_images_to_display, function($val, $keys) use (&$array_images_filtered, $key) {
+                    $array_images_filtered[$key][] = $val;
+                });
+            } else {
+                $array_images_to_display = $pagination->forPage(1, $pagination->perPage())->all();
+                array_walk($array_images_to_display, function($val, $keys) use (&$array_images_filtered, $key) {
+                    $array_images_filtered[$key][] = $val;
+                });
+            }
+        });
+
+        return $array_images_filtered;
 	}
 	/**
 	 * Fetches the images names from a specific gallery

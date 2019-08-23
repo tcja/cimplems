@@ -53,6 +53,9 @@
                 @include(config('site.theme_dir') . config('site.theme') . '/' . 'assets/misc_js')
             @endif
         @endif
+        @if (config('site.gallery_page_ajax_transition'))
+            @include('assets/gallery_js')
+        @endif
 	</head>
 	<body>
 		@include('misc_top')

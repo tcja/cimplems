@@ -257,9 +257,9 @@
                         $('#orderList').children('option[value="' + $menuOrder + '"]').html(data.new_page_title);
                         $('#EditPage').find('input[name="slug"]').val(data.new_page_slug);
                         if (data.new_page_slug == 'home') {
-                            window.history.pushState(null, "Title", $rootUrl + "/");
+                            window.history.pushState(null, 'Title', $rootUrl + "/");
                         } else {
-                            window.history.pushState(null, "Title", $rootUrl + "/" + data.new_page_slug);
+                            window.history.pushState(null, 'Title', $rootUrl + "/" + data.new_page_slug);
                         }
                         $pageSlug = data.new_page_slug;
                         $pageTitle = data.new_page_title;
@@ -340,7 +340,7 @@
                                 }
                             }
                             $('#content').append(data.content).hide().fadeIn(300);
-                            window.history.pushState(null, "Title", $rootUrl + "/");
+                            window.history.pushState(null, 'Title', $rootUrl + "/");
                             $('.toast-body').html('{{ __("site.page_deleted") }}');
                             $('.toast').toast('show');
                         });
@@ -522,7 +522,7 @@
                                     $('#menu').find('span').parent().removeClass('active');
                                     $('#menu').find('span').replaceWith('<a href="' + $rootUrl + '/' + slugLink + '" class="pageLink nav-link" title="' + titleLink + '">' + titleLink + '</a>');
                                     $('#menu').children().first().addClass('active').children().replaceWith('<span class="nav-link">' + $('#menu').children().first().children().html() + '</span>');
-                                    window.history.pushState(null, "Title", $rootUrl + "/");
+                                    window.history.pushState(null, 'Title', $rootUrl + "/");
                                     $(document).prop('title', $('#menu').find('span').html());
                                 });
                             });

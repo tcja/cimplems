@@ -27,7 +27,8 @@ Route::post('/delete_gallery', 'GalleryController@deleteGallery')->middleware('u
 Route::post('/create_gallery', 'GalleryController@createGallery')->middleware('usercheck');
 Route::post('/edit_galleries', 'GalleryController@editGalleries')->middleware('usercheck');
 Route::post('/edit_image_show_form', 'GalleryController@editImageShowForm')->middleware('usercheck');
-Route::post('/edit_image', 'GalleryController@editImage')->middleware('usercheck');//Route::post('/edit_image', 'GalleryController@editImage')->name('edit_image');
+Route::post('/edit_image', 'GalleryController@editImage')->middleware('usercheck');
+Route::post('/change_gal_page', 'GalleryController@changeGalleryPage');
 
 // Contact routes
 Route::post('/contact', 'ContactController@sendForm');

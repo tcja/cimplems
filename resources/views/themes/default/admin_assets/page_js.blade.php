@@ -256,9 +256,9 @@
                         $('#orderList').children('option[value="' + $menuOrder + '"]').html(data.new_page_title);
                         $('#EditPage').find('input[name="slug"]').val(data.new_page_slug);
                         if (data.new_page_slug == 'home') {
-                            window.history.pushState(null, "Title", $rootUrl + "/");
+                            window.history.pushState(null, 'Title', $rootUrl + "/");
                         } else {
-                            window.history.pushState(null, "Title", $rootUrl + "/" + data.new_page_slug);
+                            window.history.pushState(null, 'Title', $rootUrl + "/" + data.new_page_slug);
                         }
                         $pageSlug = data.new_page_slug;
                         $pageTitle = data.new_page_title;
@@ -338,7 +338,7 @@
                                 }
                             }
                             $('#content').append(data.content).hide().fadeIn(300);
-                            window.history.pushState(null, "Title", $rootUrl + "/");
+                            window.history.pushState(null, 'Title', $rootUrl + "/");
                             $('.toast-body').html('{{ __("site.page_deleted") }}');
                             $('.toast').toast('show');
                         });
@@ -506,7 +506,7 @@
                                     $('#menu').children('span').replaceWith('<a href="' + $rootUrl + '/' + slugLink + '" class="pageLink mr-1" title="' + titleLink + '">' + titleLink + '</a>');
                                     $('#menu').children('a[title="' + titleLink + '"]').css({ opacity: '0', display: 'none' });
                                     $('#menu').children().first().replaceWith('<span>' + $('#menu').children().first().html() + '</span>');
-                                    window.history.pushState(null, "Title", $rootUrl + "/");
+                                    window.history.pushState(null, 'Title', $rootUrl + "/");
                                     $(document).prop('title', $('#menu').children('span').html());
                                 });
                             });

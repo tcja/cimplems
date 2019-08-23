@@ -2,7 +2,7 @@
 
 namespace App\Libraries;
 
-use Tcja\DOMDXMLParser\DOMDXMLParser;
+use Tcja\DOMDXMLParser;
 
 /*
  *
@@ -46,7 +46,7 @@ class EditGallery extends Gallery
         }
 
         $file = $request->file('image_path');
-        for ($i = 0; $i < $request->total_files; $i++) {
+        for ($i = $request->total_files - 1; $i >= 0; $i--) {
             if (in_array($file[$request->image_number_ . $i]->getMimeType(), array('image/gif', 'image/png', 'image/bmp', 'image/jpeg'))) {
                 if ($file[$request->image_number_ . $i]->getMimeType() == 'image/gif') {
                     $ext = '.gif';
@@ -73,11 +73,17 @@ class EditGallery extends Gallery
 
                 \Image::make($upload_path_big . $new_file_name)->widen($widen_min_width, function ($constraint) { $constraint->upsize(); })->save($upload_path_min . $new_file_name);
 
-                $array['name'][$i][0] = $new_file_name;
+                /* $array['name'][$i][0] = $new_file_name;
                 $array['name'][$i][1] = $request->image_number_ . $i;
-                $array['name'][$i][2] = strval($timestamp);
+                $array['name'][$i][2] = strval($timestamp); */
             }
         }
+        //$array['name'] = array_reverse($array['name']);
+
+        $gallery = new Gallery($gallery);
+        $array['galleryInfos'] = $gallery->paginateGalleries(1)[0]['galleryInfos'];
+        $array['images'] = $gallery->paginateGalleries(1)[0];
+        unset($array['images']['galleryInfos']);
 
         if ($request->file_ajax) {
             return $array;
@@ -120,13 +126,15 @@ class EditGallery extends Gallery
 	 * @param 		int			$image_gallery		The image's gallery to modify
 	 * @param 		string		$image_title		The image's title to modify, can be empty
 	 * @param 		bool		$is_same_gallery	If set to true, only the image's title will be changed otherwise with the default value set to false it will modify all the informations accordignly
+	 * @param 		int 		$page           	Determines which previous page should get paginated, defaults to page 1 if not any set
 	 * @return		mixed							Returns array of image's new infos if the modifications were saved in the provided XML, returns 0 if it failed in the process
 	 **/
-	public function modifyImage($image_name, $image_gallery, $image_title, $is_same_gallery = false)
+	public function modifyImage($image_name, $image_gallery, $image_title, $is_same_gallery = false, $page = 1)
 	{
         $xml = new DOMDXMLParser(storage_path('app/' . Gallery::IMAGES_FILE_PATH));
         $timestamp = microtime(true);
         if (!$is_same_gallery) {
+            $old_gallery = $xml->pickNode('fileName', $image_name)->getAttr('galleryID');
             if (!$xml->pickNode('fileName', $image_name)->changeData([
                 'timestamp' => $timestamp,
                 'galleryID' => $image_gallery,
@@ -134,18 +142,37 @@ class EditGallery extends Gallery
             ])) {
                 return 0;
             }
+            $gallery = new Gallery($image_gallery);
+            $oldGallery = new Gallery($old_gallery);
+            $page = empty($page) ? 1 : $page;
+            $array = [
+                'old_new_image' => !empty($oldGallery->paginateGalleries($page)[0][config('site.images_per_page') - 1]) ? $oldGallery->paginateGalleries($page)[0][config('site.images_per_page') - 1] : '',
+                //'new_images' => !empty($gallery->paginateGalleries(1)[0]) ? $gallery->paginateGalleries(1)[0] : '',
+                'old_paginatorHTML' => $oldGallery->paginateGalleries($page)[0]['galleryInfos']['paginatorHTML'],
+                'paginatorHTML' => $gallery->paginateGalleries(1)[0]['galleryInfos']['paginatorHTML'],
+                'timestamp' => $timestamp,
+                'name' => $image_name,
+                'galleryID' => $image_gallery,
+                'title' => empty($image_title) ? '' : $image_title
+            ];
         } else {
             if (!$xml->pickNode('fileName', $image_name)->changeData('CDATA', $image_title)) {
                 return 0;
             }
+            $array = [
+                'timestamp' => $timestamp,
+                'name' => $image_name,
+                'galleryID' => $image_gallery,
+                'title' => empty($image_title) ? '' : $image_title
+            ];
         }
 
-        return [
-            'timestamp' => $timestamp,
-            'name' => $image_name,
-            'galleryID' => $image_gallery,
-            'title' => empty($image_title) ? '' : $image_title
-        ];
+
+        /* $array['galleryInfos'] = $gallery->paginateGalleries(1)[0]['galleryInfos'];
+        $array['images'] = $gallery->paginateGalleries(1)[0];
+        unset($array['images']['galleryInfos']); */
+
+        return $array;
 	}
 	/**
 	 * Removes image infos in a XML file
@@ -213,7 +240,7 @@ class EditGallery extends Gallery
 	 **/
 	public function removeGallery($gallery_id)
 	{
-		parent::__construct([$gallery_id]);
+		parent::__construct($gallery_id);
 		$gal = $this->images_array;
 
 		if ($gal) {

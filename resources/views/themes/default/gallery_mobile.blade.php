@@ -18,7 +18,8 @@
 							@endif
 						@endif
 					@endforeach
-							</div>
+                            </div>
+                    {{ $images['galleryInfos']['paginator'] }}
 				</div>
 			@endforeach
 		@else

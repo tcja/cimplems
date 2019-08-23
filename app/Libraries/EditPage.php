@@ -4,7 +4,7 @@ namespace App\Libraries;
 
 use Illuminate\Support\Str;
 use Illuminate\Support\Arr;
-use Tcja\DOMDXMLParser\DOMDXMLParser;
+use Tcja\DOMDXMLParser;
 
 /*
  *

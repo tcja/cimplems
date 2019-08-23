@@ -4,7 +4,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Website's name and footer credentials
+    | Website's name and footer credits
     |--------------------------------------------------------------------------
     |
     | This is the website's default name and footer credits
@@ -37,6 +37,8 @@ return [
 
     'page_ajax_transition' => true,
 
+    'gallery_page_ajax_transition' => true,
+
     /*
     |--------------------------------------------------------------------------
     | Default theme
@@ -49,5 +51,16 @@ return [
     'theme_dir' => 'themes/',
 
     'theme' => 'bootstrap',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Gallery
+    |--------------------------------------------------------------------------
+    |
+    | This is all options related to gallery management
+    |
+    */
+
+    'images_per_page' => 4,
 
 ];

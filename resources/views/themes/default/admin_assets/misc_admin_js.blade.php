@@ -17,7 +17,7 @@
             if (slugNavBar == 'gallery' && slugLink == 'home')
                 document.location.href = $rootUrl;
             else if (slugNavBar == 'gallery')
-                document.location.href = $rootUrl + "/"+slugLink; */
+                document.location.href = $rootUrl + "/" + slugLink; */
 
             var data_string = 'page_name_show=' + slugLink;
             $.ajax({
@@ -45,7 +45,7 @@
                     originSlug = originSlug.replace(/_/gi,'-');
                     $('#EditPage').find('input[name="slug"]').val(slugLink);
                     if (originSlug != 'home') {
-                        $('#order_menu_new').children().eq(oldMenuOrder - 2).after('<option value="'+oldMenuOrder+'">'+originTitleLink+'</option>');
+                        $('#order_menu_new').children().eq(oldMenuOrder - 2).after('<option value="' + oldMenuOrder + '">' + originTitleLink + '</option>');
                     }
                     $('#order_menu_new').children('option[value="' + $menuOrder + '"]').remove();
                     $('#pageNameNew').val($('#EditPage').find('input[name="slug"]').val());
@@ -61,9 +61,9 @@
                     $('.page_name_span').html(data.pageTitle);
                     if (originSlug == 'home' || originSlug == 'contact' || originSlug == 'gallery') {
                         if (originSlug == 'contact' || originSlug == 'gallery') {
-                            $('#menu').children('span').replaceWith('<a href="' + $rootUrl + '/'+originSlug+'" class="pageLink mr-1" title="'+originTitleLink+'">'+originTitleLink+'</a>');
+                            $('#menu').children('span').replaceWith('<a href="' + $rootUrl + '/' + originSlug + '" class="pageLink mr-1" title="' + originTitleLink + '">' + originTitleLink + '</a>');
                         } else {
-                            $('#menu').children('span').replaceWith('<a href="' + $rootUrl + '" class="pageLink mr-1" title="'+originTitleLink+'">'+originTitleLink+'</a>');
+                            $('#menu').children('span').replaceWith('<a href="' + $rootUrl + '" class="pageLink mr-1" title="' + originTitleLink + '">' + originTitleLink + '</a>');
                             $('#admin_menu').prepend('<button type="button" class="tooltipz change_menu_order mt-3 mb-3 page_option_icon ml-2 btn btn-secondary btn-sm" data-toggle="modal" title="{{ __("site.change_pos_menu") }}" data-target="#ChangeOrderMenu"><i class="fas fa-exchange-alt"></i></button>');
                         }
                         if (slugLink == 'home') {
@@ -75,7 +75,7 @@
                             $('.edit_page').after('<button type="button" class="tooltipz delete_page page_option_icon mt-3 mb-3 ml-2 float-right btn btn-danger btn-sm" title="{{ __("site.delete_page") }}"><i class="far fa-trash-alt"></i></button>');
                         }
                     } else {
-                        $('#menu').children('span').replaceWith('<a href="' + $rootUrl + '/'+originSlug+'" class="pageLink mr-1" title="'+originTitleLink+'">'+originTitleLink+'</a>');
+                        $('#menu').children('span').replaceWith('<a href="' + $rootUrl + '/' + originSlug + '" class="pageLink mr-1" title="' + originTitleLink + '">' + originTitleLink + '</a>');
                         if (slugLink == 'home') {
                             $('.delete_page').remove();
                             $('.change_menu_order').remove();
@@ -83,7 +83,7 @@
                             $('.delete_page').remove();
                         }
                     }
-                    $(this).replaceWith('<span>'+targetTitleLink+'</span>');
+                    $(this).replaceWith('<span>' + targetTitleLink + '</span>');
 
                     $('#content').parent().fadeOut(200, function(el) {
                         $(el).empty();
@@ -109,9 +109,9 @@
                         if (slugLink == 'contact') {
                             var isEmpty = $(data.content['content']).text();
                             if (isEmpty == '') {
-                                $(el).append('<div style="display: none;" id="content" class="col-12">'+data.content['content']+'</div><div id="contactForm" class="col-12">'+data.content['contactForm']+'</div>').fadeIn(speed);
+                                $(el).append('<div style="display: none;" id="content" class="col-12">' + data.content['content'] + '</div><div id="contactForm" class="col-12">' + data.content['contactForm'] + '</div>').fadeIn(speed);
                             } else {
-                                $(el).append('<div id="content" class="col-12">'+data.content['content']+'</div><div id="contactForm" class="col-12">'+data.content['contactForm']+'</div>').fadeIn(speed);
+                                $(el).append('<div id="content" class="col-12">' + data.content['content'] + '</div><div id="contactForm" class="col-12">' + data.content['contactForm'] + '</div>').fadeIn(speed);
                             }
                         }
                         else if (slugLink == 'gallery') {
@@ -124,9 +124,9 @@
                             $(document).off('submit', '#modify_gal');
                             var isEmpty = $(data.content['content']).text();
                             if (isEmpty == '') {
-                                $(el).append('<div style="display: none;" id="content" class="col-12">'+data.content['content']+'</div><div id="galleriesWrapper" class="col-12">'+data.content['galleries']+'</div>').fadeIn(speed);
+                                $(el).append('<div style="display: none;" id="content" class="col-12">' + data.content['content'] + '</div><div id="galleriesWrapper" class="col-12">' + data.content['galleries'] + '</div>').fadeIn(speed);
                             } else {
-                                $(el).append('<div id="content" class="col-12">'+data.content['content']+'</div><div id="galleriesWrapper" class="col-12">'+data.content['galleries']+'</div>').fadeIn(speed);
+                                $(el).append('<div id="content" class="col-12">' + data.content['content'] + '</div><div id="galleriesWrapper" class="col-12">' + data.content['galleries'] + '</div>').fadeIn(speed);
                             }
                             if ($('#admin_menu').css('opacity') == 0) {
                                 $('.delete_image').hide();
@@ -139,12 +139,12 @@
                                 $(".phswipe").jqPhotoSwipe({ forceSingleGallery: true });
                             }
                         } else {
-                            $(el).append('<div id="content" class="col-12">'+data.content+'</div>').fadeIn(speed);
+                            $(el).append('<div id="content" class="col-12">' + data.content + '</div>').fadeIn(speed);
                         }
                         if (slugLink == 'home') {
-                            window.history.pushState(null, "Title", $rootUrl);
+                            window.history.pushState(null, 'Title', $rootUrl);
                         } else {
-                            window.history.pushState(null, "Title", $rootUrl + "/"+slugLink);
+                            window.history.pushState(null, 'Title', $rootUrl + "/" + slugLink);
                         }
                     });
                 } else {

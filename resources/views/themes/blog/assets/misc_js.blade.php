@@ -17,7 +17,7 @@
             if (slugNavBar == 'gallery' && slugLink == 'home')
                 document.location.href = $rootUrl;
             else if (slugNavBar == 'gallery')
-                document.location.href = $rootUrl + "/"+slugLink; */
+                document.location.href = $rootUrl + "/" + slugLink; */
 
             var data_string = 'page_name_show=' + slugLink;
             $.ajax({
@@ -45,14 +45,14 @@
                     originSlug = originSlug.replace(/_/gi,'-');
                     if (originSlug == 'home' || originSlug == 'contact' || originSlug == 'gallery') {
                         if (originSlug == 'contact' || originSlug == 'gallery') {
-                            $('#menu').children('.nav-item.active').replaceWith('<li class="nav-item"><a href="' + $rootUrl + '/'+originSlug+'" class="pageLink nav-link" title="'+originTitleLink+'">'+originTitleLink+'</a></li>');
+                            $('#menu').children('.nav-item.active').replaceWith('<li class="nav-item"><a href="' + $rootUrl + '/' + originSlug + '" class="pageLink nav-link" title="' + originTitleLink + '">' + originTitleLink + '</a></li>');
                         } else {
-                            $('#menu').children('.nav-item.active').replaceWith('<li class="nav-item"><a href="' + $rootUrl + '" class="pageLink nav-link" title="'+originTitleLink+'">'+originTitleLink+'</a></li>');
+                            $('#menu').children('.nav-item.active').replaceWith('<li class="nav-item"><a href="' + $rootUrl + '" class="pageLink nav-link" title="' + originTitleLink + '">' + originTitleLink + '</a></li>');
                         }
                     } else {
-                        $('#menu').children('.nav-item.active').replaceWith('<li class="nav-item"><a href="' + $rootUrl + '/'+originSlug+'" class="pageLink nav-link" title="'+originTitleLink+'">'+originTitleLink+'</a></li>');
+                        $('#menu').children('.nav-item.active').replaceWith('<li class="nav-item"><a href="' + $rootUrl + '/' + originSlug + '" class="pageLink nav-link" title="' + originTitleLink + '">' + originTitleLink + '</a></li>');
                     }
-                    $(this).parent().replaceWith('<li class="nav-item active"><span class="nav-link">'+targetTitleLink+'</span></li>');
+                    $(this).parent().replaceWith('<li class="nav-item active"><span class="nav-link">' + targetTitleLink + '</span></li>');
 
                     $('#content').parent().fadeOut(200, function(el) {
                         $(el).empty();
@@ -63,16 +63,16 @@
                         if (slugLink == 'contact') {
                             var isEmpty = $(data.content['content']).text();
                             if (isEmpty == '') {
-                                $(el).append('<div style="display: none;" id="content">'+data.content['content']+'</div><div id="contactForm">'+data.content['contactForm']+'</div>').fadeIn(speed);
+                                $(el).append('<div style="display: none;" id="content">' + data.content['content'] + '</div><div id="contactForm">' + data.content['contactForm'] + '</div>').fadeIn(speed);
                             } else {
-                                $(el).append('<div id="content">'+data.content['content']+'</div><div id="contactForm">'+data.content['contactForm']+'</div>').fadeIn(speed);
+                                $(el).append('<div id="content">' + data.content['content'] + '</div><div id="contactForm">' + data.content['contactForm'] + '</div>').fadeIn(speed);
                             }
                         } else if (slugLink == 'gallery') {
                             var isEmpty = $(data.content['content']).text();
                             if (isEmpty == '') {
-                                $(el).append('<div style="display: none;" id="content">'+data.content['content']+'</div><div id="galleriesWrapper">'+data.content['galleries']+'</div>').fadeIn(speed);
+                                $(el).append('<div style="display: none;" id="content">' + data.content['content'] + '</div><div id="galleriesWrapper">' + data.content['galleries'] + '</div>').fadeIn(speed);
                             } else {
-                                $(el).append('<div id="content">'+data.content['content']+'</div><div id="galleriesWrapper">'+data.content['galleries']+'</div>').fadeIn(speed);
+                                $(el).append('<div id="content">' + data.content['content'] + '</div><div id="galleriesWrapper">' + data.content['galleries'] + '</div>').fadeIn(speed);
                             }
                             if ($isMobile) {
                                 $('.thumb_resp2').off('contextmenu');
@@ -80,12 +80,12 @@
                                 $(".phswipe").jqPhotoSwipe({ forceSingleGallery: true });
                             }
                         } else {
-                            $(el).append('<div id="content">'+data.content+'</div>').fadeIn(speed);
+                            $(el).append('<div id="content">' + data.content + '</div>').fadeIn(speed);
                         }
                         if (slugLink == 'home') {
-                            window.history.pushState(null, "Title", $rootUrl);
+                            window.history.pushState(null, 'Title', $rootUrl);
                         } else {
-                            window.history.pushState(null, "Title", $rootUrl + "/"+slugLink);
+                            window.history.pushState(null, 'Title', $rootUrl + "/" + slugLink);
                         }
                     });
                 } else {

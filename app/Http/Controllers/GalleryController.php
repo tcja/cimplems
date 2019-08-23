@@ -77,26 +77,41 @@ class GalleryController extends Controller
             'photo_name' => 'required',
             'gallery' => 'required|numeric',
             'change_title' => 'nullable|max:50',
+            'page' => 'nullable|numeric',
 		]);
 
 		if ($validator->fails()) {
             return redirect('/');
         }
 
-        return response()->json($edit_gallery->modifyImage($request->photo_name, $request->gallery, $request->change_title, $request->modify_one_image));
+        return response()->json($edit_gallery->modifyImage($request->photo_name, $request->gallery, $request->change_title, $request->modify_one_image, $request->page));
 	}
 
     public function deleteImage(Request $request, EditGallery $edit_gallery)
 	{
 		$validator = \Validator::make($request->all(), [
-            'file' => 'required|size:20'
+            'file' => 'required|size:20',
+            'galleryID' => 'required|numeric',
+            'page' => 'required|numeric'
         ]);
 
 		if ($validator->fails()) {
             return redirect('/');
         }
 
-        return response()->json($edit_gallery->removeImage($request->file));
+        $remove_image = $edit_gallery->removeImage($request->file);
+
+        $gallery = new Gallery($request->galleryID);
+        if ($gallery->getImagesArray()['galleryInfos']['totalImages']) {
+            $array_images = $gallery->getImagesArray();
+            if ($array_images) {
+                $array_images_filtered = $gallery->paginateGalleries($request->page);
+            }
+        } else {
+            $array_images_filtered[0] = 0;
+        }
+
+        return [$array_images_filtered[0], $remove_image];
     }
 
     public function deleteGallery(Request $request, EditGallery $edit_gallery)
@@ -110,5 +125,29 @@ class GalleryController extends Controller
         }
 
         return response()->json($edit_gallery->removeGallery($request->gallery_id));
-	}
+    }
+
+    public function changeGalleryPage(Request $request, Gallery $gallery)
+	{
+		$validator = \Validator::make($request->all(), [
+            'galleryID' => 'required|numeric',
+            'page' => 'required|numeric'
+        ]);
+
+		if ($validator->fails()) {
+            return response()->json('fail');
+        }
+
+        $gallery = new Gallery($request->galleryID);
+        $array_images = $gallery->getImagesArray();
+
+        if ($array_images) {
+            $array_images_filtered = $gallery->paginateGalleries($request->page);
+            //unset($array_images_filtered[0]['galleryInfos']);
+
+            return $array_images_filtered[0];
+        }
+
+        return response()->json('fail');
+    }
 }

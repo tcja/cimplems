@@ -11,14 +11,15 @@
 						@else
 							@if (!empty($image['fileName']))
 								<div class="thumb_resp thumbs_resp">
-									<a class="phswipe" alt="{{ $image['fileName'] }}" title="{{ $image['title'] }}" rel="external" href="{{ asset('storage/images_gallery/big/' . $image['fileName']) }}" data-size="1280x960" data-med="{{ asset('storage/images_gallery/big/' . $image['fileName']) }}" data-med-size="1280x960">
-										<img class="thumb_resp2 img-fluid" timestamp="{{ $image['timestamp'] }}" src="{{ asset('storage/images_gallery/min/' . $image['fileName']) }}" alt="{{ $image['title'] }}">
+									<a class="phswipe" alt="{{ $image['fileName'] }}" title="{{ htmlspecialchars($image['title']) }}" rel="external" href="{{ asset('storage/images_gallery/big/' . $image['fileName']) }}" data-size="1280x960" data-med="{{ asset('storage/images_gallery/big/' . $image['fileName']) }}" data-med-size="1280x960">
+										<img class="thumb_resp2 img-fluid" timestamp="{{ $image['timestamp'] }}" src="{{ asset('storage/images_gallery/min/' . $image['fileName']) }}" alt="{{ $image['fileName'] }}">
 									</a>
 								</div>
 							@endif
 						@endif
 					@endforeach
-							</div>
+                            </div>
+                    {{ $images['galleryInfos']['paginator'] }}
 				</div>
 			@endforeach
 		@else

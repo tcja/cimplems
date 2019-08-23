@@ -10,6 +10,11 @@ use App\Libraries\CheckDefaultFiles;
 //use App\Libraries\User;
 //use App\Libraries\EditUser;
 use App\Libraries\EditPage;
+use App\Libraries\Gallery;
+
+//use App\Libraries\Gallery;
+//use Illuminate\Support\Arr;
+
 /* use App\Libraries\EditGallery;
 use App\Libraries\Gallery;
 use App\Libraries\User; */
@@ -23,16 +28,6 @@ class PageController extends Controller
 {
     public function index($slug = 'home', Mobile_Detect $mobile_detect)
     {
-        /* $lolz = ['asd', 'asdy', 'asd', 'asdy', 'asdd', 'asfdy', 'ased', 'asdsy', 'asxd', 'asfdy', 'asgd', 'agsdy', 'ahsd', 'asdy', 'agsd', 'asdjy', 'arsd', 'asd3y', 'awsd', 'assdy', 'asd', 'asxdy'];
-        $bise = new LengthAwarePaginator($lolz, count($lolz), 6, 1);
-        echo ($bise->render()); */
-        //echo __('passwords.token');
-        //$test->fetchPublicPages();
-        //dd($test->fetchPrivatePages());
-        //$test = new User();
-        //$test->fetchTimestampsFromGallery(2);
-        //dd();
-
         $this->listPrivatePages();
         CheckDefaultFiles::checkDefaultFiles();
 
@@ -114,6 +109,7 @@ class PageController extends Controller
                 }
             }
         }
+
         return $edit_page->deletePage($request->page_name_delete);
     }
 
@@ -127,6 +123,7 @@ class PageController extends Controller
         }
 
         $page = new Page($request->page_name_show, 'CONTENT_AND_MENU_ORDER_NUMBER_AND_SLUG_AND_PAGE_STATE_AND_PAGE_TITLE');
+
         return [
             'content' => $page->getContent(),
             'menuOrder' => $page->getMenuOrder(),
@@ -242,12 +239,14 @@ class PageController extends Controller
     public function listPrivatePages()
     {
         $page = new Page('GET', 'PRIVATE_PAGES');
+
         return $page->getPrivatePages();
     }
 
     public function showHomePage()
     {
         $page = new Page('home', 'CONTENT_AND_PAGE_TITLE_AND_PAGE_STATE');
+
         return ['publishState' => $page->getPageState(), 'content' => $page->getContent()];
     }
 }
