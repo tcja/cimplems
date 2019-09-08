@@ -5,10 +5,6 @@ namespace App\Libraries;
 use Illuminate\Support\Arr;
 use Mobile_Detect;
 use Tcja\DOMDXMLParser;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
 
 /*
  *

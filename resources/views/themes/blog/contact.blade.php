@@ -1,6 +1,6 @@
 {!! Form::open(['url' => url('/abort'), 'id' => 'contact', 'class' => '']) !!}
 	<fieldset>
-		<legend class="mb-3 ml-2">{{ __('site.contact_us') }}</legend>
+		{{-- <legend class="mb-3 ml-2">{{ __('site.contact_us') }}</legend> --}}
 		<div class="form-group">
 			<label class="col-auto control-label" for="name">{{ __('site.contact_name') }}</label>
 			<div class="col-12 col-md-5 col-lg-4">

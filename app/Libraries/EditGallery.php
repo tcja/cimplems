@@ -20,9 +20,9 @@ class EditGallery extends Gallery
     }
 
     /**
-	 * Uploads a file image into the storage
+	 * Uploads a file image into the gallery storage
 	 *
-	 * Uploads a file image into the storage and adds its corresponding infos (title if any set, gallery ID) into the image XML file
+	 * Uploads a file image into the gallery storage and adds its corresponding infos (title if any set, gallery ID) into the image XML file
 	 *
 	 * @param	object		$request		    Illuminate\Http\Request instance
 	 * @param 	string		$image_title		The image's title (optional)
@@ -72,13 +72,8 @@ class EditGallery extends Gallery
                 }
 
                 \Image::make($upload_path_big . $new_file_name)->widen($widen_min_width, function ($constraint) { $constraint->upsize(); })->save($upload_path_min . $new_file_name);
-
-                /* $array['name'][$i][0] = $new_file_name;
-                $array['name'][$i][1] = $request->image_number_ . $i;
-                $array['name'][$i][2] = strval($timestamp); */
             }
         }
-        //$array['name'] = array_reverse($array['name']);
 
         $gallery = new Gallery($gallery);
         $array['galleryInfos'] = $gallery->paginateGalleries(1)[0]['galleryInfos'];
@@ -90,6 +85,52 @@ class EditGallery extends Gallery
         } else {
             return 0;
         }
+    }
+
+    /**
+	 * Uploads a file image into the page site storage
+	 *
+	 * Uploads a file image into the page site storage and adds its corresponding infos (title if any set, gallery ID) into the image XML file
+	 *
+	 * @param	object		$request		    Illuminate\Http\Request instance
+	 * @return 	mixed                           Returns an error message if the request wasn't triggered by an ajax request, returns an array of the image's infos if its upload succeeded
+	 **/
+	public function uploadImageForPage($request)
+	{
+		$upload_path = storage_path('app/public/images_site/');
+        $widen_width = 1280;
+
+        if ($request->total_files === 0) {
+            return response()->json('erreur, veuillez rééessayer');
+        }
+
+        $file = $request->file('image');
+
+        if (in_array($file->getMimeType(), array('image/gif', 'image/png', 'image/bmp', 'image/jpeg'))) {
+            if ($file->getMimeType() == 'image/gif') {
+                $ext = '.gif';
+            } elseif ($file->getMimeType() == 'image/png') {
+                $ext = '.png';
+            } else {
+                $ext = '.jpg';
+            }
+
+            $new_file_name = \Illuminate\Support\Str::slug($request->image_name).$ext;
+
+            $width = getimagesize($file->getRealPath());
+            if ($width[0] <= $widen_width) {
+                if ($upload_done = $file->move($upload_path, $new_file_name)) {
+                } else {
+                    return $upload_done->getMessage();
+                }
+            } else {
+                \Image::make($file->getRealPath())->widen($widen_width, function ($constraint) { $constraint->upsize(); })->save($upload_path.$new_file_name);
+            }
+        } else {
+            return 0;
+        }
+
+        return $new_file_name;
 	}
 
 	/**
@@ -166,11 +207,6 @@ class EditGallery extends Gallery
                 'title' => empty($image_title) ? '' : $image_title
             ];
         }
-
-
-        /* $array['galleryInfos'] = $gallery->paginateGalleries(1)[0]['galleryInfos'];
-        $array['images'] = $gallery->paginateGalleries(1)[0];
-        unset($array['images']['galleryInfos']); */
 
         return $array;
 	}

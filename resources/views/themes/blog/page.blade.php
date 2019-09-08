@@ -33,7 +33,7 @@
                 @else
                     @php $display = $content @endphp
                 @endif
-                <div style="{{-- word-break: break-all; --}} {{ empty(strip_tags($display)) && !preg_match('/(img|iframe|canvas)/i', $display) ? 'display: none;' : '' }}"	id="content">
+                <div style="{{-- word-break: break-all; --}} {{ $display == '' || $display == '<p><br></p>' ? 'display: none;' : '' }}"	id="content">
                     {!! $display !!}
                 </div>
                 @if ($pageSlug == 'contact')

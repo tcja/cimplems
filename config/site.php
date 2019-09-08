@@ -61,6 +61,6 @@ return [
     |
     */
 
-    'images_per_page' => 4,
+    'images_per_page' => 24,
 
 ];

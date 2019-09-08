@@ -17,7 +17,7 @@
             if (slugNavBar == 'gallery' && slugLink == 'home')
                 document.location.href = $rootUrl;
             else if (slugNavBar == 'gallery')
-                document.location.href = $rootUrl + "/" + slugLink; */
+                document.location.href = $rootUrl + '/' + slugLink; */
 
             var data_string = 'page_name_show=' + slugLink;
             $.ajax({
@@ -113,8 +113,7 @@
                             }
                         }
                         if (slugLink == 'contact') {
-                            var isEmpty = $(data.content['content']).text();
-                            if (isEmpty == '') {
+                            if (data.content['content'] == '' || data.content['content'] == '<p><br></p>') {
                                 $(el).append('<div style="display: none;" id="content" class="col-12">' + data.content['content'] + '</div><div id="contactForm" class="col-12">' + data.content['contactForm'] + '</div>').fadeIn(speed);
                             } else {
                                 $(el).append('<div id="content" class="col-12">' + data.content['content'] + '</div><div id="contactForm" class="col-12">' + data.content['contactForm'] + '</div>').fadeIn(speed);
@@ -128,8 +127,7 @@
                                 $(document).off('click', '.edit_image');
                             }
                             $(document).off('submit', '#modify_gal');
-                            var isEmpty = $(data.content['content']).text();
-                            if (isEmpty == '') {
+                            if (data.content['content'] == '' || data.content['content'] == '<p><br></p>') {
                                 $(el).append('<div style="display: none;" id="content" class="col-12">' + data.content['content'] + '</div><div id="galleriesWrapper" class="col-12">' + data.content['galleries'] + '</div>').fadeIn(speed);
                             } else {
                                 $(el).append('<div id="content" class="col-12">' + data.content['content'] + '</div><div id="galleriesWrapper" class="col-12">' + data.content['galleries'] + '</div>').fadeIn(speed);

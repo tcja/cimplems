@@ -64,7 +64,7 @@ return [
     // Contact form
     'message_received'              =>  'Message received!',
     'thanks_for_contacting_us'      =>  'Thanks for contacting us! We will get back to you as soon as possible!',
-    'contact_us'                    =>  'Contact us by filling out this form!',
+    //'contact_us'                    =>  'Contact us by filling out this form!',
     'contact_name'                  =>  'Name',
     'your_name'                     =>  'Your name...',
     'contact_email'                 =>  'E-mail',

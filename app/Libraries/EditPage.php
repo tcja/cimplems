@@ -265,8 +265,10 @@ class EditPage extends Page
                 $arrayMenuOrderUpdate[] = $xml->pickNode('page')->getAttr('menuOrder');
                 $xml->pickNode('page')->changeData('menuOrder', $xml->pickNode('page')->getAttr('menuOrder') - 1);
 			}
-		}
-		\Storage::delete(Page::XML_PAGE_FOLDER_PATH . $page_name . '.xml');
+        }
+
+        \Storage::delete(Page::XML_PAGE_FOLDER_PATH . $page_name . '.xml');
+
         parent::__construct('home', 'CONTENT_AND_PAGE_TITLE_AND_PAGE_STATE');
 
 		return [
@@ -274,7 +276,7 @@ class EditPage extends Page
 			'publishState' => $this->getPageState(),
 			'menu_update' => $arrayMenuOrderUpdate,
 			'menuOrder' => (int) $order_menu,
-			'home_page_name' => $this->getPageName()
+			'home_page_title' => $this->getPageTitle()
 		];
 	}
 }

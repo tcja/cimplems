@@ -3,26 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-//use App\Libraries\Gallery;
-use Mobile_Detect;
 use App\Libraries\Page;
-use App\Libraries\CheckDefaultFiles;
-//use App\Libraries\User;
-//use App\Libraries\EditUser;
 use App\Libraries\EditPage;
-use App\Libraries\Gallery;
-
-//use App\Libraries\Gallery;
-//use Illuminate\Support\Arr;
-
-/* use App\Libraries\EditGallery;
-use App\Libraries\Gallery;
-use App\Libraries\User; */
-
-//use Illuminate\Support\Facades\Hash;
-//use Illuminate\Support\Facades\Mail;
-//use Illuminate\Support\Arr;
-//use Illuminate\Pagination\LengthAwarePaginator;
+use App\Libraries\EditGallery;
+use App\Libraries\CheckDefaultFiles;
+use Mobile_Detect;
 
 class PageController extends Controller
 {
@@ -172,7 +157,7 @@ class PageController extends Controller
         return response()->json($edit_page->changePageState($request->page_name, $request->page_state));
     }
 
-    public function uploadImage(Request $request)
+    public function uploadImage(Request $request, EditGallery $edit_gallery)
     {
         $validator = \Validator::make($request->all(), [
             'image' => 'required',
@@ -182,40 +167,7 @@ class PageController extends Controller
             return response()->json('fail');
         }
 
-        $upload_path = storage_path('app/public/images_site/');
-        $widen_width = 1280;
-
-        if ($request->total_files === 0) {
-            return response()->json('erreur, veuillez rééessayer');
-        }
-
-        $file = $request->file('image');
-
-        if (in_array($file->getMimeType(), array('image/gif', 'image/png', 'image/bmp', 'image/jpeg'))) {
-            if ($file->getMimeType() == 'image/gif') {
-                $ext = '.gif';
-            } elseif ($file->getMimeType() == 'image/png') {
-                $ext = '.png';
-            } else {
-                $ext = '.jpg';
-            }
-
-            $new_file_name = \Illuminate\Support\Str::slug($request->image_name).$ext;
-
-            $width = getimagesize($file->getRealPath());
-            if ($width[0] <= $widen_width) {
-                if ($upload_done = $file->move($upload_path, $new_file_name)) {
-                } else {
-                    return json_encode($upload_done->getMessage());
-                }
-            } else {
-                \Image::make($file->getRealPath())->widen($widen_width, function ($constraint) { $constraint->upsize(); })->save($upload_path.$new_file_name);
-            }
-        } else {
-            return response()->json('fail');
-        }
-
-        return response()->json($new_file_name);
+        return response()->json($edit_gallery->uploadImageForPage($request));
     }
 
     public function deleteSiteImage(Request $request)
