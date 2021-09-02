@@ -8,7 +8,7 @@ use Tcja\DOMDXMLParser;
  *
  * Edit Gallery class.
  *
- * Author : Trim Camaj
+ * Author: Trim C.
  *
  * Description : This class extends the main (Gallery) class and is used for all XML manipulations such as removing or modifying data
  *
@@ -31,10 +31,10 @@ class EditGallery extends Gallery
 	 **/
 	public function uploadImage($request, $image_title, $gallery)
 	{
-		$upload_path_big = storage_path('app/public/images_gallery/big/');
-        $upload_path_min = storage_path('app/public/images_gallery/min/');
-        $widen_big_width = 1280;
-        $widen_min_width = 300;
+		$upload_path_big = storage_path(config('site.big_images_path'));
+        $upload_path_min = storage_path(config('site.min_images_path'));
+        $widen_big_width = config('site.widen_big_width');
+        $widen_min_width = config('site.widen_min_width');
 
         $array = [
             'gallery' => $gallery,
@@ -57,9 +57,9 @@ class EditGallery extends Gallery
                 }
 
                 $timestamp = microtime(true);
-                $new_file_name = substr(sha1(md5('sàéy' . time() . rand(0, 10000) . 'YXdaewS')), 0, 16) . $ext;
+                $new_file_name = \Illuminate\Support\Str::random(16) . $ext;
 
-                $width = getimagesize($file[$request->image_number_ . $i]->getRealPath());
+                $width = getimagesize($file[$request->image_number_ . $i]);
                 if ($width[0] <= $widen_big_width) {
                     if ($upload_done = $file[$request->image_number_ . $i]->move($upload_path_big, $new_file_name)) {
                         $this->addImage($timestamp, $new_file_name, $gallery, $image_title);
@@ -67,7 +67,7 @@ class EditGallery extends Gallery
                         return $upload_done->getMessage();
                     }
                 } else {
-                    \Image::make($file[$request->image_number_ . $i]->getRealPath())->widen($widen_big_width, function ($constraint) { $constraint->upsize(); })->save($upload_path_big . $new_file_name);
+                    \Image::make($file[$request->image_number_ . $i])->widen($widen_big_width, function ($constraint) { $constraint->upsize(); })->save($upload_path_big . $new_file_name);
                     $this->addImage($timestamp, $new_file_name, $gallery, $image_title);
                 }
 
@@ -97,8 +97,8 @@ class EditGallery extends Gallery
 	 **/
 	public function uploadImageForPage($request)
 	{
-		$upload_path = storage_path('app/public/images_site/');
-        $widen_width = 1280;
+		$upload_path = storage_path(config('site.page_images_path'));
+        $widen_width = config('site.widen_width');
 
         if ($request->total_files === 0) {
             return response()->json('erreur, veuillez rééessayer');
@@ -115,16 +115,16 @@ class EditGallery extends Gallery
                 $ext = '.jpg';
             }
 
-            $new_file_name = \Illuminate\Support\Str::slug($request->image_name).$ext;
+            $new_file_name = \Illuminate\Support\Str::slug($request->image_name) . $ext;
 
-            $width = getimagesize($file->getRealPath());
+            $width = getimagesize($file);
             if ($width[0] <= $widen_width) {
                 if ($upload_done = $file->move($upload_path, $new_file_name)) {
                 } else {
                     return $upload_done->getMessage();
                 }
             } else {
-                \Image::make($file->getRealPath())->widen($widen_width, function ($constraint) { $constraint->upsize(); })->save($upload_path.$new_file_name);
+                \Image::make($file)->widen($widen_width, function ($constraint) { $constraint->upsize(); })->save($upload_path.$new_file_name);
             }
         } else {
             return 0;
@@ -188,7 +188,6 @@ class EditGallery extends Gallery
             $page = empty($page) ? 1 : $page;
             $array = [
                 'old_new_image' => !empty($oldGallery->paginateGalleries($page)[0][config('site.images_per_page') - 1]) ? $oldGallery->paginateGalleries($page)[0][config('site.images_per_page') - 1] : '',
-                //'new_images' => !empty($gallery->paginateGalleries(1)[0]) ? $gallery->paginateGalleries(1)[0] : '',
                 'old_paginatorHTML' => $oldGallery->paginateGalleries($page)[0]['galleryInfos']['paginatorHTML'],
                 'paginatorHTML' => $gallery->paginateGalleries(1)[0]['galleryInfos']['paginatorHTML'],
                 'timestamp' => $timestamp,
@@ -243,7 +242,7 @@ class EditGallery extends Gallery
         $xml = new DOMDXMLParser(storage_path('app/' . Gallery::GALLERIES_FILE_PATH));
         $maxID = $this->getMaxGalleryId();
 
-        if ($xml->addNode('gallery', [
+        if ($xml->addNode('gallery-info', [
             'galleryID' => ($maxID) ? $maxID + 1 : 1,
             'CDATA' => $gallery_name
         ])) {

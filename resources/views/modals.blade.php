@@ -10,18 +10,13 @@
             </div>
             {!! Form::open(['url' => url('/abort'), 'id' => 'loginForm', 'class' => '']) !!}
                 <div class="modal-body">
-                        <i style="font-size: 4.5rem; color: #007bff;" class="w-100 text-center fas fa-sign-in-alt"></i>
-                        <h5 class="my-3 text-center font-weight-normal">{{ __('site.fill_inputs') }}</h5>
-                        <label for="inputEmail" class="sr-only">{{ __('site.email') }}</label>
-                        <input type="email" id="inputEmail" name="email" style="margin: auto; max-width: 90%;" class="form-control" placeholder="{{ __('site.email') }}">
-                        <div class="mb-2"></div>
-                        <label for="inputPassword" class="sr-only">{{ __('site.password') }}</label>
-                        <input type="password" id="inputPassword" name="password" style="margin: auto; max-width: 90%;" class="form-control" placeholder="{{ __('site.password') }}">
-                        {{-- <div class="checkbox mb-3">
-                            <label>
-                            <input type="checkbox" value="remember-me"> Remember me
-                            </label>
-                        </div> --}}
+                    <i style="font-size: 4.5rem; color: #007bff;" class="w-100 text-center fas fa-sign-in-alt"></i>
+                    <h5 class="my-3 text-center font-weight-normal">{{ __('site.fill_inputs') }}</h5>
+                    <label for="inputEmail" class="sr-only">{{ __('site.email') }}</label>
+                    <input type="email" id="inputEmail" name="email" style="margin: auto; max-width: 90%;" class="form-control" placeholder="{{ __('site.email') }}">
+                    <div class="mb-2"></div>
+                    <label for="inputPassword" class="sr-only">{{ __('site.password') }}</label>
+                    <input type="password" id="inputPassword" name="password" style="margin: auto; max-width: 90%;" class="form-control" placeholder="{{ __('site.password') }}">
                 </div>
                 <div class="noselect modal-footer">
                     <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">{{ __('site.cancel_button') }}</button>

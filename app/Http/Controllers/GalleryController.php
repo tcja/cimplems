@@ -102,11 +102,9 @@ class GalleryController extends Controller
         $remove_image = $edit_gallery->removeImage($request->file);
 
         $gallery = new Gallery($request->galleryID);
-        if ($gallery->getImagesArray()['galleryInfos']['totalImages']) {
-            $array_images = $gallery->getImagesArray();
-            if ($array_images) {
-                $array_images_filtered = $gallery->paginateGalleries($request->page);
-            }
+
+        if ($array_images = $gallery->getImagesArray()) {
+            $array_images_filtered = $gallery->paginateGalleries($request->page);
         } else {
             $array_images_filtered[0] = 0;
         }
@@ -143,7 +141,6 @@ class GalleryController extends Controller
 
         if ($array_images) {
             $array_images_filtered = $gallery->paginateGalleries($request->page);
-            //unset($array_images_filtered[0]['galleryInfos']);
 
             return $array_images_filtered[0];
         }

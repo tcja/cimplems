@@ -16,40 +16,42 @@ Route::post('/abort', function () {
     abort(404);
 });
 
-// Pages routes
-Route::post('/delete_page', 'PageController@deletePage')->middleware('usercheck');
-Route::post('/edit_page', 'PageController@editPage')->middleware('usercheck');
-Route::post('/add_page', 'PageController@addPage')->middleware('usercheck');
-Route::post('/show_page_ajax', 'PageController@showPageAjax');
-Route::post('/change_menu_order', 'PageController@changeMenuOrder')->middleware('usercheck');
-Route::post('/change_page_name', 'PageController@changePageName')->middleware('usercheck');
-Route::post('/change_page_state', 'PageController@changePageState')->middleware('usercheck');
-Route::post('/upload_image', 'PageController@uploadImage')->middleware('usercheck');
-Route::post('/delete_site_image', 'PageController@deleteSiteImage')->middleware('usercheck');
-Route::get('/list_private_pages', 'PageController@listPrivatePages')->middleware('usercheck');
-Route::get('/show_home_page', 'PageController@showHomePage')->middleware('usercheck');
-Route::get('/{slug}', 'PageController@index')->where('slug', '^(?!admin|login|logout|list_private_pages|show_home_page|get_user_email).*$'); // Main route for handling a page
+Route::middleware([App\Http\Middleware\UserCheck::class])->group(function () {
+    // Pages routes
+    Route::post('/delete_page', [App\Http\Controllers\PageController::class, 'deletePage']);
+    Route::post('/edit_page', [App\Http\Controllers\PageController::class, 'editPage']);
+    Route::post('/add_page', [App\Http\Controllers\PageController::class, 'addPage']);
+    Route::post('/show_page_ajax', [App\Http\Controllers\PageController::class, 'showPageAjax'])->withoutMiddleware([App\Http\Middleware\UserCheck::class]);;
+    Route::post('/change_menu_order', [App\Http\Controllers\PageController::class, 'changeMenuOrder']);
+    Route::post('/change_page_name', [App\Http\Controllers\PageController::class, 'changePageName']);
+    Route::post('/change_page_state', [App\Http\Controllers\PageController::class, 'changePageState']);
+    Route::post('/upload_image', [App\Http\Controllers\PageController::class, 'uploadImage']);
+    Route::post('/delete_site_image', [App\Http\Controllers\PageController::class, 'deleteSiteImage']);
+    Route::get('/list_private_pages', [App\Http\Controllers\PageController::class, 'listPrivatePages']);
+    Route::get('/show_home_page', [App\Http\Controllers\PageController::class, 'showHomePage']);
 
-// Gallery routes
-Route::post('/do_upload', 'GalleryController@doUpload')->middleware('usercheck');
-Route::post('/delete_image', 'GalleryController@deleteImage')->middleware('usercheck');
-Route::post('/delete_gallery', 'GalleryController@deleteGallery')->middleware('usercheck');
-Route::post('/create_gallery', 'GalleryController@createGallery')->middleware('usercheck');
-Route::post('/edit_galleries', 'GalleryController@editGalleries')->middleware('usercheck');
-Route::post('/edit_image_show_form', 'GalleryController@editImageShowForm')->middleware('usercheck');
-Route::post('/edit_image', 'GalleryController@editImage')->middleware('usercheck');
-Route::post('/change_gal_page', 'GalleryController@changeGalleryPage');
+    Route::get('/{slug}', [App\Http\Controllers\PageController::class, 'index'])->where('slug', '^(?!list_private_pages|show_home_page|get_user_email|a\/logout).*$')->withoutMiddleware([App\Http\Middleware\UserCheck::class]); // Main route for handling a page
 
-// Contact routes
-Route::post('/contact', 'ContactController@sendForm');
+    // Gallery routes
+    Route::post('/do_upload', [App\Http\Controllers\GalleryController::class, 'doUpload']);
+    Route::post('/delete_image', [App\Http\Controllers\GalleryController::class, 'deleteImage']);
+    Route::post('/delete_gallery', [App\Http\Controllers\GalleryController::class, 'deleteGallery']);
+    Route::post('/create_gallery', [App\Http\Controllers\GalleryController::class, 'createGallery']);
+    Route::post('/edit_galleries', [App\Http\Controllers\GalleryController::class, 'editGalleries']);
+    Route::post('/edit_image_show_form', [App\Http\Controllers\GalleryController::class, 'editImageShowForm']);
+    Route::post('/edit_image', [App\Http\Controllers\GalleryController::class, 'editImage']);
+    Route::post('/change_gal_page', [App\Http\Controllers\GalleryController::class, 'changeGalleryPage'])->withoutMiddleware([App\Http\Middleware\UserCheck::class]);
 
-// Auth routes
-Route::post('/login', 'Auth\LoginController@__construct')->middleware('browsercheck');
-Route::get('/login', 'Auth\LoginController@__construct')->middleware('browsercheck');
-Route::get('/logout', 'Auth\LoginController@logout')->middleware('usercheck');
+    // Contact routes
+    Route::post('/contact', [App\Http\Controllers\ContactController::class, 'sendForm'])->withoutMiddleware([App\Http\Middleware\UserCheck::class]);;
 
-// User routes
-Route::post('/change_user_email', 'UserController@changeUserEmail')->middleware('usercheck');
-Route::post('/change_user_password', 'UserController@changeUserPassword')->middleware('usercheck');
-Route::post('/check_user_password', 'UserController@checkUserPassword')->middleware('usercheck');
-Route::get('/get_user_email', 'UserController@getUserEmail')->middleware('usercheck');
+    // Auth routes
+    Route::post('/a/login', [App\Http\Controllers\Auth\LoginController::class, '__construct'])->withoutMiddleware([App\Http\Middleware\UserCheck::class])->middleware('browsercheck');
+    Route::get('/a/logout', [App\Http\Controllers\Auth\LoginController::class, 'logout']);
+
+    // User routes
+    Route::post('/change_user_email', [App\Http\Controllers\UserController::class, 'changeUserEmail']);
+    Route::post('/change_user_password', [App\Http\Controllers\UserController::class, 'changeUserPassword']);
+    Route::post('/check_user_password', [App\Http\Controllers\UserController::class, 'checkUserPassword']);
+    Route::get('/get_user_email', [App\Http\Controllers\UserController::class, 'getUserEmail']);
+});

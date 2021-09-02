@@ -9,7 +9,7 @@ use Tcja\DOMDXMLParser;
  *
  * User class.
  *
- * Author : Trim Camaj
+ * Author: Trim C.
  *
  * Description : Class used to retrieve informations about users
  *

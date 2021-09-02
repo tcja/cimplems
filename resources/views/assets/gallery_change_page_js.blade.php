@@ -1,9 +1,8 @@
 <script type="text/javascript">
-    $(function(){//return false;
+    $(function(){
         $(this).on('click','.page-link', function(e) {
             e.preventDefault();
             $(this).closest('div').prev().children().each(function(key, val) { $(val).removeAttr('id'); });
-            //if ($(this).attr('href') == 'javascript:;') return false;
             if ($(this).parent().hasClass('active')) return false;
 
             var paginationMenu = $(this).closest('ul');
@@ -13,9 +12,6 @@
             var prevLink = paginationMenu.find('[rel=prev]');
             var nextLink = paginationMenu.find('[rel=next]');
             var targetLink = $(this);
-            //var prevButton = paginationMenu.children().first();
-            //var nextButton = paginationMenu.children().last();
-            //var initialPageNumber = initialPageButton.children().html();
             var gallery = targetLink.closest('div.row').attr('id').replace(/[a-z]+/gi, '');
 
             if (targetLink[0] == nextLink[0]) {

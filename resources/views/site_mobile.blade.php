@@ -9,11 +9,11 @@
 		@if (session('admin') === true)
 			@include('admin_assets/css_assets')
 		@endif
-		@include('assets/css_common_assets')
+		@include('assets/css_assets')
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.3/photoswipe.min.css">
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.3/default-skin/default-skin.min.css">
 		<link rel="stylesheet" href="{{ asset(config('site.theme_dir') . config('site.theme') . '/' . 'css/style.css') }}">
-		@include('assets/js_common_assets')
+		@include('assets/js_assets')
 		<script src="{{ asset('js/jquery.mobile.custom.min.js') }}"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.3/photoswipe.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.3/photoswipe-ui-default.min.js"></script>
@@ -21,24 +21,9 @@
 		<script type="text/javascript">
 			$(function(){
 				$('.thumb_resp2').on("contextmenu",function(e){	e.preventDefault();	});
-
-				//By default, plugin uses `data-fancybox-group` attribute to create galleries.
 				$(".phswipe").jqPhotoSwipe({
-					/* galleryOpen: function (gallery) {
-						//with `gallery` object you can access all methods and properties described here http://photoswipe.com/documentation/api.html
-						//console.log(gallery);
-						//console.log(gallery.currItem);
-						//console.log(gallery.getCurrentIndex());
-						//gallery.zoomTo(1, {x:gallery.viewportSize.x/2,y:gallery.viewportSize.y/2}, 500);
-						gallery.toggleDesktopZoom();
-					} */
 					forceSingleGallery: true
 				});
-				//This option forces plugin to create a single gallery and ignores `data-fancybox-group` attribute.
-				/* $(".forcedgallery > a").jqPhotoSwipe({
-					forceSingleGallery: true
-				}); */
-				//$('.mobileResize').width($('.mobileResize').width() + ($('.mobileResize').width() * 25 / 100));
 				$isMobile = true;
 			});
 		</script>
@@ -54,7 +39,7 @@
             @endif
         @endif
         @if (config('site.gallery_page_ajax_transition'))
-            @include('assets/gallery_js')
+            @include('assets/gallery_change_page_js')
         @endif
 	</head>
 	<body>

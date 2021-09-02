@@ -10,12 +10,6 @@ class ContactController extends Controller
 {
     public function sendForm(Request $request, User $user)
     {
-        //mail('cloackage@hotmail.com', 'Sujet test', 'Ceci est un message de test');
-
-        //Mail::to('client@site.com')->send(new \App\Mail\Contact);
-
-        //dd();
-
         $validator = \Validator::make($request->all(), [
             'name' => 'required|min:2|max:30',
             'email' => 'required|email',
@@ -31,7 +25,7 @@ class ContactController extends Controller
         $data = ['name' => $request->name, 'email' => $request->email, 'messageForm' => $request->message, 'urlSite' => url('/')];
 
         Mail::send('emails/contact_mail', $data, function($message) use ($title, $to_email, $request) {
-            $message->from($to_email, $title)
+            $message->from(env('MAIL_USERNAME'), $title)
                     ->to($to_email)
                     ->subject($request->subject);
         });

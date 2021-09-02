@@ -6,18 +6,10 @@
             var slugLink = $(this).attr('href').split('/');
             $(this).attr('href', 'javascript:;');
             slugLink = slugLink[slugLink.length - 1];
-            /* var slugNavBar = document.location.href.split('/')
-            slugNavBar = slugNavBar[slugNavBar.length - 1]; */
 
             if (slugLink == $rootUrl.split('/')[$rootUrl.split('/').length - 1]) {
                 slugLink = 'home';
             }
-            /* if (slugLink == 'gallery')
-                document.location.href = $rootUrl + "/gallery";
-            if (slugNavBar == 'gallery' && slugLink == 'home')
-                document.location.href = $rootUrl;
-            else if (slugNavBar == 'gallery')
-                document.location.href = $rootUrl + '/' + slugLink; */
 
             var data_string = 'page_name_show=' + slugLink;
             $.ajax({
@@ -39,7 +31,6 @@
                     var targetTitleLink = $(this).attr('title');
                     var originTitleLink = $('#menu').children('.nav-item.active').children().html();
                     var originSlug = $pageSlug;
-                    //$pageTitle = data.pageTitle;
                     $pageSlug = data.slug;
                     $(document).prop('title', data.pageTitle);
                     originSlug = originSlug.replace(/_/gi,'-');

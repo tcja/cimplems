@@ -171,7 +171,7 @@ return [
     'contact_mail_title'            =>  'Contact e-mail',
     'contact_mail_pre_header'       =>  'Contact from your website',
     'contact_mail_p_st'             =>  'Hello,',
-    'contact_mail_p_sec'            =>  "Someone wants to get in touch with you, here is the informations provided :",
+    'contact_mail_p_sec'            =>  "Someone wants to get in touch with you, here are the informations provided :",
     'contact_mail_name'             =>  'Name :',
     'contact_mail_mail'             =>  'E-mail :',
     'contact_mail_message'          =>  'Message :',

@@ -4,7 +4,6 @@
 			errorClass: 'ml-4 errorf alert-error',
             onfocusout: false,
             onkeyup: false,
-            //onclick: false,
 			rules: {
 				password: {
 					required: true,
@@ -12,8 +11,7 @@
 				},
                 email: {
 					required: true,
-                    email: true/* ,
-					minlength: 3 */
+                    email: true
 				}
 			},
 			submitHandler: function(form) {
@@ -21,33 +19,17 @@
 				var data_string = 'password=' + $('#inputPassword').val() + '&email=' + $('#inputEmail').val();
 				$.ajax({
 					type: 'POST',
-					url: $rootUrl + '/login',
+					url: $rootUrl + '/a/login',
 					data: data_string,
 					dataType: 'json'
 				}).done(function(data) {
 					if (data === 'updateBrowser') {
-						document.location.href = $rootUrl + "/login";
+						document.location.href = $rootUrl + '/a/login';
                     } else if (data === 'logged') {
-						/* $('.toast').toast({
-							delay: 6000
-						});
-						$('.modalLogin').one('hidden.bs.modal', function (e) {
-							$('.sendForm').prop('disabled', false);
-							$('.toast').on('hidden.bs.toast', function () {
-								$('.toast-header').children('strong').html('Opération effectuée !');
-								$('.toast').toast({
-									delay: 2500
-								});
-							});
-							$('.toast-header').children('strong').html('Authentification réussie !');
-							$('.toast-body').html("Vous êtes désormais connecté en tant qu'adminstrateur.");
-							$('.toast').toast('show');
-						});
-						$('.modalLogin').modal('hide'); */
 						document.location.href = $rootUrl + '/' + ($pageSlug == 'home' ? '' : $pageSlug);
 					} else if (data === 'wrongInputs') {
 						$('.sendForm').prop('disabled', false);
-						$('#inputPassword').removeClass('valid')/* .addClass('ml-4 errorf alert-error') */;
+						$('#inputPassword').removeClass('valid');
 						$('#inputPassword').after('<label style="max-width: 90%;" class="ml-4 errorf alert-error">{{ __("site.wrong_inputs") }}</label>');
 						$('#inputPassword').keyup(function() {
 							$('#inputPassword').removeClass('ml-4 errorf alert-error');

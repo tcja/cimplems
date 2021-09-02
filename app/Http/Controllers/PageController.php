@@ -11,7 +11,7 @@ use Mobile_Detect;
 
 class PageController extends Controller
 {
-    public function index($slug = 'home', Mobile_Detect $mobile_detect)
+    public function index(Mobile_Detect $mobile_detect, $slug = 'home')
     {
         $this->listPrivatePages();
         CheckDefaultFiles::checkDefaultFiles();
@@ -32,8 +32,8 @@ class PageController extends Controller
                 $data = [
                     'rootUrl' => url('/'),
                     'isMobile' => $isMobile,
-                    'pageLinks' => $page->getPagesLinksTitles(),
                     'page' => 'page',
+                    'pageLinks' => $page->getPagesLinksTitles(),
                     'publishState' => $page->getPageState(),
                     'pageTitle' => $page->getPageTitle(),
                     'pageSlug' => $page->getPageSlug(),
@@ -41,6 +41,7 @@ class PageController extends Controller
                     'menuOrder' => $page->getMenuOrder(),
                     'content' => $page->getContent()
                 ];
+
                 if ($isMobile) {
                     return view('site_mobile', $data);
                 } else {
@@ -89,8 +90,8 @@ class PageController extends Controller
 
         if (!empty($request->array_images)) {
             foreach ($request->array_images as $image_name) {
-                if (!\Storage::exists(storage_path('app/public/images_site/' . $image_name))) {
-                    \File::delete(storage_path('app/public/images_site/' . $image_name));
+                if (!\Storage::exists(storage_path(config('site.page_images_path') . $image_name))) {
+                    \File::delete(storage_path(config('site.page_images_path') . $image_name));
                 }
             }
         }
@@ -179,8 +180,8 @@ class PageController extends Controller
             return response()->json('fail');
         }
 
-        if (!\Storage::exists(storage_path('app/public/images_site/' . $request->image_name))) {
-            \File::delete(storage_path('app/public/images_site/' . $request->image_name));
+        if (!\Storage::exists(storage_path(config('site.page_images_path') . $request->image_name))) {
+            \File::delete(storage_path(config('site.page_images_path') . $request->image_name));
         } else {
             return response()->json('file_not_found');
         }
@@ -199,6 +200,9 @@ class PageController extends Controller
     {
         $page = new Page('home', 'CONTENT_AND_PAGE_TITLE_AND_PAGE_STATE');
 
-        return ['publishState' => $page->getPageState(), 'content' => $page->getContent()];
+        return [
+            'publishState' => $page->getPageState(),
+            'content' => $page->getContent()
+        ];
     }
 }

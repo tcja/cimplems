@@ -1,7 +1,7 @@
 <footer class="bg-dark">
     <div class="container position-relative">
         @if (session('admin') === true)
-            <a style="z-index: 100;" title="Se déconnecter de l'admin" class="d-inline-block position-absolute text-white" href="{{ url('/logout') }}" id="logout">{{ __('site.logout') }}</a>
+            <a style="z-index: 100;" title="Se déconnecter de l'admin" class="d-inline-block position-absolute text-white" href="{{ url('/a/logout') }}" id="logout">{{ __('site.logout') }}</a>
         @else
             <a style="z-index: 100;" class="d-inline-block position-absolute text-white" href="javascript:;" data-toggle="modal" data-target="#Login" id="login">{{ __('site.login') }}</a>
         @endif

@@ -23,6 +23,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        \Illuminate\Pagination\Paginator::useBootstrap();
+
+        if (empty(env('APP_KEY')))
+            \Artisan::call('key:generate');
+
+        \App::setLocale(config('site.locale'));
     }
 }

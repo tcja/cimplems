@@ -1,5 +1,5 @@
 <div class="row">
-	<div id="galeries" class="col-12">
+	<div id="galleries" class="col-12">
 		@if (!empty($array_images))
 			@foreach ($array_images as $images)
 			@php if (!array_key_exists(0, $images)) continue @endphp

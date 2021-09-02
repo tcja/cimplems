@@ -23,41 +23,39 @@
             ];
         $('#summernote').summernote({
             lang: '{{ app()->getLocale() }}-{{ strtoupper(app()->getLocale()) }}',
-            //placeholder: 'Hello bootstrap 4',
-            //airMode: true,
-            /* codemirror: { // codemirror options
-                //theme: 'monokai'
-            }, */
-            //dialogsFade: true,
             tabsize: 2,
             height: $isMobile ? screen.height - 430 : screen.height - 420,
             dialogsInBody: true,
             toolbar: tools,
             callbacks: {
                 onImageUpload: function(image) {
-                    $.canvasResize(image[0], {
-                        width: 1280,
-                        height: 0,
-                        quality: 90,
-                        callback: function(data) {
-                            resizedImage = $.canvasResize('dataURLtoBlob', data);
-                            var data = new FormData();
-                            data.append('image', resizedImage);
-                            data.append('image_name', image[0].name.split('.').slice(0, -1).join('.'));
-                            $.ajax({
-                                type: 'POST',
-                                url: $rootUrl + '/upload_image',
-                                cache: false,
-                                contentType: false,
-                                processData: false,
-                                data: data,
-                                dataType: 'json'
-                            }).done(function(image_name) {
-                                var image = $('<img>').attr({src: './storage/images_site/' + image_name, class: 'img-fluidR' });
-                                $('#summernote').summernote("insertNode", image[0]);
-                            }).fail(function(data){
-                                console.log(data);
-                            });
+                    loadImage(image[0], {
+                        meta: true,
+                        canvas: true,
+                        maxWidth: {{ config('site.widen_width') }}
+                    }).then(function (data) {
+                        let canvas = data.image;
+                        if (canvas.toBlob) {
+                            canvas.toBlob(function (blob) {
+                                resizedImage = blob;
+                                let data = new FormData();
+                                data.append('image', resizedImage);
+                                data.append('image_name', image[0].name.split('.').slice(0, -1).join('.'));
+                                $.ajax({
+                                    type: 'POST',
+                                    url: $rootUrl + '/upload_image',
+                                    cache: false,
+                                    contentType: false,
+                                    processData: false,
+                                    data: data,
+                                    dataType: 'json'
+                                }).done(function(image_name) {
+                                    let image = $('<img>').attr({src: './storage/images_site/' + image_name, class: 'img-fluidR' });
+                                    $('#summernote').summernote("insertNode", image[0]);
+                                }).fail(function(data){
+                                    console.log(data);
+                                });
+                            }, 'image/jpeg');
                         }
                     });
                 },
@@ -462,7 +460,7 @@
                         if ($('#submit_img').length === 1) {
                             $('.delete_image').fadeOut();
                             $('.edit_image').fadeOut();
-                            $('#galeries').find('.edit_image_form').each(function(i, el) {
+                            $('#galleries').find('.edit_image_form').each(function(i, el) {
                                 if ($(el).css('display') === 'block') {
                                     $(el).attr('show', 'show');
                                     $(el).fadeOut();
@@ -546,7 +544,7 @@
                     if ($('#submit_img').length === 1) {
                         $('.delete_image').fadeIn(700);
                         $('.edit_image').fadeIn(700);
-                        $('#galeries').find('.edit_image_form').each(function(i, el) {
+                        $('#galleries').find('.edit_image_form').each(function(i, el) {
                             if ($(el).attr('show') === 'show') {
                                 $(el).fadeIn(700);
                             }

@@ -13,7 +13,7 @@
                 var gallery_name = $(obj).parents('div.thumbs_resp').parent().parent().attr('id');
                 var gal = '#' + gallery_name + ' .thumb_resp';
                 var total_photos_gal = $(gal).length;
-                var total_gals = $('#galeries').children().length;
+                var total_galleries = $('#galleries').children().length;
                 var page_now = ($(obj).closest('div.flex-wrap').next().length) ? $(obj).closest('div.flex-wrap').next().children().children('.active').children().html() : 1;
                 var data_string = 'file=' + image_name + '&galleryID=' + gallery_name.replace(/[a-z]+/gi, '') + '&page=' + page_now;
                 $('.delete_image_mobile').prop('disabled', true);
@@ -27,10 +27,10 @@
                     $(this).children('div.edit_image_mobile').modal('hide');
                     $(this).children('div.edit_image_mobile').on('hidden.bs.modal', function () {
                         $(this).parent().fadeOut(600, function(el) {
-                            if (!data[0]) {
-                                if (total_gals == 1) {
+                            if (!data[0][0]) {
+                                if (total_galleries == 1) {
                                     $('#' + gallery_name).remove();
-                                    $('#galeries').append('<h2 class="ml-4 mt-5 mb-4" id="noimage">{{ __("site.no_image") }}</h2>');
+                                    $('#galleries').append('<h2 class="ml-4 mt-5 mb-4" id="noimage">{{ __("site.no_image") }}</h2>');
                                 } else {
                                     $('#' + gallery_name).remove();
                                 }
@@ -156,8 +156,8 @@
                             $(this).parent().fadeOut(350, function(el) {
                                 $('.accept').prop('disabled', false);
                                 if (onlyTitleChanged) {
-                                    $('#galeries a[alt="' + data.name + '"]').attr('title', data.title);
-                                    $('#galeries a[alt="' + data.name + '"]').next().find('input[name="change_title"]')[0].defaultValue = escapeHtml($('<div/>').html(data.title).text());
+                                    $('#galleries a[alt="' + data.name + '"]').attr('title', data.title);
+                                    $('#galleries a[alt="' + data.name + '"]').next().find('input[name="change_title"]')[0].defaultValue = escapeHtml($('<div/>').html(data.title).text());
                                     $(el).fadeIn(500);
                                     $('.thumb_resp2').off('contextmenu');
                                     $('.thumb_resp2').on('contextmenu',function(e){ e.preventDefault(); });
@@ -243,11 +243,11 @@
                                         var html = '<div id="' + gal_id + '" style="display:none;" class="row mb-4"><h2>' + gallery_name + '</h2><div class="col-12 d-flex flex-wrap"><div id="' + imgf + '" class="thumb_resp thumbs_resp"><a href="' + $rootUrl + '/storage/images_gallery/big/' + data.name + '" rel="external" title="' + escapeHtml($('<div/>').html(data.title).text()) + '" data-size="1280x960" data-med="' + $rootUrl + '/storage/images_gallery/big/' + data.name + '" data-med-size="1280x960" alt="' + data.name + '" class="phswipe"><img alt="" src="' + $rootUrl + '/storage/images_gallery/min/' + data.name + '" class="thumb_resp2 img-fluid"></a></div></div></div>';
 
                                         if (gallery_nbr == 1) {
-                                            $('#galeries').prepend(html);
+                                            $('#galleries').prepend(html);
                                         } else {
                                             var galtab = [];
                                             gallery_nbr = parseInt(gallery_nbr);
-                                            $("#galeries > div").each(function(i) {
+                                            $("#galleries > div").each(function(i) {
                                                 galtab.push(parseInt($(this).attr('id').replace(/[^0-9]/gi,'')));
                                             });
                                             galtab.push(gallery_nbr);
@@ -258,9 +258,9 @@
                                             galtab.sort(sortNumbers);
                                             var index = galtab.findIndex(key => key == gallery_nbr);
                                             if (index == 0) {
-                                                $('#galeries').prepend(html);
+                                                $('#galleries').prepend(html);
                                             } else {
-                                                $('#galeries > div').eq(index - 1).after(html);
+                                                $('#galleries > div').eq(index - 1).after(html);
                                             }
                                         }
                                         $('div[id="' + gal_id + '"]').fadeIn(500);

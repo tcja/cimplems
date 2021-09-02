@@ -16,8 +16,6 @@ class LoginController extends Controller
      */
     public function __construct(Request $request, User $user)
     {
-        parent::__construct();
-
         $validator = \Validator::make($request->all(), [
             'password' => 'required',
             'email' => 'required|email'
@@ -39,6 +37,6 @@ class LoginController extends Controller
     {
         session()->flush();
         session()->flash('successMessage', '<div class="alert alert-success alert-dismissible col-auto text-left" role="alert"><i class="far fa-check-square"></i><strong> ' . __('site.auth_logged_out_title') . '</strong><br> ' . __('site.auth_logged_out') . '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
-        return redirect(url('/')); //url()->previous()
+        return redirect(url('/'));
     }
 }

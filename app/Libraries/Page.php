@@ -10,7 +10,7 @@ use Tcja\DOMDXMLParser;
  *
  * Page class.
  *
- * Author : Trim Camaj
+ * Author: Trim C.
  *
  * Description : Class used to retrieve informations about pages
  *
@@ -88,12 +88,12 @@ class Page
 	 *
 	 *  @var string $XML_PAGE_FOLDER_PATH Default pages folder location
 	 * */
-	const XML_PAGE_FOLDER_PATH = 'database/pages/pages_custom/';
+	const XML_PAGE_FOLDER_PATH = 'database/pages/custom/';
 	/**
 	 *
 	 *  @var string $XML_PAGE_FOLDER_PATH Default pages folder location
 	 * */
-	const XML_PAGE_DEFAULT_FOLDER_PATH = 'database/pages/pages_default/';
+	const XML_PAGE_DEFAULT_FOLDER_PATH = 'database/pages/default/';
 
 	/**
 	 * Constructor used to retrieve content from an html page
@@ -271,7 +271,7 @@ class Page
 	public function fetchPagesDefault($real_name = false)
 	{
 		if ($real_name) {
-			$pages_list = scandir(storage_path('app/database/pages/pages_default/'));
+			$pages_list = scandir(storage_path('app/database/pages/default/'));
 			Arr::pull($pages_list, 0);
 			Arr::pull($pages_list, 1);
 			$pages_list = array_values($pages_list);
@@ -288,7 +288,7 @@ class Page
                 return false;
             }
 		} else {
-			$pages_list = scandir(storage_path('app/database/pages/pages_default/'));
+			$pages_list = scandir(storage_path('app/database/pages/default/'));
 			Arr::pull($pages_list, 0);
 			Arr::pull($pages_list, 1);
 			$pages_list = array_values($pages_list);
@@ -309,7 +309,7 @@ class Page
 	 **/
 	protected function fetchPages()
 	{
-		$pages_list = scandir(storage_path('app/database/pages/pages_custom/'));
+		$pages_list = scandir(storage_path('app/database/pages/custom/'));
         Arr::pull($pages_list, 0);
         Arr::pull($pages_list, 1);
 

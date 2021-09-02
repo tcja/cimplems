@@ -9,10 +9,10 @@
 		@if (session('admin') === true)
 			@include('admin_assets/css_assets')
 		@endif
-		@include('assets/css_common_assets')
+		@include('assets/css_assets')
 		<link rel="stylesheet" href="{{ asset('css/fancybox/jquery.fancybox-1.3.6.css') }}">
 		<link rel="stylesheet" href="{{ asset(config('site.theme_dir') . config('site.theme') . '/' . 'css/style.css') }}">
-		@include('assets/js_common_assets')
+		@include('assets/js_assets')
 		<script src="{{ asset('js/jquery.fancybox-1.3.6.min.js') }}"></script>
 		<script type="text/javascript">
 			$(function(){
@@ -45,8 +45,8 @@
                 @include(config('site.theme_dir') . config('site.theme') . '/' . 'assets/misc_js')
             @endif
         @endif
-        @if (config('site.gallery_page_ajax_transition'))
-            @include('assets/gallery_js')
+        @if (config('site.gallery_page_ajax_transition') && $pageSlug == 'gallery')
+            @include('assets/gallery_change_page_js')
         @endif
 	</head>
 	<body>

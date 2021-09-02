@@ -39,7 +39,7 @@
 						<input type="hidden" name="edit_image_infos" value="1" />
 				{!! Form::close() !!}
 			</div>
-			<div class="noselect modal-footer" style="height:45px; padding-right: 10px;">
+			<div class="noselect modal-footer" style="padding-right: 10px;">
 				<button style="width: 66px;" type="button" class="accept btn btn-primary btn-sm">{{ __('site.ok_button') }}</button>
 				<button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">{{ __('site.cancel_button') }}</button>
 			</div>

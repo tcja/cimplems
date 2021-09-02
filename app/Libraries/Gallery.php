@@ -10,7 +10,7 @@ use Mobile_Detect;
  *
  * Gallery class.
  *
- * Author : Trim Camaj
+ * Author: Trim C.
  *
  * Description : This is the main class, it serves all functions to display the gallery data according to the needed infos
  *
@@ -129,7 +129,7 @@ class Gallery
 	{
         $xml = new DOMDXMLParser(storage_path('app/' . self::GALLERIES_FILE_PATH));
 
-        return $xml->pickNode('gallery')->getHighestValue('galleryID');
+        return $xml->pickNode('gallery-info')->getHighestValue('galleryID');
 	}
 	/**
 	 * Gets image data according to its timestamp
@@ -163,8 +163,8 @@ class Gallery
 	protected function fetchGalleries()
 	{
         $xml = new DOMDXMLParser(storage_path('app/' . self::GALLERIES_FILE_PATH));
-        $id = $xml->pickNode('gallery')->fetchData('galleryID')->toArray();
-        $values = $xml->pickNode('gallery')->fetchData('nodeValue')->toArray();
+        $id = $xml->pickNode('gallery-info')->fetchData('galleryID')->toArray();
+        $values = $xml->pickNode('gallery-info')->fetchData('nodeValue')->toArray();
 
         return ($id) ? array_combine($id, $values) : [];
 	}
