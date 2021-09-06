@@ -24,7 +24,6 @@
 						'speedIn'			: 270,
 						'speedOut'			: 270,
 						'changeSpeed'		: 220,
-						//'titlePosition'	: 'inside',
 						'overlayColor'		: '#F4F4F4',
 						'overlayOpacity'	: 0.8,
 						'margin'			: 50

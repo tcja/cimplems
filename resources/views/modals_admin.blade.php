@@ -67,7 +67,6 @@
         </div>
     </div>
 </div>
-{{-- Change menu order modal // ***&& $orderNumber != $menuOrder - 1*** --}}
 <div class="modal modalReset fade modalChangeOrderMenu" id="ChangeOrderMenu" tabindex="-1" role="dialog" aria-labelledby="ChangeOrderMenu" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">

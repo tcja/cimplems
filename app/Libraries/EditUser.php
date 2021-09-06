@@ -4,12 +4,11 @@ namespace App\Libraries;
 
 use Tcja\DOMDXMLParser;
 
-//use Illuminate\Support\Arr;
 /*
  *
  * Edit User class.
  *
- * Author: Trim C.
+ * Author: tcja
  *
  * Description : Class used to manipulate users informations
  *

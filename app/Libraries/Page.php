@@ -10,7 +10,7 @@ use Tcja\DOMDXMLParser;
  *
  * Page class.
  *
- * Author: Trim C.
+ * Author: tcja
  *
  * Description : Class used to retrieve informations about pages
  *

@@ -4,7 +4,6 @@ namespace App\Libraries;
 
 use Tcja\DOMDXMLParser;
 
-//use Illuminate\Support\Arr;
 /*
  *
  * User class.

@@ -21,12 +21,10 @@
             errorClass: 'errorf alert-error',
             onfocusout: false,
             onkeyup: false,
-            //onclick: false,
 			rules: {
                 email_user: {
 					required: true,
-                    email: true/* ,
-					minlength: 3 */
+                    email: true
 				}
 			},
             submitHandler: function(form) {
@@ -65,7 +63,6 @@
             errorClass: 'ml-4 errorf alert-error',
             onfocusout: false,
             onkeyup: false,
-            //onclick: false,
 			rules: {
                 old_password_user: {
                     required: true

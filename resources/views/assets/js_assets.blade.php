@@ -17,8 +17,6 @@
         $locale = '{{ app()->getLocale() }}';
         $.validator.setDefaults({
             errorClass: 'errorf alert-error',
-            //onfocusout: false,
-            //onkeyup: false,
             onclick: false
         });
         $.validator.addMethod('selectCheck', function(value) {

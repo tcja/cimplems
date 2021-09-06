@@ -37,7 +37,6 @@
                     var targetTitleLink = $(this).attr('title');
                     var originTitleLink = $('#menu').children('span').html();
                     var originSlug = $pageSlug;
-                    //$pageTitle = data.pageTitle;
                     $pageSlug = data.slug;
                     $(document).prop('title', data.pageTitle);
                     originSlug = originSlug.replace(/_/gi,'-');

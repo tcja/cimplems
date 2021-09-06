@@ -10,7 +10,7 @@ use Mobile_Detect;
  *
  * Gallery class.
  *
- * Author: Trim C.
+ * Author: tcja
  *
  * Description : This is the main class, it serves all functions to display the gallery data according to the needed infos
  *

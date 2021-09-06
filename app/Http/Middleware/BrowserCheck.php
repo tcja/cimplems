@@ -3,8 +3,6 @@
 namespace App\Http\Middleware;
 
 use Closure;
-//use function GuzzleHttp\json_encode;
-//use Illuminate\Http\Response;
 
 class BrowserCheck
 {

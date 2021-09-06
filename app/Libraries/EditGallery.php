@@ -8,7 +8,7 @@ use Tcja\DOMDXMLParser;
  *
  * Edit Gallery class.
  *
- * Author: Trim C.
+ * Author: tcja
  *
  * Description : This class extends the main (Gallery) class and is used for all XML manipulations such as removing or modifying data
  *

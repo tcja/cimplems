@@ -10,7 +10,7 @@ use Tcja\DOMDXMLParser;
  *
  * Edit Page class.
  *
- * Author: Trim C.
+ * Author: tcja
  *
  * Description : Class used to manipulate pages files
  *

@@ -8,7 +8,7 @@ use Tcja\DOMDXMLParser;
  *
  * CheckDefaultFiles class.
  *
- * Author: Trim C.
+ * Author: tcja
  *
  * Description : Class used to add default files and folders in case they don't exist for the site to function properly
  *
