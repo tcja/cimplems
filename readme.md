@@ -71,4 +71,4 @@ The CMS is reactive by default but can be customized in the config file (`root_w
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License. © 2019 tcja
